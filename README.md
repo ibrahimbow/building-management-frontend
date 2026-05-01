@@ -49,7 +49,7 @@ A user can exist without being part of any building.
 
 ## 🔒 Privacy
 
-- Only nickname + photo are visible
+- Only nickname + (optional photo) are visible
 - Email and phone are hidden
 
 ---
