@@ -1,107 +1,60 @@
-<mat-sidenav-container class="layout">
-  <mat-sidenav mode="side" [opened]="true" class="sidebar">
-    <div class="logo">
-      <mat-icon>apartment</mat-icon>
-      <span>Building Management</span>
+<main class="content">
+  <section class="cards">
+    <mat-card 
+  *ngFor="let item of menuItems" 
+  class="dashboard-card"
+  [class.disabled-card]="!userState.hasJoinedBuilding">
+
+  <span
+    *ngIf="item.notificationCount > 0"
+    class="notification-badge">
+    {{ item.notificationCount }}
+  </span>
+
+  <mat-card-header>
+    <div mat-card-avatar class="card-icon">
+      <mat-icon>{{ item.icon }}</mat-icon>
     </div>
 
-    <mat-nav-list>
-      <a mat-list-item class="active">
-        <mat-icon matListItemIcon>dashboard</mat-icon>
-        <span matListItemTitle>Dashboard</span>
-      </a>
+    <mat-card-title>{{ item.title }}</mat-card-title>
+    <mat-card-subtitle>{{ item.description }}</mat-card-subtitle>
+  </mat-card-header>
 
-      <a mat-list-item>
-        <mat-icon matListItemIcon>business</mat-icon>
-        <span matListItemTitle>Building Info</span>
-      </a>
+  <mat-card-actions align="end">
+    <button 
+      mat-button 
+      color="primary" 
+      [routerLink]="userState.hasJoinedBuilding ? item.route : null"
+      [disabled]="!userState.hasJoinedBuilding">
+      <mat-icon>arrow_forward</mat-icon>
+      Open
+    </button>
+  </mat-card-actions>
 
-      <a mat-list-item>
-        <mat-icon matListItemIcon>campaign</mat-icon>
-        <span matListItemTitle>Announcements</span>
-      </a>
+</mat-card>
+  </section>
 
-      <a mat-list-item>
-        <mat-icon matListItemIcon>chat</mat-icon>
-        <span matListItemTitle>Chat</span>
-      </a>
+<mat-card 
+  *ngIf="userState.hasJoinedBuilding"
+  class="announcements">
 
-      <a mat-list-item>
-        <mat-icon matListItemIcon>share</mat-icon>
-        <span matListItemTitle>Help & Share</span>
-      </a>
+  <mat-card-title>Latest Announcements</mat-card-title>
 
-      <a mat-list-item>
-        <mat-icon matListItemIcon>settings</mat-icon>
-        <span matListItemTitle>Settings</span>
-      </a>
-    </mat-nav-list>
-  </mat-sidenav>
+  <mat-list>
+    <mat-list-item>
+      <mat-icon matListItemIcon>water_drop</mat-icon>
+      <div matListItemTitle>Water Maintenance</div>
+      <div matListItemLine>Water supply maintenance on May 25, 2026</div>
+    </mat-list-item>
 
-  <mat-sidenav-content>
-    <mat-toolbar class="topbar">
-      <div>
-        <h1>Dashboard</h1>
-        <p>Welcome back, Ibrahim 👋</p>
-      </div>
+    <mat-divider></mat-divider>
 
-      <span class="spacer"></span>
+    <mat-list-item>
+      <mat-icon matListItemIcon>elevator</mat-icon>
+      <div matListItemTitle>Elevator Check</div>
+      <div matListItemLine>Routine inspection scheduled next week</div>
+    </mat-list-item>
+  </mat-list>
 
-      <button mat-icon-button>
-        <mat-icon>account_circle</mat-icon>
-      </button>
-    </mat-toolbar>
-
-    <main class="content">
-
-
-<section class="cards">
-  <mat-card *ngFor="let item of menuItems" class="dashboard-card">
-
-    <span
-      *ngIf="item.notificationCount > 0"
-      class="notification-badge">
-      {{ item.notificationCount }}
-    </span>
-
-    <mat-card-header>
-      <div mat-card-avatar class="card-icon">
-        <mat-icon>{{ item.icon }}</mat-icon>
-      </div>
-
-      <mat-card-title>{{ item.title }}</mat-card-title>
-      <mat-card-subtitle>{{ item.description }}</mat-card-subtitle>
-    </mat-card-header>
-
-    <mat-card-actions align="end">
-      <button mat-button color="primary" [routerLink]="item.route">
-        <mat-icon>arrow_forward</mat-icon>
-        Open
-      </button>
-    </mat-card-actions>
-
-  </mat-card>
-</section>
-
-      <mat-card class="announcements">
-        <mat-card-title>Latest Announcements</mat-card-title>
-
-        <mat-list>
-          <mat-list-item>
-            <mat-icon matListItemIcon>water_drop</mat-icon>
-            <div matListItemTitle>Water Maintenance</div>
-            <div matListItemLine>Water supply maintenance on May 25, 2026</div>
-          </mat-list-item>
-
-          <mat-divider></mat-divider>
-
-          <mat-list-item>
-            <mat-icon matListItemIcon>elevator</mat-icon>
-            <div matListItemTitle>Elevator Check</div>
-            <div matListItemLine>Routine inspection scheduled next week</div>
-          </mat-list-item>
-        </mat-list>
-      </mat-card>
-    </main>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+</mat-card>
+</main>

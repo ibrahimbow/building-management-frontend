@@ -11,6 +11,8 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
 import { RouterLink } from '@angular/router';
 
+import { UserStateService } from '../../../core/user/user-state.service';
+
 @Component({
   selector: 'app-tenant-dashboard',
   standalone: true,
@@ -30,17 +32,18 @@ import { RouterLink } from '@angular/router';
   styleUrl: './tenant-dashboard.scss',
 })
 export class TenantDashboard {
+  constructor(public userState: UserStateService) { }
+
   hasJoinedBuilding = false; // later this comes from backend
 
   menuItems = [
     {
-      title: this.hasJoinedBuilding ? 'Building Info' : 'Join Building',
-      description: this.hasJoinedBuilding
-        ? 'View your building details, rules and contacts'
-        : 'Enter a building code to request access',
-      icon: this.hasJoinedBuilding ? 'business' : 'add_business',
-      route: this.hasJoinedBuilding ? '/tenant/building-info' : '/tenant/join-building',
+      title: 'Building Info',
+      description: 'View your building details',
+      icon: 'business',
+      route: '/tenant/building-info',
       notificationCount: 0
+
     },
     {
       title: 'Announcements',
@@ -64,4 +67,5 @@ export class TenantDashboard {
       notificationCount: 1
     }
   ];
+
 }
