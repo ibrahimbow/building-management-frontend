@@ -1,0 +1,23 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<div style="display: flex; height: 100vh;">
+
+  <!-- Sidebar -->
+  <div style="width: 250px; background: #2c3e50; color: white; padding: 20px;">
+    <h3>BM App</h3>
+
+    <p><a routerLink="/tenant/dashboard" routerLinkActive="active">Dashboard</a></p>
+    <p><a routerLink="/tenant/join-building" routerLinkActive="active">Join Building</a></p>
+    <p><a routerLink="/tenant/building-info" routerLinkActive="active">Building Info</a></p>
+    <p><a routerLink="/tenant/announcements" routerLinkActive="active">Announcements</a></p>
+    <p><a routerLink="/tenant/help-share" routerLinkActive="active">Help & Share</a></p>
+    <p><a routerLink="/tenant/resident-chat" routerLinkActive="active">Chat</a></p>
+    <p><a routerLink="/tenant/settings" routerLinkActive="active">Settings</a></p>
+  </div>
+
+  <!-- Content -->
+  <div style="flex: 1; padding: 20px;">
+    <router-outlet></router-outlet>
+  </div>
+
+</div>

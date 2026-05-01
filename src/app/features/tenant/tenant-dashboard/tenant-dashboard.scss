@@ -1,0 +1,172 @@
+.layout {
+  height: 100vh;
+  background: #f5f7fb;
+}
+
+.sidebar {
+  width: 260px;
+  background: #0b63ce;
+  color: white;
+  padding: 16px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: 800;
+  padding: 20px 12px 32px;
+}
+
+mat-nav-list a {
+  color: white;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+mat-nav-list a.active,
+mat-nav-list a:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.topbar {
+  height: 84px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 32px;
+
+  h1 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+  }
+}
+
+.spacer {
+  flex: 1;
+}
+
+.content {
+  padding: 32px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px;
+  border-radius: 18px;
+
+  mat-icon {
+    width: 52px;
+    height: 52px;
+    font-size: 52px;
+    color: #0b63ce;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 800;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: #6b7280;
+  }
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  gap: 24px;
+  max-width: 100%;
+}
+
+.dashboard-card {
+  border-radius: 18px;
+  padding: 8px;
+  transition: 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+}
+
+.card-icon {
+  background: #e8f0ff;
+  color: #0b63ce;
+  display: grid;
+  place-items: center;
+}
+
+.announcements {
+  border-radius: 18px;
+  margin-top: 16px;
+  padding: 20px;
+}
+
+@media (max-width: 1000px) {
+  .stats,
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sidebar {
+    width: 220px;
+  }
+}
+
+@media (max-width: 700px) {
+  .stats,
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .content {
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+}
+
+@media (max-width: 760px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.dashboard-card {
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #e53935;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

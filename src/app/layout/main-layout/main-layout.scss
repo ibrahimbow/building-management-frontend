@@ -1,0 +1,16 @@
+a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+a:hover {
+  background: #34495e;
+}
+
+a.active {
+  background: #1abc9c;
+}
