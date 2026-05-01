@@ -161,7 +161,6 @@ Designed to integrate with:
 
 **Ibrahim**  
 Software Engineer | Java & Angular  
-Based in Belgium 🇧🇪
 
 ---
 
