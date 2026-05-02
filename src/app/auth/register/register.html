@@ -1,1 +1,26 @@
-<p>register works!</p>
+<div class="register-container">
+    <div class="register-card">
+
+        <div class="register-title">Create Account</div>
+
+        <form class="register-form" (ngSubmit)="register()">
+
+            <input type="text" placeholder="Full Name" [(ngModel)]="name" name="name" required />
+
+            <input type="email" placeholder="Email" [(ngModel)]="email" name="email" required />
+
+            <input type="password" placeholder="Password" [(ngModel)]="password" name="password" required
+                minlength="6" />
+            <p *ngIf="password && password.length < 6" class="error">
+                Password must be at least 6 characters
+            </p>
+
+            <input type="text" placeholder="Nickname (visible to others)" [(ngModel)]="nickname" name="nickname"
+                required />
+
+            <button type="submit">Register</button>
+
+        </form>
+
+    </div>
+</div>

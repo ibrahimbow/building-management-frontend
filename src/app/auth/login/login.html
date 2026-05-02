@@ -1,1 +1,30 @@
-<p>login works!</p>
+
+<div class="login-container">
+  <div class="login-card">
+
+    <div class="login-title">Login</div>
+
+    <form class="login-form" (ngSubmit)="login()">
+
+      <input
+        type="email"
+        placeholder="Email"
+        [(ngModel)]="email"
+        name="email"
+        required
+      />
+
+      <input
+        type="password"
+        placeholder="Password"
+        [(ngModel)]="password"
+        name="password"
+        required
+      />
+
+      <button type="submit">Login</button>
+
+    </form>
+
+  </div>
+</div>

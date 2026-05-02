@@ -1,1 +1,78 @@
-<p>settings works!</p>
+<mat-card class="settings-card">
+    <mat-card-title>Settings</mat-card-title>
+
+    <mat-card-content>
+        <form class="settings-form">
+
+            <div class="avatar-section">
+                <div class="avatar">
+                    <img *ngIf="profile.avatarUrl; else defaultAvatar" [src]="profile.avatarUrl" alt="Profile photo" />
+
+                    <ng-template #defaultAvatar>
+                        <mat-icon>person</mat-icon>
+                    </ng-template>
+                </div>
+
+                <input type="file" accept="image/*" (change)="onAvatarSelected($event)" />
+            </div>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Name private</mat-label>
+                <input matInput name="name" [(ngModel)]="profile.name" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Email private</mat-label>
+                <input matInput type="email" name="email" [(ngModel)]="profile.email" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Password</mat-label>
+                <input matInput value="********" disabled />
+            </mat-form-field>
+
+            <button mat-stroked-button color="primary" type="button" (click)="openChangePasswordDialog()">
+                Change Password
+            </button>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Mobile number private</mat-label>
+                <input matInput name="mobileNumber" [(ngModel)]="profile.mobileNumber" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Nickname public in posts</mat-label>
+                <input matInput name="nickname" [(ngModel)]="profile.nickname" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Role</mat-label>
+                <input matInput [value]="authService.getRole()" disabled />
+            </mat-form-field>
+
+            <mat-slide-toggle name="notifications" [(ngModel)]="profile.notifications">
+                Enable notifications
+            </mat-slide-toggle>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Language</mat-label>
+                <mat-select name="language" [(ngModel)]="profile.language">
+                    <mat-option *ngFor="let lang of languages" [value]="lang.code">
+                        {{ lang.label }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <div class="actions">
+                <button mat-raised-button color="primary" type="button" (click)="save()">
+                    Save Settings
+                </button>
+
+                <button mat-button color="warn" type="button" (click)="logout()">
+                    Logout
+                </button>
+            </div>
+
+        </form>
+    </mat-card-content>
+</mat-card>
