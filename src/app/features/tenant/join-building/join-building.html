@@ -1,1 +1,23 @@
-<p>join-building works!</p>
+<mat-card class="join-card">
+
+  <h2>Join a Building</h2>
+  <p>Enter the building code provided by your manager</p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <input
+      matInput
+      placeholder="Enter building code"
+      [(ngModel)]="buildingCode" />
+  </mat-form-field>
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="joinBuilding()">
+    Join
+  </button>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+
+</mat-card>

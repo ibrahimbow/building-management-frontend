@@ -133,12 +133,6 @@ mat-sidenav-content {
   pointer-events: none;
 }
 
-.disabled-link {
-  opacity: 0.4;
-  pointer-events: none;
-  cursor: not-allowed;
-}
-
 /* remove hover effect */
 .disabled-link:hover {
   background: transparent !important;

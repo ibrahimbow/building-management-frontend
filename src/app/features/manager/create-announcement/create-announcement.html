@@ -1,0 +1,83 @@
+<mat-card class="form-card">
+  <mat-card-title>Create Announcement</mat-card-title>
+
+  <mat-card-content>
+    <form #form="ngForm" (ngSubmit)="onSubmit(form)" novalidate>
+
+      <!-- Title -->
+      <mat-form-field appearance="outline">
+        <mat-label>Title</mat-label>
+        <input
+          matInput
+          name="title"
+          [(ngModel)]="announcement.title"
+          #title="ngModel"
+          required
+        />
+        <mat-error *ngIf="title.invalid && title.touched">
+          Title is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Message -->
+      <mat-form-field appearance="outline">
+        <mat-label>Message</mat-label>
+        <textarea
+          matInput
+          rows="4"
+          name="message"
+          [(ngModel)]="announcement.message"
+          #message="ngModel"
+          required
+        ></textarea>
+        <mat-error *ngIf="message.invalid && message.touched">
+          Message is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Category -->
+      <mat-form-field appearance="outline">
+        <mat-label>Category</mat-label>
+        <mat-select
+          name="category"
+          [(ngModel)]="announcement.category"
+          #category="ngModel"
+          required
+        >
+          <mat-option *ngFor="let c of categories" [value]="c">
+            {{ c }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="category.invalid && category.touched">
+          Category is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Image Upload -->
+      <div class="upload-section">
+        <label class="upload-label">Announcement Image</label>
+
+        <input
+          type="file"
+          accept="image/*"
+          (change)="onImageSelected($event)"
+        />
+
+        <div class="image-preview" *ngIf="imagePreview">
+          <img [src]="imagePreview" alt="Image preview" />
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="form.invalid"
+      >
+        Publish Announcement
+      </button>
+
+    </form>
+  </mat-card-content>
+</mat-card>

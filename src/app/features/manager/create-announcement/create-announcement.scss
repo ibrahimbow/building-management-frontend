@@ -1,0 +1,27 @@
+.form-card {
+  max-width: 700px;
+  margin: 24px auto;
+  padding: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upload-label {
+  font-weight: 500;
+}
+
+.image-preview img {
+  height: 140px;
+  border-radius: 10px;
+  object-fit: cover;
+}

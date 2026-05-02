@@ -64,6 +64,12 @@ export const routes: Routes = [
     ]
 
   },
+    {
+  path: 'manager/create-announcement',
+  loadComponent: () =>
+    import('./features/manager/create-announcement/create-announcement')
+      .then(m => m.CreateAnnouncement)
+},
   {
     path: '**',
     redirectTo: 'auth/login'

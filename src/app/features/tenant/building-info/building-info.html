@@ -1,1 +1,40 @@
-<p>building-info works!</p>
+<main class="building-page">
+  <mat-card class="building-card">
+    <div class="header">
+      <mat-icon>apartment</mat-icon>
+      <div>
+        <h2>{{ building.name }}</h2>
+        <p>{{ building.address }}</p>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <span>Building Code</span>
+        <strong>{{ building.code }}</strong>
+      </div>
+
+      <div class="info-item">
+        <span>Total Apartments</span>
+        <strong>{{ building.totalApartments }}</strong>
+      </div>
+
+      <div class="info-item">
+        <span>Manager</span>
+        <strong>{{ building.managerName }}</strong>
+      </div>
+
+      <div class="info-item">
+        <span>Manager Email</span>
+        <strong>{{ building.managerEmail }}</strong>
+      </div>
+
+      <div class="info-item">
+        <span>Emergency Phone</span>
+        <strong>{{ building.emergencyPhone }}</strong>
+      </div>
+    </div>
+  </mat-card>
+</main>
