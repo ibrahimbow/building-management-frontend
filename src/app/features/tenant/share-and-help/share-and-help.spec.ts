@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HelpShare } from './help-share';
+import { ShareAndHelp } from './share-and-help';
 
-describe('HelpShare', () => {
-  let component: HelpShare;
-  let fixture: ComponentFixture<HelpShare>;
+describe('ShareAndHelp', () => {
+  let component: ShareAndHelp;
+  let fixture: ComponentFixture<ShareAndHelp>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HelpShare],
+      imports: [ShareAndHelp],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(HelpShare);
+    fixture = TestBed.createComponent(ShareAndHelp);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

@@ -47,9 +47,16 @@ export const routes: Routes = [
             .then(m => m.Announcements)
       },
       {
-        path: 'help-share', loadComponent: () =>
-          import('./features/tenant/help-share/help-share')
-            .then(m => m.HelpShare)
+        path: 'help-share',
+        loadComponent: () =>
+          import('./features/tenant/share-and-help/share-and-help')
+            .then(m => m.ShareAndHelpComponent)
+      },
+      {
+        path: 'help-share',
+        loadComponent: () =>
+          import('./features/tenant/share-and-help/share-and-help')
+            .then(m => m.ShareAndHelpComponent)
       },
       {
         path: 'resident-chat', loadComponent: () =>
@@ -64,12 +71,12 @@ export const routes: Routes = [
     ]
 
   },
-    {
-  path: 'manager/create-announcement',
-  loadComponent: () =>
-    import('./features/manager/create-announcement/create-announcement')
-      .then(m => m.CreateAnnouncement)
-},
+  {
+    path: 'manager/create-announcement',
+    loadComponent: () =>
+      import('./features/manager/create-announcement/create-announcement')
+        .then(m => m.CreateAnnouncement)
+  },
   {
     path: '**',
     redirectTo: 'auth/login'

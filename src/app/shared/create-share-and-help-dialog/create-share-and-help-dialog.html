@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>Create Post</h2>
+
+<mat-dialog-content>
+  <form class="post-form">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Title</mat-label>
+      <input
+        matInput
+        name="title"
+        [(ngModel)]="title"
+        placeholder="What do you want to share?"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea
+        matInput
+        rows="4"
+        name="description"
+        [(ngModel)]="description"
+        placeholder="Write your post details..."
+      ></textarea>
+    </mat-form-field>
+
+    <div class="upload-section">
+      <label>Add photos</label>
+
+      <input
+        type="file"
+        accept="image/*"
+        multiple
+        (change)="onImageSelected($event)"
+      />
+    </div>
+
+    <div class="preview-grid" *ngIf="imagePreview.length">
+      <img
+        *ngFor="let img of imagePreview"
+        [src]="img"
+        alt="Preview image"
+      />
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancel</button>
+  <button mat-raised-button color="primary" type="button" (click)="create()">
+    Post
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,88 @@
+<div class="feed-page">
+    <h2>Share & Help</h2>
+
+    <mat-card *ngFor="let post of posts$ | async" class="post-card">
+        <mat-card-header>
+            <div class="avatar">
+                <img *ngIf="post.createdByAvatarUrl; else defaultAvatar" [src]="post.createdByAvatarUrl"
+                    alt="User avatar" />
+
+                <ng-template #defaultAvatar>
+                    <span>👤</span>
+                </ng-template>
+            </div>
+
+            <div class="post-header-text">
+                <mat-card-title>{{ post.createdByNickname }}</mat-card-title>
+                <mat-card-subtitle>
+                    {{ post.createdAt | date:'medium' }}
+                </mat-card-subtitle>
+            </div>
+
+            <button *ngIf="post.createdByUserId === authService.getCurrentUser()?.id" mat-icon-button color="warn"
+                (click)="delete(post.id)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </mat-card-header>
+
+        <mat-card-content>
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.description }}</p>
+
+            <div class="post-images" *ngIf="post.images.length">
+                <img *ngFor="let img of post.images" [src]="img" alt="Post image" />
+            </div>
+
+            <div class="comments-section">
+
+
+                <h4>Comments</h4>
+                <p class="no-comments" *ngIf="!post.comments.length">
+                    No comments yet. Be the first to comment!
+                </p>
+                <div class="comment" *ngFor="let comment of post.comments.slice(0, getVisibleCommentCount(post.id))">
+                    <div class="comment-avatar">
+                        <img *ngIf="comment.createdByAvatarUrl; else defaultCommentAvatar"
+                            [src]="comment.createdByAvatarUrl" alt="Comment avatar" />
+
+                        <ng-template #defaultCommentAvatar>
+                            <span>👤</span>
+                        </ng-template>
+                    </div>
+
+                    <div class="comment-body">
+                        <div class="comment-header">
+                            <strong>{{ comment.createdByNickname }}</strong>
+                            <span>{{ comment.createdAt | date:'short' }}</span>
+                        </div>
+
+                        <p>{{ comment.text }}</p>
+                    </div>
+
+                    <button *ngIf="comment.createdByUserId === authService.getCurrentUser()?.id" mat-icon-button
+                        color="warn" (click)="deleteComment(post.id, comment.id)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+                <button *ngIf="post.comments.length > getVisibleCommentCount(post.id)" mat-button color="primary"
+                    type="button" (click)="loadMoreComments(post.id)">
+                    Load more comments
+                </button>
+                <div class="add-comment">
+                    <input matInput placeholder="Write a comment..." [(ngModel)]="commentTextByPostId[post.id]"
+                        name="comment-{{ post.id }}" (keyup.enter)="addComment(post.id)" />
+
+                    <button mat-raised-button color="primary" type="button" (click)="addComment(post.id)"
+                        [disabled]="!commentTextByPostId[post.id]?.trim()">
+                        Comment
+                    </button>
+                </div>
+
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <button mat-fab color="primary" class="add-post-button" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+    </button>
+</div>
