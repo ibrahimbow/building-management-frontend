@@ -21,6 +21,8 @@ import { AuthService } from '../../../core/services/auth.service';
 import { CreateShareAndHelpDialog } from '../../../shared/create-share-and-help-dialog/create-share-and-help-dialog';
 import { ConfirmDialog } from '../../../shared/confirm-dialog/confirm-dialog';
 
+import { TimeAgoPipe } from '../../../core/pipes/time-ago-pipe';
+
 @Component({
   selector: 'app-share-and-help',
   standalone: true,
@@ -31,13 +33,15 @@ import { ConfirmDialog } from '../../../shared/confirm-dialog/confirm-dialog';
     MatButtonModule,
     MatIconModule,
     MatDialogModule,
-    MatInputModule
+    MatInputModule,
+    TimeAgoPipe
   ],
   templateUrl: './share-and-help.html',
   styleUrl: './share-and-help.scss'
 })
 export class ShareAndHelpComponent {
   posts$: Observable<ShareAndHelp[]>;
+  isLoading = true;
 
   commentTextByPostId: Record<string, string> = {};
 
@@ -47,6 +51,9 @@ export class ShareAndHelpComponent {
     public authService: AuthService
   ) {
     this.posts$ = this.service.posts$;
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 600);
   }
 
   openCreateDialog(): void {
