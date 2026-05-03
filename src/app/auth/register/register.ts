@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { UserRole } from '../../core/models/user.model';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -18,6 +19,7 @@ export class Register {
   password = '';
   nickname = '';
   role: UserRole = 'TENANT';
+
   errorMessage = '';
   isSubmitting = false;
 
@@ -27,6 +29,7 @@ export class Register {
   ) {}
 
   register(): void {
+     console.log('REGISTER CLICKED');
     this.errorMessage = '';
 
     if (!this.name || !this.email || !this.nickname || !this.password) {
@@ -40,22 +43,36 @@ export class Register {
     }
 
     this.isSubmitting = true;
-
-    const success = this.authService.register({
-      name: this.name,
-      email: this.email,
+console.log('CALLING API');
+    this.authService.register({
+      name: this.name.trim(),
+      email: this.email.trim(),
       password: this.password,
-      nickname: this.nickname,
+      nickname: this.nickname.trim(),
       role: this.role,
+    }).pipe(
+      switchMap(() => this.authService.login(this.email.trim(), this.password)),
+      switchMap(() => this.authService.loadCurrentUser())
+    ).subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        this.router.navigateByUrl(this.authService.getDashboardUrl());
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+
+        if (err.status === 409) {
+          this.errorMessage = 'An account already exists with this email or username.';
+          return;
+        }
+
+        if (err.status === 400) {
+          this.errorMessage = 'Please check your registration details.';
+          return;
+        }
+
+        this.errorMessage = 'Registration failed. Please try again.';
+      },
     });
-
-    this.isSubmitting = false;
-
-    if (!success) {
-      this.errorMessage = 'An account already exists with this email.';
-      return;
-    }
-
-    this.router.navigate(['/auth/login']);
   }
 }

@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -20,27 +20,43 @@ export class Login {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {}
 
   login(): void {
     this.errorMessage = '';
 
-    if (!this.email || !this.password) {
-      this.errorMessage = 'Email and password are required.';
+    if (!this.email.trim() || !this.password) {
+      this.errorMessage = 'Username/email and password are required.';
       return;
     }
 
     this.isSubmitting = true;
-    const response = this.authService.login(this.email, this.password);
-    this.isSubmitting = false;
 
-    if (!response) {
-      this.errorMessage = 'Invalid email or password.';
-      return;
-    }
-
-    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    this.router.navigateByUrl(returnUrl || this.authService.getDashboardUrl());
+    this.authService.login(this.email.trim(), this.password).subscribe({
+      next: () => {
+        this.authService.loadCurrentUser().subscribe({
+          next: () => {
+            this.isSubmitting = false;
+            this.cdr.detectChanges();
+            this.router.navigateByUrl(this.authService.getDashboardUrl());
+          },
+          error: () => {
+            this.isSubmitting = false;
+            this.errorMessage = 'Login failed. Please try again.';
+            this.cdr.detectChanges();
+          }
+        });
+      },
+      error: (err) => {
+        console.log('CAUGHT ERROR:', err);
+        this.isSubmitting = false;
+        this.errorMessage =
+          err.status === 401
+            ? 'Invalid email or password.'
+            : 'Login failed. Please try again.';
+        this.cdr.detectChanges(); // ← forces view to update
+      }
+    });
   }
 }

@@ -1,61 +1,64 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { AuthResponse, RegisterRequest, StoredUser, User, UserRole } from '../models/user.model';
+import { RegisterRequest, User, UserRole } from '../models/user.model';
+import { Observable, tap } from 'rxjs';
+
+interface BackendLoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+}
+
+interface BackendRegisterResponse {
+  id: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly USERS_KEY = 'bm_users';
+  private readonly API = 'http://localhost:8080/api/auth';
   private readonly CURRENT_USER_KEY = 'bm_current_user';
   private readonly TOKEN_KEY = 'bm_access_token';
+  private readonly REFRESH_TOKEN_KEY = 'bm_refresh_token';
+
+  private http = inject(HttpClient);
 
   constructor(private router: Router) { }
 
-  register(request: RegisterRequest): boolean {
-    const email = request.email.trim().toLowerCase();
-    const users = this.getUsers();
-
-    if (users.some(user => user.email === email)) {
-      return false;
-    }
-
-    const user: StoredUser = {
-      id: crypto.randomUUID(),
-      name: request.name.trim(),
-      email,
+  
+  register(request: RegisterRequest): Observable<BackendRegisterResponse> {
+    return this.http.post<BackendRegisterResponse>(`${this.API}/register`, {
+      username: request.name,
+      email: request.email,
       password: request.password,
-      role: request.role ?? 'TENANT',
-      nickname: request.nickname.trim(),
-    };
-
-    localStorage.setItem(this.USERS_KEY, JSON.stringify([...users, user]));
-    return true;
+      nickname: request.nickname,
+    });
   }
 
-  login(email: string, password: string): AuthResponse | null {
-    const normalizedEmail = email.trim().toLowerCase();
-
-    const user = this.getUsers().find(
-      storedUser =>
-        storedUser.email === normalizedEmail &&
-        storedUser.password === password,
+  login(usernameOrEmail: string, password: string): Observable<BackendLoginResponse> {
+    return this.http.post<BackendLoginResponse>(`${this.API}/login`, {
+      usernameOrEmail,
+      password,
+    }).pipe(
+      tap(response => {
+        localStorage.setItem(this.TOKEN_KEY, response.accessToken);
+        localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
+      })
     );
+  }
 
-    if (!user) {
-      return null;
-    }
-
-    const token = `mock-jwt-${user.role.toLowerCase()}-${Date.now()}`;
-    const currentUser = this.toPublicUser(user, token);
-
-    localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(currentUser));
-    localStorage.setItem(this.TOKEN_KEY, token);
-
-    return { token, user: currentUser };
+  loadCurrentUser(): Observable<User> {
+    return this.http.get<User>(`${this.API}/profile`).pipe(
+      tap(user => {
+        localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
+      })
+    );
   }
 
   logout(): void {
     localStorage.removeItem(this.CURRENT_USER_KEY);
     localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
     this.router.navigate(['/auth/login']);
   }
 
@@ -69,7 +72,7 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.getCurrentUser() && !!this.getToken();
+    return !!this.getToken();
   }
 
   getRole(): UserRole | null {
@@ -81,7 +84,6 @@ export class AuthService {
     return !!role && roles.includes(role);
   }
 
-
   isManagerOrAdmin(): boolean {
     return this.hasAnyRole(['MANAGER', 'ADMIN']);
   }
@@ -89,46 +91,15 @@ export class AuthService {
   getDashboardUrl(): string {
     const role = this.getRole();
 
-    if (role === 'ADMIN' ||  role === 'MANAGER') return '/manager';
+    if (role === 'ADMIN' || role === 'MANAGER') {
+      return '/manager/dashboard';
+    }
 
     return '/tenant/dashboard';
   }
 
-  updatePassword(newPassword: string): boolean {
-    const currentUser = this.getCurrentUser();
-
-    if (!currentUser) {
-      return false;
-    }
-
-    const users = this.getUsers();
-
-    const updatedUsers = users.map(user => {
-      if (user.id !== currentUser.id) {
-        return user;
-      }
-
-      return {
-        ...user,
-        password: newPassword,
-      };
-    });
-
-    localStorage.setItem(this.USERS_KEY, JSON.stringify(updatedUsers));
-
-    return true;
+  updatePassword(_newPassword: string): boolean {
+    // TODO: backend endpoint later
+    return false;
   }
-
-
-  private getUsers(): StoredUser[] {
-    const data = localStorage.getItem(this.USERS_KEY);
-    return data ? JSON.parse(data) as StoredUser[] : [];
-  }
-
-private toPublicUser(user: StoredUser, token: string): User {
-  return {
-    ...user,
-    token,
-  };
-}
 }
