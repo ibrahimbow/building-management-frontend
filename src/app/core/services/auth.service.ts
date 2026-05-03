@@ -1,108 +1,134 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthResponse, RegisterRequest, StoredUser, User, UserRole } from '../models/user.model';
 
-export type UserRole = 'TENANT' | 'MANAGER' | 'ADMIN';
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  role: UserRole;
-  nickname: string;
-}
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-
   private readonly USERS_KEY = 'bm_users';
   private readonly CURRENT_USER_KEY = 'bm_current_user';
+  private readonly TOKEN_KEY = 'bm_access_token';
 
-  // ========================
-  // REGISTER
-  // ========================
-  register(user: User): boolean {
+  constructor(private router: Router) { }
+
+  register(request: RegisterRequest): boolean {
+    const email = request.email.trim().toLowerCase();
     const users = this.getUsers();
 
-    const exists = users.find(u => u.email === user.email);
-    if (exists) return false;
+    if (users.some(user => user.email === email)) {
+      return false;
+    }
 
-    users.push(user);
-    localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
+    const user: StoredUser = {
+      id: crypto.randomUUID(),
+      name: request.name.trim(),
+      email,
+      password: request.password,
+      role: request.role ?? 'TENANT',
+      nickname: request.nickname.trim(),
+    };
 
+    localStorage.setItem(this.USERS_KEY, JSON.stringify([...users, user]));
     return true;
   }
 
-  // ========================
-  // LOGIN
-  // ========================
-  login(email: string, password: string): boolean {
-    const users = this.getUsers();
+  login(email: string, password: string): AuthResponse | null {
+    const normalizedEmail = email.trim().toLowerCase();
 
-    const user = users.find(
-      u => u.email === email && u.password === password
+    const user = this.getUsers().find(
+      storedUser =>
+        storedUser.email === normalizedEmail &&
+        storedUser.password === password,
     );
 
-    if (!user) return false;
+    if (!user) {
+      return null;
+    }
 
-    localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
+    const token = `mock-jwt-${user.role.toLowerCase()}-${Date.now()}`;
+    const currentUser = this.toPublicUser(user, token);
+
+    localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(currentUser));
+    localStorage.setItem(this.TOKEN_KEY, token);
+
+    return { token, user: currentUser };
+  }
+
+  logout(): void {
+    localStorage.removeItem(this.CURRENT_USER_KEY);
+    localStorage.removeItem(this.TOKEN_KEY);
+    this.router.navigate(['/auth/login']);
+  }
+
+  getCurrentUser(): User | null {
+    const data = localStorage.getItem(this.CURRENT_USER_KEY);
+    return data ? JSON.parse(data) as User : null;
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.getCurrentUser() && !!this.getToken();
+  }
+
+  getRole(): UserRole | null {
+    return this.getCurrentUser()?.role ?? null;
+  }
+
+  hasAnyRole(roles: UserRole[]): boolean {
+    const role = this.getRole();
+    return !!role && roles.includes(role);
+  }
+
+
+  isManagerOrAdmin(): boolean {
+    return this.hasAnyRole(['MANAGER', 'ADMIN']);
+  }
+
+  getDashboardUrl(): string {
+    const role = this.getRole();
+
+    if (role === 'ADMIN' ||  role === 'MANAGER') return '/manager';
+
+    return '/tenant/dashboard';
+  }
+
+  updatePassword(newPassword: string): boolean {
+    const currentUser = this.getCurrentUser();
+
+    if (!currentUser) {
+      return false;
+    }
+
+    const users = this.getUsers();
+
+    const updatedUsers = users.map(user => {
+      if (user.id !== currentUser.id) {
+        return user;
+      }
+
+      return {
+        ...user,
+        password: newPassword,
+      };
+    });
+
+    localStorage.setItem(this.USERS_KEY, JSON.stringify(updatedUsers));
+
     return true;
   }
 
-  // ========================
-  // LOGOUT
-  // ========================
-  logout(): void {
-    localStorage.removeItem(this.CURRENT_USER_KEY);
-  }
 
-  // ========================
-  // CURRENT USER
-  // ========================
-  getCurrentUser(): User | null {
-    const data = localStorage.getItem(this.CURRENT_USER_KEY);
-    return data ? JSON.parse(data) : null;
-  }
-
-  getRole(): UserRole {
-    return this.getCurrentUser()?.role || 'TENANT';
-  }
-
-  isManagerOrAdmin(): boolean {
-    const role = this.getRole();
-    return role === 'MANAGER' || role === 'ADMIN';
-  }
-
-  // ========================
-  // HELPERS
-  // ========================
-  private getUsers(): User[] {
+  private getUsers(): StoredUser[] {
     const data = localStorage.getItem(this.USERS_KEY);
-    return data ? JSON.parse(data) : [];
+    return data ? JSON.parse(data) as StoredUser[] : [];
   }
 
-
-  // ========================
-  // updatePassword
-  // ========================
-  updatePassword(newPassword: string): void {
-  const currentUser = this.getCurrentUser();
-
-  if (!currentUser) return;
-
-  const users = this.getUsers().map(user =>
-    user.id === currentUser.id
-      ? { ...user, password: newPassword }
-      : user
-  );
-
-  const updatedCurrentUser = {
-    ...currentUser,
-    password: newPassword
+private toPublicUser(user: StoredUser, token: string): User {
+  return {
+    ...user,
+    token,
   };
-
-  localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
-  localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(updatedCurrentUser));
 }
 }

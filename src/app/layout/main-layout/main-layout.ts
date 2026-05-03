@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { UserStateService } from '../../core/user/user-state.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -27,7 +28,7 @@ import { UserStateService } from '../../core/user/user-state.service';
   styleUrl: './main-layout.scss'
 })
 export class MainLayout {
-constructor(public userState: UserStateService) {}
+constructor(public userState: UserStateService, public authService: AuthService) {}
 
 isDisabled(): boolean {
   return !this.userState.hasJoinedBuilding;
