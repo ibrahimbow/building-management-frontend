@@ -41,13 +41,13 @@ export class ManagerDashboard implements OnInit {
         this.building = building;
         this.hasBuilding = !!building;
         this.isReady = true;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: () => {
         this.building = null;
         this.hasBuilding = false;
         this.isReady = true;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       }
     });
   }
