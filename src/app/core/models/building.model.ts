@@ -10,8 +10,7 @@ export interface BuildingInfo {
   buildingName: string;
   code: string;
   address: string;
-  managerName: string;
-  managerEmail: string;
+  managerId: number;
   totalApartments: number;
   emergencyPhone: string;
 }
