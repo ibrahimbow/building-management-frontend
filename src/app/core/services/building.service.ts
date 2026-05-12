@@ -21,33 +21,21 @@ export class BuildingService {
   private readonly tenantBuildingsUrl = 'http://localhost:8080/api/tenant/buildings';
 
   createBuilding(request: CreateBuildingRequest): Observable<BuildingInfo> {
-    return this.http.post<BuildingInfo>(
-      this.managerBuildingsUrl,
-      request
-    );
+    return this.http.post<BuildingInfo>(this.managerBuildingsUrl, request);
   }
 
   getMyManagedBuildings(): Observable<BuildingInfo[]> {
-    return this.http.get<BuildingInfo[]>(
-      this.managerBuildingsUrl
-    );
+    return this.http.get<BuildingInfo[]>(this.managerBuildingsUrl);
   }
 
   getMyManagedBuilding(): Observable<BuildingInfo | null> {
-    return this.http.get<BuildingInfo[]>(this.managerBuildingsUrl).pipe(
-      map((buildings) => {
-        if (!Array.isArray(buildings) || buildings.length === 0) {
-          return null;
-        }
-
-        return buildings[0];
-      })
+    return this.getMyManagedBuildings().pipe(
+      map((buildings) => buildings.length > 0 ? buildings[0] : null)
     );
   }
+
   getMyBuildingById(id: string): Observable<BuildingInfo> {
-    return this.http.get<BuildingInfo>(
-      `${this.managerBuildingsUrl}/${id}`
-    );
+    return this.http.get<BuildingInfo>(`${this.managerBuildingsUrl}/${id}`);
   }
 
   updateMyBuilding(
@@ -61,9 +49,7 @@ export class BuildingService {
   }
 
   deleteMyBuilding(id: string): Observable<void> {
-    return this.http.delete<void>(
-      `${this.managerBuildingsUrl}/${id}`
-    );
+    return this.http.delete<void>(`${this.managerBuildingsUrl}/${id}`);
   }
 
   getBuildingTenants(buildingId: string): Observable<BuildingTenant[]> {
