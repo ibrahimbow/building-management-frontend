@@ -1,29 +1,17 @@
-<section class="create-announcement-page">
+<section class="edit-announcement-page">
 
-  <mat-card *ngIf="isReady && !hasBuilding" class="state-card">
-    <mat-card-title>No building found</mat-card-title>
+  <p *ngIf="isLoading">
+    Loading announcement...
+  </p>
 
-    <mat-card-content>
-      <p>You need to create a building before creating announcements.</p>
-
-      <button
-        mat-raised-button
-        color="primary"
-        routerLink="/manager/create-building">
-        Create Building
-      </button>
-    </mat-card-content>
-  </mat-card>
-
-  <mat-card *ngIf="isReady && hasBuilding" class="form-card">
-    <mat-card-title>Create Announcement</mat-card-title>
-
+  <mat-card *ngIf="!isLoading" class="form-card">
+    <mat-card-title>Edit Announcement</mat-card-title>
     <mat-card-subtitle>
-      Publish an announcement for your building tenants.
+      Update the announcement details for your tenants.
     </mat-card-subtitle>
 
     <mat-card-content>
-      <form #form="ngForm" (ngSubmit)="createAnnouncement(form)" novalidate>
+      <form #form="ngForm" (ngSubmit)="updateAnnouncement(form)" novalidate>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Title</mat-label>
@@ -32,7 +20,8 @@
             name="title"
             [(ngModel)]="title"
             maxlength="255"
-            required />
+            required
+          />
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
@@ -49,7 +38,6 @@
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Category</mat-label>
-
           <mat-select
             name="category"
             [(ngModel)]="category"
@@ -64,22 +52,31 @@
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Image URL</mat-label>
-
           <input
             matInput
             name="imageUrl"
             [(ngModel)]="imageUrl"
             maxlength="500"
-            placeholder="Optional image URL" />
+            placeholder="Optional image URL"
+          />
         </mat-form-field>
 
-        <button
-          mat-raised-button
-          color="primary"
-          type="submit"
-          [disabled]="form.invalid || isSubmitting || !hasBuilding">
-          {{ isSubmitting ? 'Creating...' : 'Create Announcement' }}
-        </button>
+        <div class="actions">
+          <button
+            mat-button
+            type="button"
+            routerLink="/manager/announcements">
+            Cancel
+          </button>
+
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="isSubmitting">
+            {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </div>
 
       </form>
     </mat-card-content>

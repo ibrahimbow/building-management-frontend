@@ -1,0 +1,27 @@
+.building-tenants-page {
+    padding: 24px;
+}
+
+.page-header {
+    margin-bottom: 24px;
+}
+
+.page-header p {
+    margin: 4px 0 0;
+    color: #666;
+}
+
+.tenants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.empty-card,
+.tenant-card {
+    border-radius: 16px;
+}
+
+mat-card-content p {
+    margin: 8px 0;
+}

@@ -2,37 +2,53 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { switchMap } from 'rxjs';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+
 import { AuthService } from '../../core/services/auth.service';
 import { UserRole } from '../../core/models/user.model';
-import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    CommonModule,
+    FormsModule,
+    RouterLink],
   templateUrl: './register.html',
-  styleUrl: './register.scss',
+  styleUrl: './register.scss'
 })
+
 export class Register {
-  name = '';
+
+  username = '';
   email = '';
   password = '';
-  nickname = '';
+  displayName = '';
+  phoneNumber = '';
   role: UserRole = 'TENANT';
 
   errorMessage = '';
   isSubmitting = false;
 
   constructor(
-    private authService: AuthService,
-    private router: Router,
-  ) {}
+    private readonly authService: AuthService,
+    private readonly router: Router
+  ) { }
 
   register(): void {
-     console.log('REGISTER CLICKED');
     this.errorMessage = '';
 
-    if (!this.name || !this.email || !this.nickname || !this.password) {
+    if (!this.username || !this.email || !this.displayName || !this.phoneNumber || !this.password) {
       this.errorMessage = 'Please fill in all required fields.';
       return;
     }
@@ -43,15 +59,19 @@ export class Register {
     }
 
     this.isSubmitting = true;
-console.log('CALLING API');
+
     this.authService.register({
-      name: this.name.trim(),
+      username: this.username.trim(),
       email: this.email.trim(),
       password: this.password,
-      nickname: this.nickname.trim(),
-      role: this.role,
+      displayName: this.displayName.trim(),
+      phoneNumber: this.phoneNumber.trim(),
+      role: this.role
     }).pipe(
-      switchMap(() => this.authService.login(this.email.trim(), this.password)),
+      switchMap(() => this.authService.login({
+        usernameOrEmail: this.email.trim(),
+        password: this.password
+      })),
       switchMap(() => this.authService.loadCurrentUser())
     ).subscribe({
       next: () => {
@@ -72,7 +92,7 @@ console.log('CALLING API');
         }
 
         this.errorMessage = 'Registration failed. Please try again.';
-      },
+      }
     });
   }
 }

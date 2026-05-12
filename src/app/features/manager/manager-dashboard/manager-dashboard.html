@@ -1,25 +1,73 @@
-<section class="manager-dashboard">
-  <div class="header">
-    <p class="eyebrow">Manager MVP</p>
-    <h1>Manager Dashboard</h1>
-    <p>Use this page to test manager-only routing before backend JWT role validation is connected.</p>
-  </div>
+<section class="manager-dashboard" *ngIf="isReady">
 
-  <div class="cards">
-    <article class="card">
-      <h2>Announcements</h2>
-      <p>Create building announcements visible to tenants.</p>
-      <a routerLink="/manager/create-announcement">Create announcement</a>
-    </article>
+  <h1>Manager Dashboard</h1>
 
-    <article class="card muted">
-      <h2>Invitation codes</h2>
-      <p>Backend task: create and validate unique building invitation codes.</p>
-    </article>
+  <p class="page-subtitle">
+    Manage your building, announcements, and tenants from one place.
+  </p>
 
-    <article class="card muted">
-      <h2>Residents</h2>
-      <p>Backend task: list joined residents and their building membership status.</p>
-    </article>
-  </div>
+  <mat-card *ngIf="!hasBuilding" class="empty-state-card">
+    <mat-card-title>No building created yet</mat-card-title>
+
+    <mat-card-content>
+      <p>
+        Create your building to start managing announcements and tenants.
+      </p>
+
+      <button
+        mat-raised-button
+        color="primary"
+        routerLink="/manager/create-building">
+        Create Building
+      </button>
+    </mat-card-content>
+  </mat-card>
+
+  <section *ngIf="hasBuilding && building" class="dashboard-grid">
+
+    <mat-card class="building-card">
+      <mat-card-title>{{ building.buildingName }}</mat-card-title>
+
+      <mat-card-content>
+        <p><strong>Code:</strong> {{ building.code }}</p>
+        <p><strong>Address:</strong> {{ building.address }}</p>
+        <p><strong>Total Apartments:</strong> {{ building.totalApartments }}</p>
+        <p><strong>Emergency Phone:</strong> {{ building.emergencyPhone }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="action-card">
+      <mat-icon>campaign</mat-icon>
+      <mat-card-title>Announcements</mat-card-title>
+
+      <mat-card-content>
+        <p>Create, edit, and manage announcements for your tenants.</p>
+
+        <button
+          mat-raised-button
+          color="primary"
+          routerLink="/manager/announcements">
+          Manage Announcements
+        </button>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="action-card">
+      <mat-icon>groups</mat-icon>
+      <mat-card-title>Tenants</mat-card-title>
+
+      <mat-card-content>
+        <p>View and manage tenants currently joined to your building.</p>
+
+        <button
+          mat-raised-button
+          color="primary"
+          routerLink="/manager/tenants">
+          View Tenants
+        </button>
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+
 </section>

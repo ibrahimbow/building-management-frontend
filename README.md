@@ -68,7 +68,7 @@ The frontend structure and routing are built to scale for:
 
 ## 🔒 Privacy
 
-- Only **nickname** and **optional profile photo** are visible to other residents  
+- Only **Display Name** and **optional profile photo** are visible to other residents  
 - Email and phone number remain private  
 
 ---

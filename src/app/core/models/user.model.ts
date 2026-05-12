@@ -1,28 +1,31 @@
 export type UserRole = 'TENANT' | 'MANAGER' | 'ADMIN';
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  nickname: string;
-  token?: string;
-  password?: string;
-}
-
-export interface StoredUser extends User {
-  password: string;
-}
-
 export interface RegisterRequest {
-  name: string;
+  username: string;
   email: string;
   password: string;
-  nickname: string;
-  role?: UserRole;
+  displayName: string;
+  phoneNumber: string;
+  role: UserRole;
+}
+
+export interface LoginRequest {
+  usernameOrEmail: string;
+  password: string;
 }
 
 export interface AuthResponse {
-  token: string;
-  user: User;
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+}
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  displayName: string;
+  phoneNumber: string;
+  role: UserRole;
+  enabled: boolean;
 }

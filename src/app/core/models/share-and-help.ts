@@ -3,7 +3,7 @@ export interface ShareAndHelpComment {
   text: string;
   createdAt: string;
   createdByUserId: string;
-  createdByNickname: string;
+  createdByDisplayName: string;
   createdByAvatarUrl?: string;
 }
 
@@ -14,7 +14,7 @@ export interface ShareAndHelp {
   createdAt: string;
 
   createdByUserId: string;
-  createdByNickname: string;
+  createdByDisplayName: string;
   createdByAvatarUrl?: string;
 
   images: string[];

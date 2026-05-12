@@ -1,0 +1,89 @@
+<section class="manager-announcements-page">
+
+  <div class="page-header">
+    <div>
+      <span class="page-label">Manager Dashboard</span>
+      <h1>Announcements</h1>
+      <p>Manage and publish important updates for your building tenants.</p>
+    </div>
+
+    <button mat-raised-button color="primary" class="create-button" routerLink="/manager/announcements/create">
+      <mat-icon>add</mat-icon>
+      Create Announcement
+    </button>
+  </div>
+
+  <section *ngIf="announcements.length > 0; else noAnnouncements" class="announcement-feed">
+
+    <mat-card *ngFor="let announcement of announcements" class="announcement-card">
+
+      <div class="announcement-body">
+
+        <div class="announcement-icon">
+          <mat-icon>{{ announcement.icon || 'campaign' }}</mat-icon>
+        </div>
+
+        <div class="announcement-content">
+
+          <div class="announcement-top">
+
+            <div class="announcement-header-info">
+              <h2>{{ announcement.title }}</h2>
+
+              <span class="published-date">
+                Published {{ announcement.createdAt | timeAgo }}
+              </span>
+            </div>
+
+            <div class="actions">
+              <button mat-button color="primary" [routerLink]="['/manager/announcements', announcement.id, 'edit']">
+                <mat-icon>edit</mat-icon>
+                Edit
+              </button>
+
+              <button mat-button color="warn" [disabled]="isDeleting" (click)="deleteAnnouncement(announcement.id)">
+                <mat-icon>delete</mat-icon>
+                Delete
+              </button>
+            </div>
+
+          </div>
+
+          <img *ngIf="hasValidImage(announcement.imageUrl)" [src]="announcement.imageUrl" alt="Announcement image"
+            class="announcement-image" />
+
+          <p class="announcement-message">
+            {{ announcement.message }}
+          </p>
+
+          <div class="announcement-bottom">
+            <span class="category">
+              {{ announcement.category }}
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </mat-card>
+
+  </section>
+
+  <ng-template #noAnnouncements>
+    <mat-card *ngIf="!isLoading" class="empty-card">
+      <mat-icon>campaign</mat-icon>
+
+      <mat-card-title>No announcements yet</mat-card-title>
+
+      <mat-card-content>
+        <p>Create your first announcement and keep your tenants informed.</p>
+
+        <button mat-raised-button color="primary" routerLink="/manager/announcements/create">
+          Create Announcement
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
+
+</section>

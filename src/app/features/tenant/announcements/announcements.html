@@ -14,8 +14,8 @@
         </mat-card-subtitle>
     </mat-card-header>
 
-    <div class="image-container" *ngIf="announcement.images?.length">
-        <img *ngFor="let img of announcement.images ?? []" [src]="img" alt="announcement image" />
+    <div class="image-container" *ngIf="announcement.imageUrl">
+        <img [src]="announcement.imageUrl" alt="announcement image" />
     </div>
 
     <mat-card-content>

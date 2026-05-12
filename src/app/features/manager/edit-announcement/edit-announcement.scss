@@ -1,8 +1,7 @@
-.create-announcement-page {
+.edit-announcement-page {
   padding: 24px;
 }
 
-.state-card,
 .form-card {
   max-width: 720px;
   margin: 0 auto;
@@ -22,6 +21,9 @@ mat-card-subtitle {
   margin-bottom: 24px;
 }
 
-button[type='submit'] {
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
   margin-top: 8px;
 }

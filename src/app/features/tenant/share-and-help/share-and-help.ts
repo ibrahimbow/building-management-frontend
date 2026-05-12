@@ -95,8 +95,8 @@ export class ShareAndHelpComponent {
       id: crypto.randomUUID(),
       text,
       createdAt: new Date().toISOString(),
-      createdByUserId: user.id,
-      createdByNickname: user.nickname,
+      createdByUserId: user.id.toString(),
+      createdByDisplayName: user.displayName,
       createdByAvatarUrl: avatarUrl
     };
 

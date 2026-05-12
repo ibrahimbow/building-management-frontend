@@ -1,37 +1,91 @@
-import { Component } from '@angular/core';
-import { NgIf } from '@angular/common';
-
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
 
-import { UserStateService } from '../../core/user/user-state.service';
 import { AuthService } from '../../core/services/auth.service';
+import { BuildingService } from '../../core/services/building.service';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
   imports: [
-    NgIf,
+    CommonModule,
+    RouterOutlet,
     RouterLink,
     RouterLinkActive,
-    RouterOutlet,
     MatSidenavModule,
+    MatToolbarModule,
     MatListModule,
     MatIconModule,
-    MatToolbarModule
+    MatButtonModule
   ],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
 })
-export class MainLayout {
-constructor(public userState: UserStateService, public authService: AuthService) {}
+export class MainLayout implements OnInit {
 
-isDisabled(): boolean {
-  return !this.userState.hasJoinedBuilding;
-}
+  private readonly authService = inject(AuthService);
+  private readonly buildingService = inject(BuildingService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
+  managerHasBuilding = false;
+  tenantHasJoinedBuilding = false;
+
+  ngOnInit(): void {
+    if (this.isManagerOrAdmin) {
+      this.loadManagerBuildingState();
+    }
+
+    if (this.isTenant) {
+      this.loadTenantBuildingState();
+    }
+  }
+
+  get isManagerOrAdmin(): boolean {
+    return this.authService.isManagerOrAdmin();
+  }
+
+  get isTenant(): boolean {
+    return this.authService.isTenant();
+  }
+
+  get displayName(): string {
+    return this.authService.getCurrentUser()?.displayName ?? 'User';
+  }
+
+  logout(): void {
+    this.authService.logout();
+  }
+
+  private loadManagerBuildingState(): void {
+    this.buildingService.getMyManagedBuilding().subscribe({
+      next: (building) => {
+        this.managerHasBuilding = building !== null;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.managerHasBuilding = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  private loadTenantBuildingState(): void {
+    this.buildingService.getMyJoinedBuilding().subscribe({
+      next: () => {
+        this.tenantHasJoinedBuilding = true;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.tenantHasJoinedBuilding = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
 }

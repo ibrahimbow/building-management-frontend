@@ -45,7 +45,7 @@ export class Settings implements OnInit {
     name: '',
     email: '',
     mobileNumber: '',
-    nickname: '',
+    displayName: '',
     notifications: true,
     language: 'EN',
     avatarUrl: ''
@@ -68,9 +68,9 @@ export class Settings implements OnInit {
     const currentUser = this.authService.getCurrentUser();
 
     if (currentUser) {
-      this.profile.name = currentUser.name;
+      this.profile.name = currentUser.username;
       this.profile.email = currentUser.email;
-      this.profile.nickname = currentUser.nickname;
+      this.profile.displayName = currentUser.displayName;
     }
 
     const saved = localStorage.getItem(this.getStorageKey());

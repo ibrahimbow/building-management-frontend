@@ -39,14 +39,14 @@
       </div>
 
       <div class="post-header-text">
-        <mat-card-title>{{ post.createdByNickname }}</mat-card-title>
+        <mat-card-title>{{ post.createdByDisplayName }}</mat-card-title>
         <mat-card-subtitle>
           {{ post.createdAt | timeAgo }}
         </mat-card-subtitle>
       </div>
 
       <button
-        *ngIf="post.createdByUserId === authService.getCurrentUser()?.id"
+        *ngIf="post.createdByUserId === authService.getCurrentUser()?.id?.toString()"
         mat-icon-button
         color="warn"
         (click)="delete(post.id)"
@@ -92,7 +92,7 @@
 
           <div class="comment-body">
             <div class="comment-header">
-              <strong>{{ comment.createdByNickname }}</strong>
+              <strong>{{ comment.createdByDisplayName }}</strong>
               <span>{{ comment.createdAt | date:'short' }}</span>
             </div>
 
@@ -100,7 +100,7 @@
           </div>
 
           <button
-            *ngIf="comment.createdByUserId === authService.getCurrentUser()?.id"
+            *ngIf="comment.createdByUserId === authService.getCurrentUser()?.id?.toString()"
             mat-icon-button
             color="warn"
             (click)="deleteComment(post.id, comment.id)">

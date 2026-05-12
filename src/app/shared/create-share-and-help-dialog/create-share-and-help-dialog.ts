@@ -76,8 +76,8 @@ export class CreateShareAndHelpDialog {
       description: this.description,
       createdAt: new Date().toISOString(),
 
-      createdByUserId: user.id,
-      createdByNickname: user.nickname,
+      createdByUserId: user.id.toString(),
+      createdByDisplayName: user.displayName,
       createdByAvatarUrl: avatarUrl,
 
       images: this.images,

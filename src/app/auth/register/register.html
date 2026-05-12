@@ -1,73 +1,68 @@
 <section class="auth-page">
-  <div class="auth-card">
-    <p class="eyebrow">Building Management</p>
-    <h1>Create account</h1>
-    <p class="subtitle">
-      Register now. Later, tenants can join a building using an invitation code.
-    </p>
+  <mat-card class="auth-card">
+    <mat-card-title>Create account</mat-card-title>
+    <mat-card-subtitle>Register as tenant or manager</mat-card-subtitle>
 
-    <form #registerForm="ngForm" (ngSubmit)="register()" novalidate>
-      <label for="name">Full name</label>
-      <input
-        id="name"
-        name="name"
-        [(ngModel)]="name"
-        required
-        placeholder="Ibrahim"
-      />
+    <mat-card-content>
+      <form (ngSubmit)="register()" #form="ngForm" novalidate>
 
-      <label for="nickname">Public nickname</label>
-      <input
-        id="nickname"
-        name="nickname"
-        [(ngModel)]="nickname"
-        required
-        placeholder="Ibrahim B."
-      />
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <input matInput name="username" [(ngModel)]="username" required />
+        </mat-form-field>
 
-      <label for="email">Email</label>
-      <input
-        id="email"
-        name="email"
-        type="email"
-        [(ngModel)]="email"
-        required
-        email
-        placeholder="you@example.com"
-      />
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Display name</mat-label>
+          <input matInput name="displayName" [(ngModel)]="displayName" required />
+        </mat-form-field>
 
-      <label for="password">Password</label>
-      <input
-        id="password"
-        name="password"
-        type="password"
-        [(ngModel)]="password"
-        required
-        minlength="6"
-        placeholder="At least 6 characters"
-      />
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" name="email" [(ngModel)]="email" required />
+        </mat-form-field>
 
-      <label for="role">Role for local MVP testing</label>
-      <select id="role" name="role" [(ngModel)]="role">
-        <option value="TENANT">Tenant</option>
-        <option value="MANAGER">Manager</option>
-        <option value="ADMIN">Admin</option>
-      </select>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Phone number</mat-label>
+          <input
+            matInput
+            name="phoneNumber"
+            [(ngModel)]="phoneNumber"
+            placeholder="+32465570653"
+            required
+          />
+        </mat-form-field>
 
-      <p class="hint">
-        Backend will decide real roles later. This dropdown is only for testing protected routes now.
-      </p>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" name="password" [(ngModel)]="password" required />
+        </mat-form-field>
 
-      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Account type</mat-label>
+          <mat-select name="role" [(ngModel)]="role" required>
+            <mat-option value="TENANT">Tenant</mat-option>
+            <mat-option value="MANAGER">Manager</mat-option>
+          </mat-select>
+        </mat-form-field>
 
-      <button type="submit" [disabled]="isSubmitting || registerForm.invalid">
-        {{ isSubmitting ? 'Creating account...' : 'Register' }}
-      </button>
-    </form>
+        <p class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </p>
 
-    <p class="switch-auth">
-      Already have an account?
-      <a routerLink="/auth/login">Login</a>
-    </p>
-  </div>
+        <button
+          mat-raised-button
+          color="primary"
+          class="full-width"
+          type="submit"
+          [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Creating account...' : 'Create account' }}
+        </button>
+
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <a routerLink="/auth/login">Already have an account? Login</a>
+    </mat-card-actions>
+  </mat-card>
 </section>

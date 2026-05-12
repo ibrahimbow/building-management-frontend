@@ -1,17 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+import { Observable } from 'rxjs';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-
-import { Observable } from 'rxjs';
-import { Announcement } from '../../../core/models/announcement';
-import { AnnouncementService } from '../../../core/services/announcement.service';
 import { MatButtonModule } from '@angular/material/button';
-
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ConfirmDialog } from '../../../shared/confirm-dialog/confirm-dialog';
 
+import { Announcement } from '../../../core/models/announcement.model';
+import { AnnouncementService } from '../../../core/services/announcement.service';
+import { ConfirmDialog } from '../../../shared/confirm-dialog/confirm-dialog';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -27,25 +26,42 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './announcements.html',
   styleUrl: './announcements.scss'
 })
-export class Announcements {
-  announcements$: Observable<Announcement[]>;
+export class Announcements implements OnInit {
 
-  constructor(private announcementService: AnnouncementService, 
-    private dialog: MatDialog,
-    public authService: AuthService) {
-    this.announcements$ = this.announcementService.announcements$;
+  announcements$!: Observable<Announcement[]>;
+ 
+
+  constructor(
+    private readonly announcementService: AnnouncementService,
+    private readonly dialog: MatDialog,
+    public readonly authService: AuthService
+  ) {
+  }
+
+  ngOnInit(): void {
+    this.announcements$ = this.authService.isTenant()
+      ? this.announcementService.getTenantAnnouncements()
+      : this.announcementService.getManagerAnnouncements();
   }
 
   delete(id: string): void {
+
     const dialogRef = this.dialog.open(ConfirmDialog, {
-      data: { message: 'Are you sure you want to delete this announcement?' }
+      data: {
+        message: 'Are you sure you want to delete this announcement?'
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
+
       if (result) {
-        this.announcementService.deleteAnnouncement(id);
+
+        this.announcementService.deleteAnnouncement(id)
+          .subscribe(() => {
+
+            this.announcements$ = this.announcementService.getManagerAnnouncements();
+          });
       }
     });
   }
-
 }

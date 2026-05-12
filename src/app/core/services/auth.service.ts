@@ -1,54 +1,42 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { RegisterRequest, User, UserRole } from '../models/user.model';
 import { Observable, tap } from 'rxjs';
 
-interface BackendLoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  tokenType: string;
-}
+import {
+  AuthResponse,
+  LoginRequest,
+  RegisterRequest,
+  User,
+  UserRole
+} from '../models/user.model';
 
-interface BackendRegisterResponse {
-  id: number;
-}
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
-  private readonly API = 'http://localhost:8080/api/auth';
+
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+
+  private readonly apiUrl = 'http://localhost:8080/api/auth';
+
   private readonly CURRENT_USER_KEY = 'bm_current_user';
-  private readonly TOKEN_KEY = 'bm_access_token';
+  private readonly ACCESS_TOKEN_KEY = 'bm_access_token';
   private readonly REFRESH_TOKEN_KEY = 'bm_refresh_token';
 
-  private http = inject(HttpClient);
-
-  constructor(private router: Router) { }
-
-  
-  register(request: RegisterRequest): Observable<BackendRegisterResponse> {
-    return this.http.post<BackendRegisterResponse>(`${this.API}/register`, {
-      username: request.name,
-      email: request.email,
-      password: request.password,
-      nickname: request.nickname,
-    });
+  register(request: RegisterRequest): Observable<number> {
+    return this.http.post<number>(`${this.apiUrl}/register`, request);
   }
 
-  login(usernameOrEmail: string, password: string): Observable<BackendLoginResponse> {
-    return this.http.post<BackendLoginResponse>(`${this.API}/login`, {
-      usernameOrEmail,
-      password,
-    }).pipe(
-      tap(response => {
-        localStorage.setItem(this.TOKEN_KEY, response.accessToken);
-        localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
-      })
+  login(request: LoginRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
+      tap(response => this.storeTokens(response))
     );
   }
 
   loadCurrentUser(): Observable<User> {
-    return this.http.get<User>(`${this.API}/profile`).pipe(
+    return this.http.get<User>(`${this.apiUrl}/profile`).pipe(
       tap(user => {
         localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
       })
@@ -57,8 +45,9 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.CURRENT_USER_KEY);
-    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.ACCESS_TOKEN_KEY);
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+
     this.router.navigate(['/auth/login']);
   }
 
@@ -68,7 +57,7 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return localStorage.getItem(this.ACCESS_TOKEN_KEY);
   }
 
   isAuthenticated(): boolean {
@@ -82,6 +71,14 @@ export class AuthService {
   hasAnyRole(roles: UserRole[]): boolean {
     const role = this.getRole();
     return !!role && roles.includes(role);
+  }
+
+  isManager(): boolean {
+    return this.getRole() === 'MANAGER';
+  }
+
+  isTenant(): boolean {
+    return this.getRole() === 'TENANT';
   }
 
   isManagerOrAdmin(): boolean {
@@ -98,8 +95,8 @@ export class AuthService {
     return '/tenant/dashboard';
   }
 
-  updatePassword(_newPassword: string): boolean {
-    // TODO: backend endpoint later
-    return false;
+  private storeTokens(response: AuthResponse): void {
+    localStorage.setItem(this.ACCESS_TOKEN_KEY, response.accessToken);
+    localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
   }
 }

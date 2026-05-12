@@ -1,0 +1,68 @@
+<section class="manager-page">
+  <mat-card class="form-card">
+    <mat-card-title>Create Building</mat-card-title>
+    <mat-card-subtitle>
+      Create your building before managing announcements and tenants.
+    </mat-card-subtitle>
+
+    <mat-card-content>
+      <form #form="ngForm" (ngSubmit)="createBuilding(form)" novalidate>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Building name</mat-label>
+          <input
+            matInput
+            name="buildingName"
+            [(ngModel)]="buildingName"
+            required
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Address</mat-label>
+          <input
+            matInput
+            name="address"
+            [(ngModel)]="address"
+            required
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Total apartments</mat-label>
+          <input
+            matInput
+            type="number"
+            name="totalApartments"
+            [(ngModel)]="totalApartments"
+            required
+            min="1"
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Emergency phone</mat-label>
+          <input
+            matInput
+            name="emergencyPhone"
+            [(ngModel)]="emergencyPhone"
+            required
+          />
+        </mat-form-field>
+
+        <p class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </p>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Creating...' : 'Create Building' }}
+        </button>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+</section>

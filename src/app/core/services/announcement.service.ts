@@ -1,68 +1,61 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { Announcement } from '../models/announcement';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+import {
+  Announcement,
+  CreateAnnouncementRequest,
+  UpdateAnnouncementRequest
+} from '../models/announcement.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AnnouncementService {
-  private readonly STORAGE_KEY = 'bm_announcements';
 
-  private readonly defaultAnnouncements: Announcement[] = [
-    {
-      id: '1',
-      title: 'Water Maintenance',
-      message: 'Water supply maintenance is scheduled...',
-      category: 'Maintenance',
-      createdAt: '2026-05-20T09:00:00Z',
-      icon: 'build',
-      images: ['assets/images/water-maintenance.jpg']
-    }
-  ];
+  private readonly http = inject(HttpClient);
 
-  private readonly announcementsSubject =
-    new BehaviorSubject<Announcement[]>(this.loadAnnouncements());
+  private readonly apiUrl = 'http://localhost:8080/api';
 
-  readonly announcements$ = this.announcementsSubject.asObservable();
-
-  getAnnouncements(): Announcement[] {
-    return this.announcementsSubject.value;
-  }
-
-  addAnnouncement(announcement: Announcement): void {
-    const updated = [
-      announcement,
-      ...this.announcementsSubject.value
-    ];
-
-    this.updateState(updated);
-  }
-
-  deleteAnnouncement(id: string): void {
-    const updated = this.announcementsSubject.value.filter(a => a.id !== id);
-    this.updateState(updated);
-  }
-
-  updateAnnouncement(updatedAnnouncement: Announcement): void {
-    const updated = this.announcementsSubject.value.map(a =>
-      a.id === updatedAnnouncement.id ? updatedAnnouncement : a
+  createAnnouncement(request: CreateAnnouncementRequest): Observable<Announcement> {
+    return this.http.post<Announcement>(
+      `${this.apiUrl}/manager/announcements`,
+      request
     );
-
-    this.updateState(updated);
   }
 
-  private updateState(announcements: Announcement[]): void {
-    this.announcementsSubject.next(announcements);
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(announcements));
+  getManagerAnnouncements(): Observable<Announcement[]> {
+    return this.http.get<Announcement[]>(
+      `${this.apiUrl}/manager/announcements`
+    );
   }
 
-  private loadAnnouncements(): Announcement[] {
-    const saved = localStorage.getItem(this.STORAGE_KEY);
-
-    if (!saved) {
-      return this.defaultAnnouncements;
-    }
-
-    return JSON.parse(saved);
+  getTenantAnnouncements(): Observable<Announcement[]> {
+    return this.http.get<Announcement[]>(
+      `${this.apiUrl}/tenant/announcements`
+    );
   }
+
+  deleteAnnouncement(id: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.apiUrl}/manager/announcements/${id}`
+    );
+  }
+
+  getAnnouncementById(id: string): Observable<Announcement> {
+  return this.http.get<Announcement>(
+    `${this.apiUrl}/manager/announcements/${id}`
+  );
+}
+
+updateAnnouncement(
+  id: string,
+  request: UpdateAnnouncementRequest
+): Observable<Announcement> {
+  return this.http.put<Announcement>(
+    `${this.apiUrl}/manager/announcements/${id}`,
+    request
+  );
+}
+
 }

@@ -23,6 +23,7 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './change-password-dialog.html',
   styleUrl: './change-password-dialog.scss'
 })
+
 export class ChangePasswordDialog {
   currentPassword = '';
   newPassword = '';
@@ -43,10 +44,10 @@ export class ChangePasswordDialog {
       return;
     }
 
-    if (this.currentPassword !== currentUser.password) {
-      this.errorMessage = 'Current password is incorrect.';
-      return;
-    }
+    // if (this.currentPassword !== currentUser.password) {
+    //   this.errorMessage = 'Current password is incorrect.';
+    //   return;
+    // }
 
     if (!this.newPassword || this.newPassword.length < 6) {
       this.errorMessage = 'New password must be at least 6 characters.';
@@ -58,7 +59,7 @@ export class ChangePasswordDialog {
       return;
     }
 
-    this.authService.updatePassword(this.newPassword);
+    // this.authService.updatePassword(this.newPassword);
     this.dialogRef.close(true);
   }
 
