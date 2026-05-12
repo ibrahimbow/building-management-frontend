@@ -121,6 +121,12 @@ export const routes: Routes = [
             .then(m => m.ManagerAnnouncements)
       },
       {
+        path: 'manager/tenants',
+        loadComponent: () =>
+          import('./features/manager/tenants/manager-tenants')
+            .then(m => m.ManagerTenants)
+      },
+      {
         path: 'tenants',
         loadComponent: () =>
           import('./features/manager/building-tenants/building-tenants')

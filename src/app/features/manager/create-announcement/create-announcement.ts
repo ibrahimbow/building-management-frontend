@@ -67,6 +67,7 @@ export class CreateAnnouncement implements OnInit {
 
   createAnnouncement(form: NgForm): void {
     if (form.invalid || !this.hasBuilding || this.isSubmitting) {
+      form.form.markAllAsTouched();
       return;
     }
 
@@ -82,7 +83,7 @@ export class CreateAnnouncement implements OnInit {
     this.announcementService.createAnnouncement(request).pipe(
       finalize(() => {
         this.isSubmitting = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       })
     ).subscribe({
       next: () => {
@@ -105,12 +106,12 @@ export class CreateAnnouncement implements OnInit {
       next: (building) => {
         this.hasBuilding = building !== null;
         this.isReady = true;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: () => {
         this.hasBuilding = false;
         this.isReady = true;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       }
     });
   }

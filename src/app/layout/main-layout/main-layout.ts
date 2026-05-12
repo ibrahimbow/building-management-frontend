@@ -67,11 +67,11 @@ export class MainLayout implements OnInit {
     this.buildingService.getMyManagedBuilding().subscribe({
       next: (building) => {
         this.managerHasBuilding = building !== null;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: () => {
         this.managerHasBuilding = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       }
     });
   }
@@ -80,11 +80,11 @@ export class MainLayout implements OnInit {
     this.buildingService.getMyJoinedBuilding().subscribe({
       next: () => {
         this.tenantHasJoinedBuilding = true;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: () => {
         this.tenantHasJoinedBuilding = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       }
     });
   }

@@ -54,7 +54,7 @@ export class Login {
       switchMap(() => this.authService.loadCurrentUser()),
       finalize(() => {
         this.isSubmitting = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       })
     ).subscribe({
       next: () => {

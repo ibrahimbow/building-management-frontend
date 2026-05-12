@@ -87,7 +87,7 @@ export class EditAnnouncement implements OnInit {
     this.announcementService.getManagerAnnouncements().pipe(
       finalize(() => {
         this.isLoading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       })
     ).subscribe({
       next: (announcements) => {
@@ -109,7 +109,7 @@ export class EditAnnouncement implements OnInit {
         this.category = announcement.category;
         this.imageUrl = announcement.imageUrl ?? '';
 
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: () => {
         this.snackBar.open('Could not load announcement.', 'Close', {
@@ -141,7 +141,7 @@ export class EditAnnouncement implements OnInit {
     this.announcementService.updateAnnouncement(this.announcementId, request).pipe(
       finalize(() => {
         this.isSubmitting = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       })
     ).subscribe({
       next: () => {
