@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EMPTY, finalize, switchMap } from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,7 +20,8 @@ import { BuildingInfo } from '../../../core/models/building.model';
     MatCardModule,
     MatIconModule,
     MatButtonModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    RouterLink
   ],
   templateUrl: './building-tenants.html',
   styleUrl: './building-tenants.scss'
@@ -33,10 +35,42 @@ export class BuildingTenants implements OnInit {
   tenants: BuildingTenant[] = [];
 
   isLoading = true;
-  isRemovingTenant = false;
+  removingTenantUserId: number | null = null;
 
   ngOnInit(): void {
     this.loadTenants();
+  }
+
+  removeTenant(tenantUserId: number): void {
+    if (!this.building || this.removingTenantUserId !== null) {
+      return;
+    }
+
+    this.removingTenantUserId = tenantUserId;
+
+    this.buildingService.removeTenantFromBuilding(
+      this.building.id,
+      tenantUserId
+    ).pipe(
+      finalize(() => {
+        this.removingTenantUserId = null;
+      })
+    ).subscribe({
+      next: () => {
+        this.tenants = this.tenants.filter(
+          tenant => tenant.tenantUserId !== tenantUserId
+        );
+
+        this.snackBar.open('Tenant removed successfully.', 'Close', {
+          duration: 2500
+        });
+      },
+      error: () => {
+        this.snackBar.open('Could not remove tenant.', 'Close', {
+          duration: 3000
+        });
+      }
+    });
   }
 
   private loadTenants(): void {
@@ -47,12 +81,10 @@ export class BuildingTenants implements OnInit {
         if (!building) {
           this.building = null;
           this.tenants = [];
-
           return EMPTY;
         }
 
         this.building = building;
-
         return this.buildingService.getBuildingTenants(building.id);
       }),
       finalize(() => {
@@ -67,38 +99,6 @@ export class BuildingTenants implements OnInit {
         this.tenants = [];
 
         this.snackBar.open('Could not load tenants.', 'Close', {
-          duration: 3000
-        });
-      }
-    });
-  }
-
-  removeTenant(tenantUserId: number): void {
-    if (!this.building) {
-      return;
-    }
-
-    this.isRemovingTenant = true;
-
-    this.buildingService.removeTenantFromBuilding(
-      this.building.id,
-      tenantUserId
-    ).pipe(
-      finalize(() => {
-        this.isRemovingTenant = false;
-      })
-    ).subscribe({
-      next: () => {
-        this.tenants = this.tenants.filter(
-          (tenant) => tenant.tenantUserId !== tenantUserId
-        );
-
-        this.snackBar.open('Tenant removed successfully.', 'Close', {
-          duration: 2500
-        });
-      },
-      error: () => {
-        this.snackBar.open('Could not remove tenant.', 'Close', {
           duration: 3000
         });
       }

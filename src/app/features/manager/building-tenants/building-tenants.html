@@ -1,70 +1,76 @@
 <section class="building-tenants-page">
 
-    <div class="page-header">
-        <div>
-            <h1>Building Tenants</h1>
-            <p *ngIf="building">
-                Tenants joined to {{ building.buildingName }}.
-            </p>
-        </div>
+  <div class="page-header">
+    <div>
+      <h1>Building Tenants</h1>
+
+      <p *ngIf="building">
+        Tenants joined to {{ building.buildingName }}.
+      </p>
     </div>
+  </div>
 
-    <p *ngIf="isLoading">
-        Loading tenants...
-    </p>
+  <p *ngIf="isLoading">
+    Loading tenants...
+  </p>
 
-    <mat-card *ngIf="!isLoading && !building" class="empty-card">
+  <mat-card *ngIf="!isLoading && !building" class="empty-card">
+    <mat-card-title>No building found</mat-card-title>
 
-        <mat-card-title>No building found</mat-card-title>
+    <mat-card-content>
+      <p>You need to create a building before viewing tenants.</p>
 
-        <mat-card-content>
-            <p>You need to create a building before viewing tenants.</p>
+      <button
+        mat-raised-button
+        color="primary"
+        routerLink="/manager/create-building">
+        Create Building
+      </button>
+    </mat-card-content>
+  </mat-card>
 
-            <button mat-raised-button color="primary" routerLink="/manager/create-building">
-                Create Building
-            </button>
-        </mat-card-content>
+  <mat-card *ngIf="!isLoading && building && tenants.length === 0" class="empty-card">
+    <mat-card-title>No tenants yet</mat-card-title>
+
+    <mat-card-content>
+      <p>No tenants have joined your building yet.</p>
+    </mat-card-content>
+  </mat-card>
+
+  <section
+    *ngIf="!isLoading && building && tenants.length > 0"
+    class="tenants-grid">
+
+    <mat-card *ngFor="let tenant of tenants" class="tenant-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>person</mat-icon>
+
+        <mat-card-title>
+          {{ tenant.username }}
+        </mat-card-title>
+
+        <mat-card-subtitle>
+          Tenant ID: {{ tenant.tenantUserId }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p><strong>Email:</strong> {{ tenant.email }}</p>
+        <p><strong>Phone:</strong> {{ tenant.phoneNumber || 'Not provided' }}</p>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button
+          mat-button
+          color="warn"
+          type="button"
+          [disabled]="removingTenantUserId === tenant.tenantUserId"
+          (click)="removeTenant(tenant.tenantUserId)">
+          {{ removingTenantUserId === tenant.tenantUserId ? 'Removing...' : 'Remove' }}
+        </button>
+      </mat-card-actions>
     </mat-card>
 
-    <mat-card *ngIf="!isLoading && building && tenants.length === 0" class="empty-card">
-
-        <mat-card-title>No tenants yet</mat-card-title>
-
-        <mat-card-content>
-            <p>No tenants have joined your building yet.</p>
-        </mat-card-content>
-    </mat-card>
-
-    <section *ngIf="!isLoading && building && tenants.length > 0" class="tenants-grid">
-
-        <mat-card *ngFor="let tenant of tenants" class="tenant-card">
-
-            <mat-card-header>
-                <mat-icon mat-card-avatar>person</mat-icon>
-
-                <mat-card-title>
-                    {{ tenant.tenantUsername }}
-                </mat-card-title>
-
-                <mat-card-subtitle>
-                    Joined {{ tenant.joinedAt | date:'mediumDate' }}
-                </mat-card-subtitle>
-            </mat-card-header>
-
-            <mat-card-content>
-                <p><strong>Email:</strong> {{ tenant.tenantEmail }}</p>
-                <p><strong>Phone:</strong> {{ tenant.tenantPhoneNumber }}</p>
-            </mat-card-content>
-
-            <mat-card-actions align="end">
-                <button mat-button color="warn" [disabled]="isRemovingTenant"
-                    (click)="removeTenant(tenant.tenantUserId)">
-                    Remove
-                </button>
-            </mat-card-actions>
-
-        </mat-card>
-
-    </section>
+  </section>
 
 </section>
