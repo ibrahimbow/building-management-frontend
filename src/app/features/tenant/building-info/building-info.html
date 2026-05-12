@@ -1,40 +1,56 @@
-<main class="building-page">
-  <mat-card class="building-card">
-    <div class="header">
-      <mat-icon>apartment</mat-icon>
-      <div>
-        <h2>{{ building.name }}</h2>
-        <p>{{ building.address }}</p>
-      </div>
+<mat-card class="building-info-card">
+
+  <ng-container *ngIf="isLoading">
+    <div class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading building information...</p>
     </div>
+  </ng-container>
+
+  <ng-container *ngIf="!isLoading && errorMessage">
+    <div class="empty-state">
+      <mat-icon>apartment</mat-icon>
+      <h2>No building connected</h2>
+      <p>{{ errorMessage }}</p>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!isLoading && building">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>apartment</mat-icon>
+
+      <mat-card-title>
+        {{ building.buildingName }}
+      </mat-card-title>
+
+      <mat-card-subtitle>
+        {{ building.address }}
+      </mat-card-subtitle>
+    </mat-card-header>
 
     <mat-divider></mat-divider>
 
-    <div class="info-grid">
-      <div class="info-item">
-        <span>Building Code</span>
-        <strong>{{ building.code }}</strong>
+    <mat-card-content>
+      <div class="info-row">
+        <strong>Building Code</strong>
+        <span>{{ building.code }}</span>
       </div>
 
-      <div class="info-item">
-        <span>Total Apartments</span>
-        <strong>{{ building.totalApartments }}</strong>
+      <div class="info-row">
+        <strong>Total Apartments</strong>
+        <span>{{ building.totalApartments }}</span>
       </div>
 
-      <div class="info-item">
-        <span>Manager</span>
-        <strong>{{ building.managerName }}</strong>
+      <div class="info-row">
+        <strong>Manager ID</strong>
+        <span>{{ building.managerId }}</span>
       </div>
 
-      <div class="info-item">
-        <span>Manager Email</span>
-        <strong>{{ building.managerEmail }}</strong>
+      <div class="info-row">
+        <strong>Emergency Phone</strong>
+        <span>{{ building.emergencyPhone }}</span>
       </div>
+    </mat-card-content>
+  </ng-container>
 
-      <div class="info-item">
-        <span>Emergency Phone</span>
-        <strong>{{ building.emergencyPhone }}</strong>
-      </div>
-    </div>
-  </mat-card>
-</main>
+</mat-card>
