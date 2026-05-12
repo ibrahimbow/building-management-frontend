@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
+import { Router } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,6 +12,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Announcement } from '../../../core/models/announcement.model';
 import { AnnouncementService } from '../../../core/services/announcement.service';
 import { TimeAgoPipe } from '../../../core/pipes/time-ago-pipe';
+import { BuildingService } from '../../../core/services/building.service';
 
 
 @Component({
@@ -31,44 +33,56 @@ import { TimeAgoPipe } from '../../../core/pipes/time-ago-pipe';
 export class ManagerAnnouncements implements OnInit {
 
   private readonly announcementService = inject(AnnouncementService);
+  private readonly buildingService = inject(BuildingService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly cdr = inject(ChangeDetectorRef);
-  
+  private readonly router = inject(Router);
+
+
   announcements: Announcement[] = [];
   isLoading = true;
   isDeleting = false;
 
   ngOnInit(): void {
-    this.loadAnnouncements();
+    this.validateManagerBuilding();
   }
 
-  loadAnnouncements(): void {
+  private validateManagerBuilding(): void {
     this.isLoading = true;
 
+    this.buildingService.getMyManagedBuilding().subscribe({
+      next: (building) => {
+        if (!building) {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.router.navigate(['/manager/create-building']);
+          return;
+        }
+
+        this.loadAnnouncements();
+      },
+      error: () => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.router.navigate(['/manager/create-building']);
+      }
+    });
+  }
+
+  private loadAnnouncements(): void {
     this.announcementService.getManagerAnnouncements().pipe(
       finalize(() => {
         this.isLoading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       })
     ).subscribe({
       next: (announcements) => {
-        console.log('Loaded announcements:', announcements);
-
-        this.announcements = [...announcements].sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-
-        this.cdr.detectChanges();
+        this.announcements = announcements;
       },
       error: () => {
-        this.announcements = [];
-
         this.snackBar.open('Could not load announcements.', 'Close', {
           duration: 3000
         });
-
-        this.cdr.detectChanges();
       }
     });
   }
@@ -79,7 +93,7 @@ export class ManagerAnnouncements implements OnInit {
     this.announcementService.deleteAnnouncement(id).pipe(
       finalize(() => {
         this.isDeleting = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       })
     ).subscribe({
       next: () => {
@@ -102,4 +116,6 @@ export class ManagerAnnouncements implements OnInit {
   hasValidImage(imageUrl: string | null | undefined): boolean {
     return !!imageUrl && imageUrl.startsWith('http');
   }
+
+
 }
