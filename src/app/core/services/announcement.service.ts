@@ -16,46 +16,49 @@ export class AnnouncementService {
   private readonly http = inject(HttpClient);
 
   private readonly apiUrl = 'http://localhost:8080/api';
+  private readonly managerAnnouncementsUrl = `${this.apiUrl}/manager/announcements`;
+  private readonly tenantAnnouncementsUrl = `${this.apiUrl}/tenant/announcements`;
 
-  createAnnouncement(request: CreateAnnouncementRequest): Observable<Announcement> {
+  createAnnouncement(
+    request: CreateAnnouncementRequest
+  ): Observable<Announcement> {
     return this.http.post<Announcement>(
-      `${this.apiUrl}/manager/announcements`,
+      this.managerAnnouncementsUrl,
       request
     );
   }
 
   getManagerAnnouncements(): Observable<Announcement[]> {
     return this.http.get<Announcement[]>(
-      `${this.apiUrl}/manager/announcements`
+      this.managerAnnouncementsUrl
     );
   }
 
-  getTenantAnnouncements(): Observable<Announcement[]> {
-    return this.http.get<Announcement[]>(
-      `${this.apiUrl}/tenant/announcements`
+  getAnnouncementById(id: string): Observable<Announcement> {
+    return this.http.get<Announcement>(
+      `${this.managerAnnouncementsUrl}/${id}`
+    );
+  }
+
+  updateAnnouncement(
+    id: string,
+    request: UpdateAnnouncementRequest
+  ): Observable<Announcement> {
+    return this.http.put<Announcement>(
+      `${this.managerAnnouncementsUrl}/${id}`,
+      request
     );
   }
 
   deleteAnnouncement(id: string): Observable<void> {
     return this.http.delete<void>(
-      `${this.apiUrl}/manager/announcements/${id}`
+      `${this.managerAnnouncementsUrl}/${id}`
     );
   }
 
-  getAnnouncementById(id: string): Observable<Announcement> {
-  return this.http.get<Announcement>(
-    `${this.apiUrl}/manager/announcements/${id}`
-  );
-}
-
-updateAnnouncement(
-  id: string,
-  request: UpdateAnnouncementRequest
-): Observable<Announcement> {
-  return this.http.put<Announcement>(
-    `${this.apiUrl}/manager/announcements/${id}`,
-    request
-  );
-}
-
+  getTenantAnnouncements(): Observable<Announcement[]> {
+    return this.http.get<Announcement[]>(
+      this.tenantAnnouncementsUrl
+    );
+  }
 }
