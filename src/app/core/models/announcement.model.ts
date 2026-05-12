@@ -23,12 +23,12 @@ export interface CreateAnnouncementRequest {
   title: string;
   message: string;
   category: AnnouncementCategory;
-  imageUrl: string | null;
+  imageUrl?: string | null;
 }
 
 export interface UpdateAnnouncementRequest {
   title: string;
   message: string;
   category: AnnouncementCategory;
-  imageUrl: string | null;
+  imageUrl?: string | null;
 }
