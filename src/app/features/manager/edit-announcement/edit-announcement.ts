@@ -84,32 +84,17 @@ export class EditAnnouncement implements OnInit {
   private loadAnnouncement(): void {
     this.isLoading = true;
 
-    this.announcementService.getManagerAnnouncements().pipe(
+    this.announcementService.getAnnouncementById(this.announcementId).pipe(
       finalize(() => {
         this.isLoading = false;
         this.cdr.markForCheck();
       })
     ).subscribe({
-      next: (announcements) => {
-        const announcement = announcements.find(
-          item => item.id === this.announcementId
-        );
-
-        if (!announcement) {
-          this.snackBar.open('Announcement not found.', 'Close', {
-            duration: 3000
-          });
-
-          this.router.navigateByUrl('/manager/announcements');
-          return;
-        }
-
+      next: (announcement) => {
         this.title = announcement.title;
         this.message = announcement.message;
         this.category = announcement.category;
         this.imageUrl = announcement.imageUrl ?? '';
-
-        this.cdr.markForCheck();
       },
       error: () => {
         this.snackBar.open('Could not load announcement.', 'Close', {
@@ -122,10 +107,13 @@ export class EditAnnouncement implements OnInit {
   }
 
   updateAnnouncement(form: NgForm): void {
-    if (form.invalid) {
+    if (form.invalid || this.isSubmitting) {
+      form.form.markAllAsTouched();
+
       this.snackBar.open('Please fill all required fields.', 'Close', {
         duration: 3000
       });
+
       return;
     }
 
