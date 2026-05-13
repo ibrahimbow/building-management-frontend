@@ -1,13 +1,15 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, ChangeDetectorRef, inject } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgIf } from '@angular/common';
+import { finalize } from 'rxjs';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { UserStateService } from '../../../core/user/user-state.service';
+import { BuildingService } from '../../../core/services/building.service';
 
 @Component({
   selector: 'app-join-building',
@@ -17,44 +19,66 @@ import { UserStateService } from '../../../core/user/user-state.service';
     NgIf,
     MatInputModule,
     MatButtonModule,
-    MatCardModule
+    MatCardModule,
+    MatSnackBarModule
   ],
   templateUrl: './join-building.html',
   styleUrl: './join-building.scss'
 })
 export class JoinBuilding {
 
+  private readonly buildingService = inject(BuildingService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   buildingCode = '';
-  errorMessage = '';
-  successMessage = '';
 
-  constructor(
-    private userState: UserStateService,
-    private router: Router
-  ) {}
+  isSubmitting = false;
 
-  joinBuilding() {
+  joinBuilding(form: NgForm): void {
 
-    if (!this.buildingCode) {
-      this.errorMessage = 'Please enter a building code';
-      this.successMessage = '';
+    if (form.invalid || this.isSubmitting) {
+      form.form.markAllAsTouched();
       return;
     }
 
-    // Mock validation
-    if (this.buildingCode === 'BM-2026') {
-      this.userState.hasJoinedBuilding = true;
+    const code = this.buildingCode.trim();
 
-      this.successMessage = 'Successfully joined building!';
-      this.errorMessage = '';
-
-      setTimeout(() => {
-        this.router.navigate(['/tenant/dashboard']);
-      }, 1000);
-
-    } else {
-      this.errorMessage = 'Invalid building code';
-      this.successMessage = '';
+    if (!code) {
+      return;
     }
+
+    this.isSubmitting = true;
+
+    this.buildingService.joinBuilding(code).pipe(
+      finalize(() => {
+        this.isSubmitting = false;
+        this.cdr.markForCheck();
+      })
+    ).subscribe({
+      next: () => {
+
+        this.snackBar.open(
+          'Successfully joined building.',
+          'Close',
+          {
+            duration: 2500
+          }
+        );
+
+        this.router.navigateByUrl('/tenant/dashboard');
+      },
+      error: () => {
+
+        this.snackBar.open(
+          'Invalid building code or already joined.',
+          'Close',
+          {
+            duration: 3000
+          }
+        );
+      }
+    });
   }
 }
