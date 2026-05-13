@@ -1,60 +1,75 @@
 <main class="content">
+
+  <mat-card
+    *ngIf="!isLoading && !hasJoinedBuilding"
+    class="join-building-card">
+
+    <mat-card-title>Join a Building</mat-card-title>
+
+    <mat-card-content>
+      <p>You are not connected to a building yet. Join using the code provided by your manager.</p>
+
+      <button
+        mat-raised-button
+        color="primary"
+        routerLink="/tenant/join-building">
+        Join Building
+      </button>
+    </mat-card-content>
+
+  </mat-card>
+
   <section class="cards">
-    <mat-card 
-  *ngFor="let item of menuItems" 
-  class="dashboard-card"
-  [class.disabled-card]="!userState.hasJoinedBuilding">
 
-  <span
-    *ngIf="item.notificationCount > 0"
-    class="notification-badge">
-    {{ item.notificationCount }}
-  </span>
+    <mat-card
+      *ngFor="let item of menuItems"
+      class="dashboard-card"
+      [class.disabled-card]="!hasJoinedBuilding">
 
-  <mat-card-header>
-    <div mat-card-avatar class="card-icon">
-      <mat-icon>{{ item.icon }}</mat-icon>
-    </div>
+      <span
+        *ngIf="hasJoinedBuilding && item.notificationCount > 0"
+        class="notification-badge">
+        {{ item.notificationCount }}
+      </span>
 
-    <mat-card-title>{{ item.title }}</mat-card-title>
-    <mat-card-subtitle>{{ item.description }}</mat-card-subtitle>
-  </mat-card-header>
+      <mat-card-header>
+        <div mat-card-avatar class="card-icon">
+          <mat-icon>{{ item.icon }}</mat-icon>
+        </div>
 
-  <mat-card-actions align="end">
-    <button 
-      mat-button 
-      color="primary" 
-      [routerLink]="userState.hasJoinedBuilding ? item.route : null"
-      [disabled]="!userState.hasJoinedBuilding">
-      <mat-icon>arrow_forward</mat-icon>
-      Open
-    </button>
-  </mat-card-actions>
+        <mat-card-title>{{ item.title }}</mat-card-title>
+        <mat-card-subtitle>{{ item.description }}</mat-card-subtitle>
+      </mat-card-header>
 
-</mat-card>
+      <mat-card-actions align="end">
+        <button
+          mat-button
+          color="primary"
+          [routerLink]="hasJoinedBuilding ? item.route : null"
+          [disabled]="!hasJoinedBuilding">
+          <mat-icon>arrow_forward</mat-icon>
+          Open
+        </button>
+      </mat-card-actions>
+
+    </mat-card>
+
   </section>
 
-<mat-card 
-  *ngIf="userState.hasJoinedBuilding"
-  class="announcements">
+  <mat-card
+    *ngIf="hasJoinedBuilding"
+    class="announcements">
 
-  <mat-card-title>Latest Announcements</mat-card-title>
+    <mat-card-title>Latest Announcements</mat-card-title>
 
-  <mat-list>
-    <mat-list-item>
-      <mat-icon matListItemIcon>water_drop</mat-icon>
-      <div matListItemTitle>Water Maintenance</div>
-      <div matListItemLine>Water supply maintenance on May 25, 2026</div>
-    </mat-list-item>
+    <mat-list>
+      <mat-list-item>
+        <mat-icon matListItemIcon>campaign</mat-icon>
+        <div matListItemTitle>Building announcements</div>
+        <div matListItemLine>Open announcements to view the latest updates.</div>
+      </mat-list-item>
+    </mat-list>
 
-    <mat-divider></mat-divider>
+  </mat-card>
 
-    <mat-list-item>
-      <mat-icon matListItemIcon>elevator</mat-icon>
-      <div matListItemTitle>Elevator Check</div>
-      <div matListItemLine>Routine inspection scheduled next week</div>
-    </mat-list-item>
-  </mat-list>
-
-</mat-card>
 </main>

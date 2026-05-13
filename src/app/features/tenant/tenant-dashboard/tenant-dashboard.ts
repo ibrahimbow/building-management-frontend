@@ -1,49 +1,46 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatDividerModule } from '@angular/material/divider';
 import { RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
-import { UserStateService } from '../../../core/user/user-state.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatListModule } from '@angular/material/list';
+import { MatDividerModule } from '@angular/material/divider';
+
+import { BuildingService } from '../../../core/services/building.service';
 
 @Component({
   selector: 'app-tenant-dashboard',
   standalone: true,
   imports: [
     CommonModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatListModule,
+    RouterLink,
     MatCardModule,
+    MatIconModule,
     MatButtonModule,
-    MatBadgeModule,
-    MatDividerModule,
-    RouterLink
+    MatListModule,
+    MatDividerModule
   ],
   templateUrl: './tenant-dashboard.html',
-  styleUrl: './tenant-dashboard.scss',
+  styleUrl: './tenant-dashboard.scss'
 })
-export class TenantDashboard {
-  constructor(public userState: UserStateService) { }
+export class TenantDashboard implements OnInit {
 
-  hasJoinedBuilding = false; // later this comes from backend
+  private readonly buildingService = inject(BuildingService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  menuItems = [
+  hasJoinedBuilding = false;
+  isLoading = true;
+
+  readonly menuItems = [
     {
       title: 'Building Info',
       description: 'View your building details',
       icon: 'business',
       route: '/tenant/building-info',
       notificationCount: 0
-
     },
     {
       title: 'Announcements',
@@ -68,4 +65,23 @@ export class TenantDashboard {
     }
   ];
 
+  ngOnInit(): void {
+    this.loadTenantBuildingState();
+  }
+
+  private loadTenantBuildingState(): void {
+    this.buildingService.getMyJoinedBuilding().pipe(
+      finalize(() => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      })
+    ).subscribe({
+      next: () => {
+        this.hasJoinedBuilding = true;
+      },
+      error: () => {
+        this.hasJoinedBuilding = false;
+      }
+    });
+  }
 }
