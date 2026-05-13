@@ -11,6 +11,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../core/services/auth.service';
 import { BuildingService } from '../../core/services/building.service';
 
+interface MenuItem {
+  label: string;
+  icon: string;
+  route: string;
+  requiresBuilding?: boolean;
+}
+
 @Component({
   selector: 'app-main-layout',
   standalone: true,
@@ -37,6 +44,68 @@ export class MainLayout implements OnInit {
   managerHasBuilding = false;
   tenantHasJoinedBuilding = false;
 
+  readonly managerMenuItems: MenuItem[] = [
+    {
+      label: 'Dashboard',
+      icon: 'dashboard',
+      route: '/manager/dashboard'
+    },
+    {
+      label: 'Building Tenants',
+      icon: 'groups',
+      route: '/manager/building-tenants',
+      requiresBuilding: true
+    },
+    {
+      label: 'Announcements',
+      icon: 'campaign',
+      route: '/manager/announcements',
+      requiresBuilding: true
+    }
+  ];
+
+  readonly tenantMenuItems: MenuItem[] = [
+    {
+      label: 'Dashboard',
+      icon: 'dashboard',
+      route: '/tenant/dashboard'
+    },
+    {
+      label: 'Join Building',
+      icon: 'apartment',
+      route: '/tenant/join-building'
+    },
+    {
+      label: 'Building Info',
+      icon: 'business',
+      route: '/tenant/building-info',
+      requiresBuilding: true
+    },
+    {
+      label: 'Announcements',
+      icon: 'campaign',
+      route: '/tenant/announcements',
+      requiresBuilding: true
+    },
+    {
+      label: 'Help & Share',
+      icon: 'volunteer_activism',
+      route: '/tenant/help-share',
+      requiresBuilding: true
+    },
+    {
+      label: 'Resident Chat',
+      icon: 'chat',
+      route: '/tenant/resident-chat',
+      requiresBuilding: true
+    },
+    {
+      label: 'Settings',
+      icon: 'settings',
+      route: '/tenant/settings'
+    }
+  ];
+
   ngOnInit(): void {
     if (this.isManagerOrAdmin) {
       this.loadManagerBuildingState();
@@ -57,6 +126,14 @@ export class MainLayout implements OnInit {
 
   get displayName(): string {
     return this.authService.getCurrentUser()?.displayName ?? 'User';
+  }
+
+  canShowManagerMenuItem(item: MenuItem): boolean {
+    return !item.requiresBuilding || this.managerHasBuilding;
+  }
+
+  canShowTenantMenuItem(item: MenuItem): boolean {
+    return !item.requiresBuilding || this.tenantHasJoinedBuilding;
   }
 
   logout(): void {
