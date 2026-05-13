@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatButtonModule } from '@angular/material/button';
 
 import { BuildingService } from '../../../core/services/building.service';
 import { BuildingInfo as BuildingInfoModel } from '../../../core/models/building.model';
@@ -20,7 +21,8 @@ import { BuildingInfo as BuildingInfoModel } from '../../../core/models/building
     MatIconModule,
     MatDividerModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatButtonModule
   ],
   templateUrl: './building-info.html',
   styleUrl: './building-info.scss'
@@ -33,6 +35,7 @@ export class BuildingInfo implements OnInit {
 
   building: BuildingInfoModel | null = null;
   isLoading = false;
+  isLeaving = false;
   errorMessage: string | null = null;
 
   ngOnInit(): void {
@@ -57,6 +60,36 @@ export class BuildingInfo implements OnInit {
         this.errorMessage = 'You are not connected to a building yet.';
 
         this.snackBar.open('Could not load building information.', 'Close', {
+          duration: 3000
+        });
+      }
+    });
+  }
+
+  leaveBuilding(): void {
+    if (this.isLeaving) {
+      return;
+    }
+
+    this.isLeaving = true;
+    this.errorMessage = null;
+
+    this.buildingService.leaveBuilding().pipe(
+      finalize(() => {
+        this.isLeaving = false;
+        this.cdr.markForCheck();
+      })
+    ).subscribe({
+      next: () => {
+        this.building = null;
+        this.errorMessage = 'You are not connected to a building yet.';
+
+        this.snackBar.open('You left the building successfully.', 'Close', {
+          duration: 3000
+        });
+      },
+      error: () => {
+        this.snackBar.open('Could not leave the building.', 'Close', {
           duration: 3000
         });
       }

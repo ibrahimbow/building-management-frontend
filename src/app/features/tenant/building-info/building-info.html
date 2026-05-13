@@ -35,6 +35,11 @@
       <p><strong>Total Apartments:</strong> {{ building.totalApartments }}</p>
       <p><strong>Manager ID:</strong> {{ building.managerId }}</p>
       <p><strong>Emergency Phone:</strong> {{ building.emergencyPhone }}</p>
+      <button mat-raised-button color="warn" type="button" (click)="leaveBuilding()" [disabled]="isLeaving">
+
+        {{ isLeaving ? 'Leaving...' : 'Leave Building' }}
+
+      </button>
     </mat-card-content>
   </ng-container>
 
