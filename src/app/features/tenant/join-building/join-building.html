@@ -1,23 +1,37 @@
 <mat-card class="join-card">
 
   <h2>Join a Building</h2>
-  <p>Enter the building code provided by your manager</p>
+  <p>Enter the building code provided by your manager.</p>
 
-  <mat-form-field appearance="outline" class="full-width">
-    <input
-      matInput
-      placeholder="Enter building code"
-      [(ngModel)]="buildingCode" />
-  </mat-form-field>
+  <form
+    #form="ngForm"
+    (ngSubmit)="joinBuilding(form)">
 
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="joinBuilding()">
-    Join
-  </button>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Building code</mat-label>
 
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-  <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+      <input
+        matInput
+        name="buildingCode"
+        placeholder="Example: BM-ABC123"
+        required
+        [(ngModel)]="buildingCode" />
+
+      <mat-error *ngIf="form.submitted && !buildingCode.trim()">
+        Building code is required.
+      </mat-error>
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="isSubmitting">
+
+      {{ isSubmitting ? 'Joining...' : 'Join Building' }}
+
+    </button>
+
+  </form>
 
 </mat-card>
