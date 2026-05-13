@@ -52,6 +52,7 @@ export const routes: Routes = [
             .then(m => m.BuildingInfo)
       },
       {
+        path: 'announcements',
         loadComponent: () =>
           import('./features/tenant/tenant-announcements/tenant-announcements')
             .then(m => m.TenantAnnouncements)
@@ -102,6 +103,12 @@ export const routes: Routes = [
             .then(m => m.CreateBuilding)
       },
       {
+        path: 'announcements',
+        loadComponent: () =>
+          import('./features/manager/manager-announcements/manager-announcements')
+            .then(m => m.ManagerAnnouncements)
+      },
+      {
         path: 'announcements/create',
         loadComponent: () =>
           import('./features/manager/create-announcement/create-announcement')
@@ -114,13 +121,7 @@ export const routes: Routes = [
             .then(m => m.EditAnnouncement)
       },
       {
-        path: 'announcements',
-        loadComponent: () =>
-          import('./features/manager/manager-announcements/manager-announcements')
-            .then(m => m.ManagerAnnouncements)
-      },
-      {
-        path: 'tenants',
+        path: 'building-tenants',
         loadComponent: () =>
           import('./features/manager/building-tenants/building-tenants')
             .then(m => m.BuildingTenants)
