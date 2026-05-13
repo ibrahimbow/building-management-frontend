@@ -1,0 +1,24 @@
+<mat-card *ngFor="let announcement of announcements | async" class="announcement-card">
+    <mat-card-header>
+        <mat-icon mat-card-avatar>{{ announcement.icon }}</mat-icon>
+
+        <mat-card-title>{{ announcement.title }}</mat-card-title>
+
+
+        <mat-card-subtitle>
+            {{ announcement.createdAt | date:'mediumDate' }}
+        </mat-card-subtitle>
+    </mat-card-header>
+
+    <div class="image-container" *ngIf="announcement.imageUrl">
+        <img [src]="announcement.imageUrl" alt="announcement image" />
+    </div>
+
+    <mat-card-content>
+        <p>{{ announcement.message }}</p>
+
+        <div class="category-badge" [ngClass]="announcement.category.toLowerCase()">
+            {{ announcement.category }}
+        </div>
+    </mat-card-content>
+</mat-card>

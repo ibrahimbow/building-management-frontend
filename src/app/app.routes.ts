@@ -52,10 +52,9 @@ export const routes: Routes = [
             .then(m => m.BuildingInfo)
       },
       {
-        path: 'announcements',
         loadComponent: () =>
-          import('./features/tenant/announcements/announcements')
-            .then(m => m.Announcements)
+          import('./features/tenant/tenant-announcements/tenant-announcements')
+            .then(m => m.TenantAnnouncements)
       },
       {
         path: 'help-share',
@@ -119,12 +118,6 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/manager/manager-announcements/manager-announcements')
             .then(m => m.ManagerAnnouncements)
-      },
-      {
-        path: 'manager/tenants',
-        loadComponent: () =>
-          import('./features/manager/tenants/manager-tenants')
-            .then(m => m.ManagerTenants)
       },
       {
         path: 'tenants',
