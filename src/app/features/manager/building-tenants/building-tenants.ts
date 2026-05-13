@@ -1,6 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EMPTY, finalize, switchMap } from 'rxjs';
+
 import { RouterLink } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
@@ -17,11 +18,11 @@ import { BuildingInfo } from '../../../core/models/building.model';
   standalone: true,
   imports: [
     CommonModule,
+    RouterLink,
     MatCardModule,
     MatIconModule,
     MatButtonModule,
-    MatSnackBarModule,
-    RouterLink
+    MatSnackBarModule
   ],
   templateUrl: './building-tenants.html',
   styleUrl: './building-tenants.scss'
@@ -30,6 +31,7 @@ export class BuildingTenants implements OnInit {
 
   private readonly buildingService = inject(BuildingService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   building: BuildingInfo | null = null;
   tenants: BuildingTenant[] = [];
@@ -54,6 +56,7 @@ export class BuildingTenants implements OnInit {
     ).pipe(
       finalize(() => {
         this.removingTenantUserId = null;
+        this.cdr.markForCheck();
       })
     ).subscribe({
       next: () => {
@@ -75,20 +78,24 @@ export class BuildingTenants implements OnInit {
 
   private loadTenants(): void {
     this.isLoading = true;
+    this.building = null;
+    this.tenants = [];
 
     this.buildingService.getMyManagedBuilding().pipe(
       switchMap((building) => {
+        this.building = building;
+
         if (!building) {
-          this.building = null;
-          this.tenants = [];
+          this.isLoading = false;
+          this.cdr.markForCheck();
           return EMPTY;
         }
 
-        this.building = building;
         return this.buildingService.getBuildingTenants(building.id);
       }),
       finalize(() => {
         this.isLoading = false;
+        this.cdr.markForCheck();
       })
     ).subscribe({
       next: (tenants) => {
@@ -97,6 +104,8 @@ export class BuildingTenants implements OnInit {
       error: () => {
         this.building = null;
         this.tenants = [];
+        this.isLoading = false;
+        this.cdr.markForCheck();
 
         this.snackBar.open('Could not load tenants.', 'Close', {
           duration: 3000
