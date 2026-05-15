@@ -63,19 +63,28 @@ export class ShareAndHelpComponent implements OnInit {
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateShareAndHelpDialog, {
-      width: '600px'
+      width: '600px',
+      maxWidth: '95vw',
+      autoFocus: false,
+      restoreFocus: false
     });
 
     dialogRef.afterClosed().subscribe(created => {
-      if (created) {
-        this.loadPosts();
+      if (!created) {
+        return;
       }
+
+      setTimeout(() => {
+        this.loadPosts();
+      }, 0);
     });
   }
 
   delete(id: string): void {
     const dialogRef = this.dialog.open(ConfirmDialog, {
-      data: { message: 'Are you sure you want to delete this post?' }
+      data: { message: 'Are you sure you want to delete this post?' },
+      autoFocus: false,
+      restoreFocus: false
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -140,21 +149,39 @@ export class ShareAndHelpComponent implements OnInit {
   }
 
   hasValidImage(imageUrl: string | null | undefined): boolean {
-    return !!imageUrl && imageUrl.startsWith('http');
+    return !!imageUrl && imageUrl.trim().length > 0;
+  }
+
+  resolveImageUrl(imageUrl: string | null | undefined): string {
+    if (!imageUrl) {
+      return '';
+    }
+
+    if (imageUrl.startsWith('http')) {
+      return imageUrl;
+    }
+
+    if (imageUrl.startsWith('/')) {
+      return `http://localhost:8080${imageUrl}`;
+    }
+
+    return `http://localhost:8080/${imageUrl}`;
   }
 
   private loadPosts(): void {
     this.isLoading = true;
+    this.cdr.detectChanges();
 
     this.service.getAll().pipe(
       finalize(() => {
         this.isLoading = false;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       })
     ).subscribe({
-      next: (posts) => {
-        this.posts = posts;
-      },
+      next: posts => {
+  console.log('Share & Help posts from backend:', posts);
+  this.posts = posts;
+},
       error: () => {
         this.posts = [];
         this.notificationService.error('Could not load Share & Help posts.');
