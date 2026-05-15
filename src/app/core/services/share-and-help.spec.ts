@@ -1,13 +1,17 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { ShareAndHelp } from './share-and-help.service';
+import { ShareAndHelpService } from './share-and-help.service';
 
-describe('ShareAndHelp', () => {
-  let service: ShareAndHelp;
+describe('ShareAndHelpService', () => {
+  let service: ShareAndHelpService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(ShareAndHelp);
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule]
+    });
+
+    service = TestBed.inject(ShareAndHelpService);
   });
 
   it('should be created', () => {

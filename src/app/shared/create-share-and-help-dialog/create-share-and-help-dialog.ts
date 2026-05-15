@@ -2,13 +2,15 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+import { finalize } from 'rxjs';
+
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 import { ShareAndHelpService } from '../../core/services/share-and-help.service';
-import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-create-share-and-help-dialog',
@@ -25,68 +27,46 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './create-share-and-help-dialog.scss'
 })
 export class CreateShareAndHelpDialog {
+
   title = '';
   description = '';
-  images: string[] = [];
-  imagePreview: string[] = [];
+  imageUrl = '';
+
+  isSubmitting = false;
 
   constructor(
-    private dialogRef: MatDialogRef<CreateShareAndHelpDialog>,
-    private service: ShareAndHelpService,
-    private authService: AuthService
-  ) {}
-
-  onImageSelected(event: Event): void {
-    const files = (event.target as HTMLInputElement).files;
-
-    if (!files) return;
-
-    Array.from(files).forEach(file => {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        const image = reader.result as string;
-        this.images.push(image);
-        this.imagePreview.push(image);
-      };
-
-      reader.readAsDataURL(file);
-    });
-  }
+    private readonly dialogRef: MatDialogRef<CreateShareAndHelpDialog>,
+    private readonly service: ShareAndHelpService,
+    private readonly notificationService: NotificationService
+  ) { }
 
   create(): void {
-    const user = this.authService.getCurrentUser();
-
-    if (!user) {
-      alert('You must be logged in to create a post.');
-      return;
-    }
-
     if (!this.title.trim() || !this.description.trim()) {
-      alert('Title and description are required.');
       return;
     }
 
-    const settings = localStorage.getItem(`bm_user_settings_${user.id}`);
-    const avatarUrl = settings ? JSON.parse(settings).avatarUrl : '';
+    this.isSubmitting = true;
 
-    this.service.add({
-      id: crypto.randomUUID(),
-      title: this.title,
-      description: this.description,
-      createdAt: new Date().toISOString(),
-
-      createdByUserId: user.id.toString(),
-      createdByDisplayName: user.displayName,
-      createdByAvatarUrl: avatarUrl,
-
-      images: this.images,
-
-      comments: []
+    this.service.create({
+      title: this.title.trim(),
+      description: this.description.trim(),
+      imageUrl: this.imageUrl.trim() || null
+    }).pipe(
+      finalize(() => {
+        this.isSubmitting = false;
+      })
+    ).subscribe({
+      next: () => {
+        this.notificationService.success('Post created successfully.');
+        this.dialogRef.close(true);
+      },
+      error: () => {
+        this.notificationService.error('Could not create post.');
+      }
     });
-
-    this.dialogRef.close(true);
   }
+
+  
 
   cancel(): void {
     this.dialogRef.close(false);

@@ -1,7 +1,6 @@
 <div class="feed-page">
   <h2>Share & Help</h2>
 
-  <!-- Skeleton Loading -->
   <div class="skeleton-list" *ngIf="isLoading">
     <mat-card class="skeleton-card" *ngFor="let item of [1, 2, 3]">
       <div class="skeleton-header">
@@ -19,9 +18,12 @@
     </mat-card>
   </div>
 
-  <!-- Posts Feed -->
+  <p class="empty-state" *ngIf="!isLoading && posts.length === 0">
+    No Share & Help posts yet. Be the first tenant to share something.
+  </p>
+
   <mat-card
-    *ngFor="let post of posts$ | async"
+    *ngFor="let post of posts; trackBy: trackByPostId"
     class="post-card"
     [hidden]="isLoading"
   >
@@ -46,9 +48,10 @@
       </div>
 
       <button
-        *ngIf="post.createdByUserId === authService.getCurrentUser()?.id?.toString()"
+        *ngIf="post.createdByUserId === authService.getCurrentUser()?.id"
         mat-icon-button
         color="warn"
+        type="button"
         (click)="delete(post.id)"
       >
         <mat-icon>delete</mat-icon>
@@ -59,10 +62,9 @@
       <h3>{{ post.title }}</h3>
       <p>{{ post.description }}</p>
 
-      <div class="post-images" *ngIf="post.images.length">
+      <div class="post-images" *ngIf="post.imageUrl">
         <img
-          *ngFor="let img of post.images"
-          [src]="img"
+          [src]="post.imageUrl"
           alt="Post image"
         />
       </div>
@@ -78,12 +80,14 @@
 
         <div
           class="comment"
-          *ngFor="let comment of post.comments.slice(0, getVisibleCommentCount(post.id))">
+          *ngFor="let comment of post.comments.slice(0, getVisibleCommentCount(post.id))"
+        >
           <div class="comment-avatar">
             <img
               *ngIf="comment.createdByAvatarUrl; else defaultCommentAvatar"
               [src]="comment.createdByAvatarUrl"
-              alt="Comment avatar"/>
+              alt="Comment avatar"
+            />
 
             <ng-template #defaultCommentAvatar>
               <span>👤</span>
@@ -96,14 +100,16 @@
               <span>{{ comment.createdAt | date:'short' }}</span>
             </div>
 
-            <p>{{ comment.text }}</p>
+            <p>{{ comment.comment }}</p>
           </div>
 
           <button
-            *ngIf="comment.createdByUserId === authService.getCurrentUser()?.id?.toString()"
+            *ngIf="comment.createdByUserId === authService.getCurrentUser()?.id"
             mat-icon-button
             color="warn"
-            (click)="deleteComment(post.id, comment.id)">
+            type="button"
+            (click)="deleteComment(post.id, comment.id)"
+          >
             <mat-icon>delete</mat-icon>
           </button>
         </div>
@@ -114,7 +120,8 @@
             mat-button
             color="primary"
             type="button"
-            (click)="loadMoreComments(post.id)">
+            (click)="loadMoreComments(post.id)"
+          >
             Load more comments
           </button>
         </div>
@@ -142,11 +149,11 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- Floating Add Button -->
   <button
     mat-fab
     color="primary"
     class="add-post-button"
+    type="button"
     (click)="openCreateDialog()"
   >
     <mat-icon>add</mat-icon>

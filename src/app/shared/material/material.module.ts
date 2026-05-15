@@ -10,6 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 /**
  * Grouped Material modules for clean reuse
@@ -22,7 +23,8 @@ const MATERIAL_MODULES = [
   MatCardModule,
   MatButtonModule,
   MatBadgeModule,
-  MatDividerModule
+  MatDividerModule,
+  MatSnackBarModule
 ];
 
 @NgModule({

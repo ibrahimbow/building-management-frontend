@@ -1,73 +1,57 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import {
+  CreateShareAndHelpCommentRequest,
+  CreateShareAndHelpRequest,
   ShareAndHelp,
-  ShareAndHelpComment
+  UpdateShareAndHelpRequest
 } from '../models/share-and-help';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ShareAndHelpService {
-  private readonly STORAGE_KEY = 'bm_share_and_help';
 
-  private subject = new BehaviorSubject<ShareAndHelp[]>(this.load());
+  private readonly apiUrl = 'http://localhost:8080/api/tenant/share-and-help/posts';
 
-  posts$ = this.subject.asObservable();
+  constructor(private readonly http: HttpClient) {}
 
-  add(post: ShareAndHelp): void {
-    const updated = [post, ...this.subject.value];
-    this.update(updated);
+  getAll(): Observable<ShareAndHelp[]> {
+    return this.http.get<ShareAndHelp[]>(this.apiUrl);
   }
 
-  delete(id: string): void {
-    const updated = this.subject.value.filter(post => post.id !== id);
-    this.update(updated);
+  create(request: CreateShareAndHelpRequest): Observable<ShareAndHelp> {
+    return this.http.post<ShareAndHelp>(this.apiUrl, request);
   }
 
-  addComment(postId: string, comment: ShareAndHelpComment): void {
-    const updated = this.subject.value.map(post =>
-      post.id === postId
-        ? {
-            ...post,
-            comments: [...(post.comments ?? []), comment]
-          }
-        : post
+  update(
+    postId: string,
+    request: UpdateShareAndHelpRequest
+  ): Observable<ShareAndHelp> {
+    return this.http.put<ShareAndHelp>(`${this.apiUrl}/${postId}`, request);
+  }
+
+  delete(postId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${postId}`);
+  }
+
+  addComment(
+    postId: string,
+    request: CreateShareAndHelpCommentRequest
+  ): Observable<ShareAndHelp> {
+    return this.http.post<ShareAndHelp>(
+      `${this.apiUrl}/${postId}/comments`,
+      request
     );
-
-    this.update(updated);
   }
 
-  deleteComment(postId: string, commentId: string): void {
-    const updated = this.subject.value.map(post =>
-      post.id === postId
-        ? {
-            ...post,
-            comments: post.comments.filter(comment => comment.id !== commentId)
-          }
-        : post
+  deleteComment(
+    postId: string,
+    commentId: string
+  ): Observable<void> {
+    return this.http.delete<void>(
+      `${this.apiUrl}/${postId}/comments/${commentId}`
     );
-
-    this.update(updated);
-  }
-
-  private update(posts: ShareAndHelp[]): void {
-    this.subject.next(posts);
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(posts));
-  }
-
-  private load(): ShareAndHelp[] {
-    const data = localStorage.getItem(this.STORAGE_KEY);
-
-    if (!data) {
-      return [];
-    }
-
-    const posts = JSON.parse(data) as ShareAndHelp[];
-
-    return posts.map(post => ({
-      ...post,
-      comments: post.comments ?? []
-    }));
   }
 }
