@@ -1,16 +1,21 @@
 <mat-sidenav-container class="layout">
 
   <mat-sidenav mode="side" [opened]="true" class="sidebar">
+
     <div class="logo">
-      <mat-icon>apartment</mat-icon>
-      <span>Building Management</span>
+      <div class="logo-icon">
+        <mat-icon>apartment</mat-icon>
+      </div>
+
+      <span>
+        Building<br />
+        Management
+      </span>
     </div>
 
-    <mat-nav-list *ngIf="isManagerOrAdmin">
-      <a
-        mat-list-item
-        routerLink="/manager/dashboard"
-        routerLinkActive="active">
+    <mat-nav-list *ngIf="isManagerOrAdmin" class="nav-list">
+
+      <a mat-list-item routerLink="/manager/dashboard" routerLinkActive="active">
         <mat-icon matListItemIcon>dashboard</mat-icon>
         <span matListItemTitle>Dashboard</span>
       </a>
@@ -42,21 +47,12 @@
         <span matListItemTitle>Building Tenants</span>
       </a>
 
-      <button
-        mat-list-item
-        type="button"
-        (click)="logout()">
-        <mat-icon matListItemIcon>logout</mat-icon>
-        <span matListItemTitle>Logout</span>
-      </button>
     </mat-nav-list>
 
-    <mat-nav-list *ngIf="isTenant">
-      <a
-        mat-list-item
-        routerLink="/tenant/dashboard"
-        routerLinkActive="active">
-        <mat-icon matListItemIcon>dashboard</mat-icon>
+    <mat-nav-list *ngIf="isTenant" class="nav-list">
+
+      <a mat-list-item routerLink="/tenant/dashboard" routerLinkActive="active">
+        <mat-icon matListItemIcon>home</mat-icon>
         <span matListItemTitle>Dashboard</span>
       </a>
 
@@ -105,44 +101,54 @@
         <span matListItemTitle>Help & Share</span>
       </a>
 
-      <a
-        mat-list-item
-        routerLink="/tenant/settings"
-        routerLinkActive="active">
+      <a mat-list-item routerLink="/tenant/settings" routerLinkActive="active">
         <mat-icon matListItemIcon>settings</mat-icon>
         <span matListItemTitle>Settings</span>
       </a>
 
-      <button
-        mat-list-item
-        type="button"
-        (click)="logout()">
-        <mat-icon matListItemIcon>logout</mat-icon>
-        <span matListItemTitle>Logout</span>
-      </button>
     </mat-nav-list>
+
+    <button
+      mat-list-item
+      type="button"
+      class="logout-btn"
+      (click)="logout()">
+      <mat-icon matListItemIcon>logout</mat-icon>
+      <span matListItemTitle>Logout</span>
+    </button>
+
   </mat-sidenav>
 
   <mat-sidenav-content>
+
     <mat-toolbar class="topbar">
-      <div>
-        <h1>{{ isManagerOrAdmin ? 'Manager Dashboard' : 'Tenant Dashboard' }}</h1>
+
+      <div class="topbar-title">
         <p>Welcome back, {{ displayName }} 👋</p>
+        <h1>{{ isManagerOrAdmin ? 'Manager Dashboard' : 'Tenant Dashboard' }}</h1>
       </div>
 
       <span class="spacer"></span>
 
-      <button
-        mat-icon-button
-        type="button"
-        class="profile-btn">
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input type="text" placeholder="Search anything..." />
+      </div>
+
+      <button mat-icon-button type="button" class="notification-btn">
+        <mat-icon>notifications_none</mat-icon>
+      </button>
+
+      <button mat-icon-button type="button" class="profile-btn">
         <mat-icon>account_circle</mat-icon>
       </button>
+
     </mat-toolbar>
 
-    <main class="page-content">
-      <router-outlet></router-outlet>
-    </main>
+<main class="page-content" [class.chat-page-mode]="isChatPage">
+  <router-outlet></router-outlet>
+</main>
+
   </mat-sidenav-content>
 
 </mat-sidenav-container>

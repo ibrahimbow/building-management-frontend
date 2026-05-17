@@ -70,13 +70,9 @@ export class ShareAndHelpComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(created => {
-      if (!created) {
-        return;
-      }
-
-      setTimeout(() => {
+      if (created) {
         this.loadPosts();
-      }, 0);
+      }
     });
   }
 
@@ -124,7 +120,8 @@ export class ShareAndHelpComponent implements OnInit {
     });
   }
 
-  deleteComment(postId: string, commentId: string): void {
+  deleteComment(postId: string,
+                commentId: string): void {
     this.service.deleteComment(postId, commentId).subscribe({
       next: () => {
         this.loadPosts();
@@ -144,7 +141,8 @@ export class ShareAndHelpComponent implements OnInit {
       this.getVisibleCommentCount(postId) + 3;
   }
 
-  trackByPostId(index: number, post: ShareAndHelp): string {
+  trackByPostId(index: number,
+                post: ShareAndHelp): string {
     return post.id;
   }
 
@@ -170,18 +168,16 @@ export class ShareAndHelpComponent implements OnInit {
 
   private loadPosts(): void {
     this.isLoading = true;
-    this.cdr.detectChanges();
 
     this.service.getAll().pipe(
       finalize(() => {
         this.isLoading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       })
     ).subscribe({
       next: posts => {
-  console.log('Share & Help posts from backend:', posts);
-  this.posts = posts;
-},
+        this.posts = posts;
+      },
       error: () => {
         this.posts = [];
         this.notificationService.error('Could not load Share & Help posts.');

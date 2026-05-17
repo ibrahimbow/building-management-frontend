@@ -1,13 +1,27 @@
 <section class="tenant-announcements-page">
 
-  <p *ngIf="isLoading">
-    Loading announcements...
-  </p>
+  <section class="announcements-hero">
+    <div>
+      <p class="eyebrow">Building updates</p>
+      <h2>Announcements</h2>
+      <p>Stay informed about maintenance, events, safety alerts and important building news.</p>
+    </div>
+
+    <div class="hero-icon">
+      <mat-icon>campaign</mat-icon>
+    </div>
+  </section>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <mat-icon>hourglass_top</mat-icon>
+    <p>Loading announcements...</p>
+  </div>
 
   <mat-card
     *ngIf="!isLoading && announcements.length === 0"
     class="empty-card">
 
+    <mat-icon>notifications_off</mat-icon>
     <mat-card-title>No announcements yet</mat-card-title>
 
     <mat-card-content>
@@ -16,44 +30,50 @@
 
   </mat-card>
 
-  <mat-card
-    *ngFor="let announcement of announcements"
-    class="announcement-card">
+  <section class="announcements-list">
 
-    <mat-card-header>
-      <mat-icon mat-card-avatar>
-        {{ announcement.icon || 'campaign' }}
-      </mat-icon>
+    <mat-card
+      *ngFor="let announcement of announcements"
+      class="announcement-card"
+      [ngClass]="announcement.category.toLowerCase()">
 
-      <mat-card-title>
-        {{ announcement.title }}
-      </mat-card-title>
-
-      <mat-card-subtitle>
-        {{ announcement.createdAt | date:'mediumDate' }}
-      </mat-card-subtitle>
-    </mat-card-header>
-
-    <div
-      class="image-container"
-      *ngIf="hasValidImage(announcement.imageUrl)">
-
-      <img
-        [src]="announcement.imageUrl"
-        alt="announcement image" />
-    </div>
-
-    <mat-card-content>
-      <p>{{ announcement.message }}</p>
-
-      <div
-        class="category-badge"
-        [ngClass]="announcement.category.toLowerCase()">
-
-        {{ announcement.category }}
+      <div class="announcement-icon">
+        <mat-icon>{{ announcement.icon || 'campaign' }}</mat-icon>
       </div>
-    </mat-card-content>
 
-  </mat-card>
+      <div class="announcement-body">
+
+        <div class="announcement-header">
+          <div>
+            <h3>{{ announcement.title }}</h3>
+            <p class="date">
+              <mat-icon>schedule</mat-icon>
+              {{ announcement.createdAt | date:'mediumDate' }}
+            </p>
+          </div>
+
+          <span
+            class="category-badge"
+            [ngClass]="announcement.category.toLowerCase()">
+            {{ announcement.category }}
+          </span>
+        </div>
+
+        <div
+          class="image-container"
+          *ngIf="hasValidImage(announcement.imageUrl)">
+
+          <img
+            [src]="announcement.imageUrl"
+            alt="announcement image" />
+        </div>
+
+        <p class="message">{{ announcement.message }}</p>
+
+      </div>
+
+    </mat-card>
+
+  </section>
 
 </section>

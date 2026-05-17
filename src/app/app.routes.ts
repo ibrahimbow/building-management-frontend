@@ -66,7 +66,7 @@ export const routes: Routes = [
       {
         path: 'resident-chat',
         loadComponent: () =>
-          import('./features/tenant/resident-chat/resident-chat')
+          import('./features/tenant/tenant-chat/tenant-chat')
             .then(m => m.ResidentChat)
       },
       {

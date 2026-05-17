@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet, Router } from '@angular/router';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -40,6 +40,10 @@ export class MainLayout implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly buildingService = inject(BuildingService);
   private readonly cdr = inject(ChangeDetectorRef);
+
+  private readonly router = inject(Router);
+
+
 
   managerHasBuilding = false;
   tenantHasJoinedBuilding = false;
@@ -138,6 +142,10 @@ export class MainLayout implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  get isChatPage(): boolean {
+    return this.router.url.includes('/chat');
   }
 
   private loadManagerBuildingState(): void {

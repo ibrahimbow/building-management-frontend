@@ -1,0 +1,279 @@
+<section class="chat-page">
+
+  <header class="chat-header">
+    <div>
+      <span class="eyebrow">Building community</span>
+      <h2>Resident Chat</h2>
+      <p>Share updates, questions, and helpful messages with your neighbors.</p>
+    </div>
+
+    <button
+      mat-icon-button
+      class="refresh-button"
+      type="button"
+      [disabled]="isLoading"
+      (click)="loadMessages()">
+
+      <mat-spinner *ngIf="isLoading" diameter="22"></mat-spinner>
+      <mat-icon *ngIf="!isLoading">refresh</mat-icon>
+
+    </button>
+  </header>
+
+  <section class="chat-shell">
+
+    <div class="chat-toolbar">
+      <div class="room-info">
+        <div class="room-icon">
+          <mat-icon>forum</mat-icon>
+        </div>
+
+        <div>
+          <h3>Public building room</h3>
+          <p>Messages are visible to all active residents</p>
+        </div>
+      </div>
+
+      <span class="room-status">
+        <span></span>
+        Active
+      </span>
+    </div>
+
+    <div class="messages-area" #messagesArea>
+
+      <div *ngIf="isLoading" class="loading-state">
+        <mat-spinner diameter="36"></mat-spinner>
+        <p>Loading resident messages...</p>
+      </div>
+
+      <div *ngIf="!isLoading && messages.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <mat-icon>chat_bubble_outline</mat-icon>
+        </div>
+
+        <h3>No messages yet</h3>
+        <p>Start the first conversation in your building.</p>
+      </div>
+
+      <ng-container *ngIf="!isLoading && messages.length > 0">
+
+        <section
+          *ngFor="let group of groupedMessages; trackBy: trackByGroupLabel"
+          class="message-group">
+
+          <div class="day-separator">
+            <span>{{ group.label }}</span>
+          </div>
+
+          <article
+            *ngFor="let message of group.messages; trackBy: trackByMessageId"
+            class="bubble-row"
+            [class.mine]="isMyMessage(message)">
+
+            <div class="bubble-line">
+
+              <div class="bubble-avatar">
+                <img
+                  *ngIf="message.senderAvatarUrl"
+                  [src]="message.senderAvatarUrl"
+                  [alt]="message.senderDisplayName" />
+
+                <mat-icon *ngIf="!message.senderAvatarUrl">person</mat-icon>
+                <span></span>
+              </div>
+
+              <div class="bubble-stack">
+
+                <div class="bubble-meta">
+                  <strong>{{ message.senderDisplayName }}</strong>
+                  <small>{{ message.createdAt | timeAgo }}</small>
+                </div>
+
+                <div
+                  class="message-bubble"
+                  [class.deleted-message]="message.deleted">
+
+                  <p
+                    class="message-content"
+                    *ngIf="!message.deleted && message.content">
+                    {{ message.content }}
+                  </p>
+
+                  <p class="deleted-text" *ngIf="message.deleted">
+                    <mat-icon>block</mat-icon>
+                    This message was deleted
+                  </p>
+
+        <img
+  *ngIf="!message.deleted && message.imageUrl"
+  class="bubble-image clickable-image"
+  [src]="resolveImageUrl(message.imageUrl)"
+  alt="Chat image"
+  (click)="openImagePreview(resolveImageUrl(message.imageUrl))" />
+
+                </div>
+
+                <div
+                  class="reaction-pills"
+                  *ngIf="message.reactions.length > 0">
+
+                  <button
+                    type="button"
+                    *ngFor="let reaction of message.reactions"
+                    [class.mine]="reaction.reactedByCurrentUser"
+                    (click)="reactToMessage(message, reaction.emoji)">
+                    {{ reaction.emoji }} {{ reaction.count }}
+                  </button>
+
+                </div>
+
+                <div class="bubble-actions" *ngIf="!message.deleted">
+
+                  <div class="emoji-actions">
+                    <button
+                      type="button"
+                      *ngFor="let emoji of emojis"
+                      [class.reacted]="hasReacted(message, emoji)"
+                      (click)="reactToMessage(message, emoji)">
+                      {{ emoji }}
+                    </button>
+                  </div>
+
+                  <button
+                    *ngIf="isMyMessage(message)"
+                    mat-icon-button
+                    type="button"
+                    class="delete-button"
+                    aria-label="Delete message"
+                    (click)="deleteMessage(message)">
+                    <mat-icon>delete_outline</mat-icon>
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        </section>
+
+      </ng-container>
+
+    </div>
+
+    <form class="composer" (ngSubmit)="sendMessage()">
+
+      <div class="composer-row">
+
+        <div class="composer-avatar">
+          <mat-icon>person</mat-icon>
+          <span></span>
+        </div>
+
+        <div class="composer-box">
+
+          <input
+  class="message-textbox"
+  name="messageContent"
+  maxlength="2000"
+  [(ngModel)]="messageContent"
+  [disabled]="isSending"
+  placeholder="Message @Residents..."
+  (keydown.enter)="!isSending && sendMessage(); $event.preventDefault()" />
+
+<input
+  #imageFileInput
+  type="file"
+  accept="image/*"
+  hidden
+  (change)="onImageSelected($event)" />
+
+<button
+  type="button"
+  class="composer-icon"
+  aria-label="Upload image"
+  [disabled]="isSending"
+  (click)="imageFileInput.click()">
+  <mat-icon>attach_file</mat-icon>
+</button>
+
+          <div
+  #emojiPickerContainer
+  class="emoji-picker-wrapper">
+
+            <button
+  type="button"
+  class="composer-icon"
+  aria-label="Open emoji picker"
+  [disabled]="isSending"
+  (click)="showEmojiPicker = !showEmojiPicker">
+  <mat-icon>sentiment_satisfied_alt</mat-icon>
+</button>
+
+            <div class="emoji-picker" *ngIf="showEmojiPicker">
+
+              <button
+                type="button"
+                *ngFor="let emoji of composerEmojis"
+                (click)="addEmoji(emoji)">
+                {{ emoji }}
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <button
+          mat-fab
+          type="submit"
+          class="send-button"
+          [disabled]="isSending || (!messageContent.trim() && !selectedFile)">
+
+          <mat-icon *ngIf="!isSending">send</mat-icon>
+          <mat-spinner *ngIf="isSending" diameter="22"></mat-spinner>
+
+        </button>
+
+      </div>
+
+      <div class="composer-bottom">
+
+
+<div class="image-preview" *ngIf="imagePreviewUrl">
+  <img [src]="imagePreviewUrl" alt="Selected image" />
+ 
+
+  <button type="button" (click)="removeImage()" [disabled]="isSending">
+    <mat-icon>close</mat-icon>
+  </button>
+        </div>
+
+        <label class="enter-option">
+          <span>Press Enter to send</span>
+          <input type="checkbox" checked />
+        </label>
+
+      </div>
+
+      
+    </form>
+
+  </section>
+
+  <div
+  class="image-lightbox"
+  *ngIf="previewImageUrl"
+  (click)="closeImagePreview()">
+
+  <img
+    [src]="previewImageUrl"
+    alt="Preview image"
+    (click)="$event.stopPropagation()" />
+
+</div>
+</section>

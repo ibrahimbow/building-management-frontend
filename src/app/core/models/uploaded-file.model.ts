@@ -1,7 +1,8 @@
 export type FileType =
   | 'PROFILE_AVATAR'
   | 'ANNOUNCEMENT_IMAGE'
-  | 'SHARE_AND_HELP_IMAGE';
+  | 'SHARE_AND_HELP_IMAGE'
+  | 'CHAT_MESSAGE_IMAGE';
 
 export interface UploadedFile {
   fileName: string;
