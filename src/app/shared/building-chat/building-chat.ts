@@ -20,15 +20,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { AuthService } from '../../../core/services/auth.service';
-import { ChatService } from '../../../core/services/chat.service';
-import { FileUploadService } from '../../../core/services/file-upload.service';
-import { NotificationService } from '../../../core/services/notification.service';
+import { AuthService } from '../../core/services/auth.service';
+import { ChatService } from '../../core/services/chat.service';
+import { FileUploadService } from '../../core/services/file-upload.service';
+import { NotificationService } from '../../core/services/notification.service';
 
-import { ChatMessage } from '../../../core/models/chat-message.model';
-import { UploadedFile } from '../../../core/models/uploaded-file.model';
+import { ChatMessage } from '../../core/models/chat-message.model';
+import { UploadedFile } from '../../core/models/uploaded-file.model';
 
-import { TimeAgoPipe } from '../../../core/pipes/time-ago-pipe';
+import { TimeAgoPipe } from '../../core/pipes/time-ago-pipe';
+
+import { BuildingService } from '../../core/services/building.service';
+import { ChatWebSocketService } from '../../core/services/chat-websocket.service';
 
 interface ChatMessageGroup {
   label: string;
@@ -36,7 +39,7 @@ interface ChatMessageGroup {
 }
 
 @Component({
-  selector: 'app-tenant-chat',
+  selector: 'app-building-chat',
   standalone: true,
   imports: [
     CommonModule,
@@ -48,10 +51,10 @@ interface ChatMessageGroup {
     MatProgressSpinnerModule,
     TimeAgoPipe
   ],
-  templateUrl: './tenant-chat.html',
-  styleUrl: './tenant-chat.scss'
+  templateUrl: './building-chat.html',
+  styleUrl: './building-chat.scss'
 })
-export class ResidentChat implements OnInit, AfterViewChecked {
+export class BuildingChat implements OnInit, AfterViewChecked {
 
   @ViewChild('messagesArea')
   private messagesArea?: ElementRef<HTMLDivElement>;
@@ -64,6 +67,8 @@ export class ResidentChat implements OnInit, AfterViewChecked {
   private readonly fileUploadService = inject(FileUploadService);
   private readonly notificationService = inject(NotificationService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly chatWebSocketService = inject(ChatWebSocketService);
+  private readonly buildingService = inject(BuildingService);
 
   private shouldScrollToBottom = false;
 
@@ -99,10 +104,10 @@ export class ResidentChat implements OnInit, AfterViewChecked {
   showEmojiPicker = false;
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.loadMessages();
-    });
-  }
+  setTimeout(() => {
+    this.loadTenantBuildingAndMessages();
+  });
+}
 
   ngAfterViewChecked(): void {
   if (!this.shouldScrollToBottom) return;
@@ -222,16 +227,10 @@ export class ResidentChat implements OnInit, AfterViewChecked {
         })
       )
       .subscribe({
-        next: message => {
-          this.messages = [
-            ...this.messages,
-            message
-          ];
-
-          this.messageContent = '';
-          this.clearSelectedImage();
-          this.shouldScrollToBottom = true;
-        },
+        next: () => {
+  this.messageContent = '';
+  this.clearSelectedImage();
+},
         error: error => {
           console.error('Failed to send chat message:', error);
           this.notificationService.error('Failed to send message.');
@@ -274,14 +273,29 @@ export class ResidentChat implements OnInit, AfterViewChecked {
       return;
     }
 
-    const previousMessages = this.cloneMessages();
-    const alreadyReacted = this.hasReacted(message, emoji);
+    const currentMessage = this.messages.find(
+  current => current.id === message.id
+);
+
+if (!currentMessage) {
+  return;
+}
+
+const previousMessages = this.cloneMessages();
+const alreadyReacted = this.hasReacted(currentMessage, emoji);
+      console.log(
+  alreadyReacted ? 'Removing reaction logfile' : 'Adding reaction',
+  message.id,
+  emoji
+);
 
     this.toggleReactionLocally(message.id, emoji);
 
     const request$: Observable<unknown> = alreadyReacted
       ? this.chatService.removeReaction(message.id, emoji)
       : this.chatService.reactToMessage(message.id, emoji);
+
+
 
     request$.subscribe({
       error: error => {
@@ -478,4 +492,111 @@ export class ResidentChat implements OnInit, AfterViewChecked {
 
     element.scrollTop = element.scrollHeight;
   }
+
+private connectWebSocketMessages(): void {
+
+  this.chatWebSocketService.events$
+    .subscribe(event => {
+console.log('Chat websocket event received:', event);
+      switch (event.type) {
+
+        case 'MESSAGE_CREATED':
+          this.handleRealtimeMessageCreated(event.message);
+          break;
+
+        case 'MESSAGE_DELETED':
+          this.handleRealtimeMessageDeleted(event.message);
+          break;
+
+        case 'REACTION_UPDATED':
+          this.handleRealtimeReactionUpdated(event.message);
+         break;
+      }
+    });
+}
+
+private loadTenantBuildingAndMessages(): void {
+
+  this.buildingService
+    .getCurrentBuildingForChat(
+      this.authService.isManagerOrAdmin()
+    )
+    .subscribe({
+      next: building => {
+
+        if (!building) {
+          this.notificationService.error(
+            'No building found for chat.'
+          );
+
+          this.isLoading = false;
+          return;
+        }
+
+        this.chatWebSocketService.connect(building.id);
+
+        console.log(
+          'Loading building chat messages:',
+          building.id
+        );
+
+        this.connectWebSocketMessages();
+        this.loadMessages();
+      },
+
+      error: error => {
+        console.error(
+          'Failed to load building chat:',
+          error
+        );
+
+        this.notificationService.error(
+          'Failed to load your building chat.'
+        );
+
+        this.isLoading = false;
+      }
+    });
+}
+
+private handleRealtimeMessageCreated(message: ChatMessage): void {
+  const alreadyExists = this.messages.some(
+    currentMessage => currentMessage.id === message.id
+  );
+
+  if (alreadyExists) {
+    return;
+  }
+
+  this.messages = [
+    ...this.messages,
+    message
+  ];
+
+  this.shouldScrollToBottom = true;
+  this.cdr.markForCheck();
+}
+
+private handleRealtimeMessageDeleted(message: ChatMessage): void {
+  this.messages = this.messages.map(currentMessage =>
+    currentMessage.id === message.id
+      ? message
+      : currentMessage
+  );
+
+  this.cdr.markForCheck();
+}
+
+private handleRealtimeReactionUpdated(message: ChatMessage): void {
+  this.messages = this.messages.map(currentMessage =>
+    currentMessage.id === message.id
+      ? {
+          ...currentMessage,
+          reactions: message.reactions
+        }
+      : currentMessage
+  );
+
+  this.cdr.markForCheck();
+}
 }

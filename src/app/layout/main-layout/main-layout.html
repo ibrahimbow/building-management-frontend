@@ -20,31 +20,24 @@
         <span matListItemTitle>Dashboard</span>
       </a>
 
-      <a
-        *ngIf="!managerHasBuilding"
-        mat-list-item
-        routerLink="/manager/create-building"
-        routerLinkActive="active">
+      <a *ngIf="!managerHasBuilding" mat-list-item routerLink="/manager/create-building" routerLinkActive="active">
         <mat-icon matListItemIcon>apartment</mat-icon>
         <span matListItemTitle>Create Building</span>
       </a>
 
-      <a
-        *ngIf="managerHasBuilding"
-        mat-list-item
-        routerLink="/manager/announcements"
-        routerLinkActive="active">
+      <a *ngIf="managerHasBuilding" mat-list-item routerLink="/manager/announcements" routerLinkActive="active">
         <mat-icon matListItemIcon>campaign</mat-icon>
         <span matListItemTitle>Announcements</span>
       </a>
 
-      <a
-        *ngIf="managerHasBuilding"
-        mat-list-item
-        routerLink="/manager/building-tenants"
-        routerLinkActive="active">
+      <a *ngIf="managerHasBuilding" mat-list-item routerLink="/manager/building-tenants" routerLinkActive="active">
         <mat-icon matListItemIcon>groups</mat-icon>
         <span matListItemTitle>Building Tenants</span>
+      </a>
+
+            <a *ngIf="managerHasBuilding" mat-list-item routerLink="/manager/building-chat" routerLinkActive="active">
+        <mat-icon matListItemIcon>chat</mat-icon>
+        <span matListItemTitle>Building Chat</span>
       </a>
 
     </mat-nav-list>
@@ -56,47 +49,27 @@
         <span matListItemTitle>Dashboard</span>
       </a>
 
-      <a
-        *ngIf="!tenantHasJoinedBuilding"
-        mat-list-item
-        routerLink="/tenant/join-building"
-        routerLinkActive="active">
+      <a *ngIf="!tenantHasJoinedBuilding" mat-list-item routerLink="/tenant/join-building" routerLinkActive="active">
         <mat-icon matListItemIcon>business</mat-icon>
         <span matListItemTitle>Join Building</span>
       </a>
 
-      <a
-        *ngIf="tenantHasJoinedBuilding"
-        mat-list-item
-        routerLink="/tenant/building-info"
-        routerLinkActive="active">
+      <a *ngIf="tenantHasJoinedBuilding" mat-list-item routerLink="/tenant/building-info" routerLinkActive="active">
         <mat-icon matListItemIcon>apartment</mat-icon>
         <span matListItemTitle>Building Info</span>
       </a>
 
-      <a
-        *ngIf="tenantHasJoinedBuilding"
-        mat-list-item
-        routerLink="/tenant/announcements"
-        routerLinkActive="active">
+      <a *ngIf="tenantHasJoinedBuilding" mat-list-item routerLink="/tenant/announcements" routerLinkActive="active">
         <mat-icon matListItemIcon>campaign</mat-icon>
         <span matListItemTitle>Announcements</span>
       </a>
 
-      <a
-        *ngIf="tenantHasJoinedBuilding"
-        mat-list-item
-        routerLink="/tenant/resident-chat"
-        routerLinkActive="active">
+      <a *ngIf="tenantHasJoinedBuilding" mat-list-item routerLink="/tenant/building-chat" routerLinkActive="active">
         <mat-icon matListItemIcon>chat</mat-icon>
-        <span matListItemTitle>Chat</span>
+        <span matListItemTitle>Building Chat</span>
       </a>
 
-      <a
-        *ngIf="tenantHasJoinedBuilding"
-        mat-list-item
-        routerLink="/tenant/help-share"
-        routerLinkActive="active">
+      <a *ngIf="tenantHasJoinedBuilding" mat-list-item routerLink="/tenant/help-share" routerLinkActive="active">
         <mat-icon matListItemIcon>share</mat-icon>
         <span matListItemTitle>Help & Share</span>
       </a>
@@ -108,11 +81,7 @@
 
     </mat-nav-list>
 
-    <button
-      mat-list-item
-      type="button"
-      class="logout-btn"
-      (click)="logout()">
+    <button mat-list-item type="button" class="logout-btn" (click)="logout()">
       <mat-icon matListItemIcon>logout</mat-icon>
       <span matListItemTitle>Logout</span>
     </button>
@@ -130,11 +99,6 @@
 
       <span class="spacer"></span>
 
-      <div class="search-box">
-        <mat-icon>search</mat-icon>
-        <input type="text" placeholder="Search anything..." />
-      </div>
-
       <button mat-icon-button type="button" class="notification-btn">
         <mat-icon>notifications_none</mat-icon>
       </button>
@@ -145,9 +109,9 @@
 
     </mat-toolbar>
 
-<main class="page-content" [class.chat-page-mode]="isChatPage">
-  <router-outlet></router-outlet>
-</main>
+    <main class="page-content" [class.chat-page-mode]="isChatPage">
+      <router-outlet></router-outlet>
+    </main>
 
   </mat-sidenav-content>
 

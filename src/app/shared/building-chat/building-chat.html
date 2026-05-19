@@ -44,7 +44,7 @@
 
       <div *ngIf="isLoading" class="loading-state">
         <mat-spinner diameter="36"></mat-spinner>
-        <p>Loading resident messages...</p>
+        <p>Loading tenant messages...</p>
       </div>
 
       <div *ngIf="!isLoading && messages.length === 0" class="empty-state">
@@ -252,11 +252,6 @@
     <mat-icon>close</mat-icon>
   </button>
         </div>
-
-        <label class="enter-option">
-          <span>Press Enter to send</span>
-          <input type="checkbox" checked />
-        </label>
 
       </div>
 

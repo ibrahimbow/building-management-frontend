@@ -1,59 +1,10 @@
 <main class="content">
 
-  <section class="building-overview">
-
-    <div class="building-image">
-      <img src="assets/images/buildingtemp.png" alt="Building Image">
-    </div>
-
-    <div class="building-details">
-      <h2>ANTWERPERN SUNRISE</h2>
-      <p class="address">BERCHEM</p>
-
-      <div class="building-info-grid">
-        <div class="info-box">
-          <mat-icon>apartment</mat-icon>
-          <div>
-            <span>Building Code</span>
-            <strong>bm-2X5TS99</strong>
-          </div>
-        </div>
-
-        <div class="info-box">
-          <mat-icon>groups</mat-icon>
-          <div>
-            <span>Total Apartments</span>
-            <strong>90</strong>
-          </div>
-        </div>
-
-        <div class="info-box">
-          <mat-icon>person</mat-icon>
-          <div>
-            <span>Manager</span>
-            <strong>IBRAHIM ALOLOFI</strong>
-          </div>
-        </div>
-
-        <div class="info-box">
-          <mat-icon>call</mat-icon>
-          <div>
-            <span>Emergency Phone</span>
-            <strong>+3200000000</strong>
-          </div>
-        </div>
-      </div>
-
-      <button mat-flat-button class="leave-btn">
-        <mat-icon>logout</mat-icon>
-        Leave Building
-      </button>
-    </div>
-
-  </section>
+  <mat-card *ngIf="isLoading" class="join-building-card">
+    <mat-card-content>Loading your building...</mat-card-content>
+  </mat-card>
 
   <mat-card *ngIf="!isLoading && !hasJoinedBuilding" class="join-building-card">
-
     <mat-card-title>Join a Building</mat-card-title>
 
     <mat-card-content>
@@ -63,33 +14,83 @@
         Join Building
       </button>
     </mat-card-content>
-
   </mat-card>
 
-  <section class="stats-row" *ngIf="hasJoinedBuilding">
+  <ng-container *ngIf="!isLoading && hasJoinedBuilding && building">
 
-    <article *ngFor="let item of menuItems" class="stat-card" [routerLink]="item.route">
+    <section class="building-overview">
 
-      <mat-icon>{{ item.icon }}</mat-icon>
-
-      <div>
-        <strong>{{ item.notificationCount || 0 }}</strong>
-        <span>{{ item.title }}</span>
-        <small>{{ item.description }}</small>
+      <div class="building-image">
+        <img src="assets/images/buildingtemp.png" alt="Building Image">
       </div>
 
-    </article>
+      <div class="building-details">
+        <h2>{{ building.buildingName }}</h2>
+        <p class="address">{{ building.address }}</p>
 
-  </section>
+        <div class="building-info-grid">
 
+          <div class="info-box">
+            <mat-icon>apartment</mat-icon>
+            <div>
+              <span>Building Code</span>
+              <strong>{{ building.code }}</strong>
+            </div>
+          </div>
 
+          <div class="info-box">
+            <mat-icon>groups</mat-icon>
+            <div>
+              <span>Total Apartments</span>
+              <strong>{{ building.totalApartments }}</strong>
+            </div>
+          </div>
 
+          <div class="info-box">
+            <mat-icon>person</mat-icon>
+            <div>
+              <span>Building Manager</span>
+              <strong>{{ building.managerName }}</strong>
+            </div>
+          </div>
 
-<section class="glance-card">
-  <div class="glance-content">
-    <h3>Antwerpen at a Glance</h3>
-    <p>A community of comfort, safety, and connection.</p>
-  </div>
-</section>
+          <div class="info-box">
+            <mat-icon>call</mat-icon>
+            <div>
+              <span>Emergency Phone</span>
+              <strong>{{ building.emergencyPhone }}</strong>
+            </div>
+          </div>
+
+        </div>
+
+        <button mat-flat-button class="leave-btn" (click)="leaveBuilding()">
+          <mat-icon>logout</mat-icon>
+          Leave Building
+        </button>
+      </div>
+
+    </section>
+
+    <section class="stats-row">
+      <article *ngFor="let item of menuItems" class="stat-card" [routerLink]="item.route">
+        <mat-icon>{{ item.icon }}</mat-icon>
+
+        <div>
+          <strong>{{ item.notificationCount || 0 }}</strong>
+          <span>{{ item.title }}</span>
+          <small>{{ item.description }}</small>
+        </div>
+      </article>
+    </section>
+
+    <section class="glance-card">
+      <div class="glance-content">
+        <h3>{{ building.buildingName }} at a Glance</h3>
+        <p>A community of comfort, safety, and connection.</p>
+      </div>
+    </section>
+
+  </ng-container>
 
 </main>

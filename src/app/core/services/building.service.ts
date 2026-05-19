@@ -30,7 +30,7 @@ export class BuildingService {
 
   getMyManagedBuilding(): Observable<BuildingInfo | null> {
     return this.getMyManagedBuildings().pipe(
-      map((buildings) => buildings.length > 0 ? buildings[0] : null)
+      map(buildings => buildings.length > 0 ? buildings[0] : null)
     );
   }
 
@@ -71,6 +71,12 @@ export class BuildingService {
     return this.http.get<BuildingInfo>(
       `${this.tenantBuildingsUrl}/my-building`
     );
+  }
+
+  getCurrentBuildingForChat(isManagerOrAdmin: boolean): Observable<BuildingInfo | null> {
+    return isManagerOrAdmin
+      ? this.getMyManagedBuilding()
+      : this.getMyJoinedBuilding();
   }
 
   joinBuilding(code: string): Observable<BuildingInfo> {

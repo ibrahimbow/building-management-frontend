@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { AuthService } from './auth.service';
 import { ChatMessage } from '../models/chat-message.model';
 import { ChatReaction } from '../models/chat-reaction.model';
 
@@ -11,8 +12,15 @@ import { ChatReaction } from '../models/chat-reaction.model';
 export class ChatService {
 
   private readonly http = inject(HttpClient);
+  private readonly authService = inject(AuthService);
 
-  private readonly baseUrl = 'http://localhost:8080/api/tenant/chat';
+  private get baseUrl(): string {
+    const rolePath = this.authService.isManagerOrAdmin()
+      ? 'manager'
+      : 'tenant';
+
+    return `http://localhost:8080/api/${rolePath}/chat`;
+  }
 
   getMessages(): Observable<ChatMessage[]> {
     return this.http.get<ChatMessage[]>(`${this.baseUrl}/messages`);
@@ -30,14 +38,19 @@ export class ChatService {
   }
 
   reactToMessage(messageId: string, emoji: string): Observable<ChatReaction> {
-    return this.http.post<ChatReaction>(`${this.baseUrl}/messages/${messageId}/reactions`, {
-      emoji
-    });
+    return this.http.post<ChatReaction>(
+      `${this.baseUrl}/messages/${messageId}/reactions`,
+      { emoji }
+    );
   }
 
   removeReaction(messageId: string, emoji: string): Observable<void> {
-    return this.http.delete<void>(
-      `${this.baseUrl}/messages/${messageId}/reactions/${encodeURIComponent(emoji)}`
+    return this.http.request<void>(
+      'DELETE',
+      `${this.baseUrl}/messages/${messageId}/reactions`,
+      {
+        body: { emoji }
+      }
     );
   }
 }

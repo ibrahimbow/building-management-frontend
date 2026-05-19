@@ -11,6 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { BuildingService } from '../../../core/services/building.service';
+import { TenantBuildingStateService } from '../../../core/services/tenant-building-state.service';
+
 
 @Component({
   selector: 'app-join-building',
@@ -33,6 +35,7 @@ export class JoinBuilding {
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly tenantBuildingState = inject(TenantBuildingStateService);
 
   buildingCode = '';
   isSubmitting = false;
@@ -56,7 +59,8 @@ export class JoinBuilding {
           duration: 2500
         });
 
-        this.router.navigateByUrl('/tenant/building-info');
+        this.tenantBuildingState.markJoined();
+this.router.navigate(['/tenant/dashboard']);
       },
       error: () => {
         this.snackBar.open('Invalid building code or already joined.', 'Close', {

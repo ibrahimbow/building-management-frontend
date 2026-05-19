@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { AuthService } from '../../core/services/auth.service';
 import { BuildingService } from '../../core/services/building.service';
+import { TenantBuildingStateService } from '../../core/services/tenant-building-state.service';
 
 interface MenuItem {
   label: string;
@@ -43,6 +44,8 @@ export class MainLayout implements OnInit {
 
   private readonly router = inject(Router);
 
+  private readonly tenantBuildingState = inject(TenantBuildingStateService);
+
 
 
   managerHasBuilding = false;
@@ -65,7 +68,14 @@ export class MainLayout implements OnInit {
       icon: 'campaign',
       route: '/manager/announcements',
       requiresBuilding: true
+    },
+    {
+      label: 'Building Chat',
+      icon: 'chat',
+      route: '/manager/building-chat',
+      requiresBuilding: true
     }
+
   ];
 
   readonly tenantMenuItems: MenuItem[] = [
@@ -98,9 +108,9 @@ export class MainLayout implements OnInit {
       requiresBuilding: true
     },
     {
-      label: 'Resident Chat',
+      label: 'Building Chat',
       icon: 'chat',
-      route: '/tenant/resident-chat',
+      route: '/tenant/building-chat',
       requiresBuilding: true
     },
     {
@@ -162,15 +172,11 @@ export class MainLayout implements OnInit {
   }
 
   private loadTenantBuildingState(): void {
-    this.buildingService.getMyJoinedBuilding().subscribe({
-      next: () => {
-        this.tenantHasJoinedBuilding = true;
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.tenantHasJoinedBuilding = false;
-        this.cdr.markForCheck();
-      }
+    this.tenantBuildingState.tenantHasJoinedBuilding$.subscribe(value => {
+      this.tenantHasJoinedBuilding = value;
+      this.cdr.markForCheck();
     });
+
+    this.tenantBuildingState.refresh();
   }
 }

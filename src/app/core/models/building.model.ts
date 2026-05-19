@@ -11,6 +11,7 @@ export interface BuildingInfo {
   code: string;
   address: string;
   managerId: number;
+  managerName: string;
   totalApartments: number;
   emergencyPhone: string;
 }

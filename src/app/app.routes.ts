@@ -64,10 +64,10 @@ export const routes: Routes = [
             .then(m => m.ShareAndHelpComponent)
       },
       {
-        path: 'resident-chat',
+        path: 'building-chat',
         loadComponent: () =>
-          import('./features/tenant/tenant-chat/tenant-chat')
-            .then(m => m.ResidentChat)
+          import('./shared/building-chat/building-chat')
+            .then(m => m.BuildingChat)
       },
       {
         path: 'settings',
@@ -125,6 +125,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/manager/building-tenants/building-tenants')
             .then(m => m.BuildingTenants)
+      },
+      {
+        path: 'building-chat',
+        loadComponent: () =>
+          import('./shared/building-chat/building-chat')
+            .then(m => m.BuildingChat)
       }
     ]
   },
