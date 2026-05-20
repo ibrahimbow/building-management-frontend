@@ -1,46 +1,89 @@
-<mat-card class="building-info-card">
+<main class="content">
 
-  <ng-container *ngIf="isLoading">
-    <div class="loading-state">
-      <mat-spinner diameter="40"></mat-spinner>
-      <p>Loading building information...</p>
-    </div>
-  </ng-container>
+  <mat-card class="building-info-card">
 
-  <ng-container *ngIf="!isLoading && errorMessage">
-    <div class="empty-state">
-      <mat-icon>apartment</mat-icon>
-      <h2>No building connected</h2>
-      <p>{{ errorMessage }}</p>
-    </div>
-  </ng-container>
+    <ng-container *ngIf="isLoading">
+      <div class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading building information...</p>
+      </div>
+    </ng-container>
 
-  <ng-container *ngIf="!isLoading && building">
-    <mat-card-header>
-      <mat-icon mat-card-avatar>apartment</mat-icon>
+    <ng-container *ngIf="!isLoading && errorMessage">
+      <div class="empty-state">
+        <mat-icon>apartment</mat-icon>
+        <h2>No building connected</h2>
+        <p>{{ errorMessage }}</p>
+      </div>
+    </ng-container>
 
-      <mat-card-title>
-        {{ building.buildingName }}
-      </mat-card-title>
+    <ng-container *ngIf="!isLoading && building">
 
-      <mat-card-subtitle>
-        {{ building.address }}
-      </mat-card-subtitle>
-    </mat-card-header>
+      <section class="building-overview">
 
-    <mat-divider></mat-divider>
+        <div class="building-image">
+          <img src="assets/images/buildingtemp.png" alt="Building image">
+        </div>
 
-    <mat-card-content>
-      <p><strong>Building Code:</strong> {{ building.code }}</p>
-      <p><strong>Total Apartments:</strong> {{ building.totalApartments }}</p>
-      <p><strong>Manager ID:</strong> {{ building.managerId }}</p>
-      <p><strong>Emergency Phone:</strong> {{ building.emergencyPhone }}</p>
-      <button mat-raised-button color="warn" type="button" (click)="leaveBuilding()" [disabled]="isLeaving">
+        <div class="building-details">
 
-        {{ isLeaving ? 'Leaving...' : 'Leave Building' }}
+          <h2>{{ building.buildingName }}</h2>
+          <p class="address">{{ building.address }}</p>
 
-      </button>
-    </mat-card-content>
-  </ng-container>
+          <div class="building-info-grid">
 
-</mat-card>
+            <div class="info-box">
+              <mat-icon>apartment</mat-icon>
+              <div>
+                <span>Building Code</span>
+                <strong>{{ building.code }}</strong>
+              </div>
+            </div>
+
+            <div class="info-box">
+              <mat-icon>groups</mat-icon>
+              <div>
+                <span>Total Apartments</span>
+                <strong>{{ building.totalApartments }}</strong>
+              </div>
+            </div>
+
+            <div class="info-box">
+              <mat-icon>person</mat-icon>
+              <div>
+                <span>Building Manager</span>
+                <strong>{{ building.managerName || building.managerId }}</strong>
+              </div>
+            </div>
+
+            <div class="info-box">
+              <mat-icon>call</mat-icon>
+              <div>
+                <span>Emergency Phone</span>
+                <strong>{{ building.emergencyPhone }}</strong>
+              </div>
+            </div>
+
+          </div>
+
+          <button
+            mat-flat-button
+            class="leave-btn"
+            type="button"
+            (click)="leaveBuilding()"
+            [disabled]="isLeaving">
+
+            <mat-icon>logout</mat-icon>
+            {{ isLeaving ? 'Leaving...' : 'Leave Building' }}
+
+          </button>
+
+        </div>
+
+      </section>
+
+    </ng-container>
+
+  </mat-card>
+
+</main>

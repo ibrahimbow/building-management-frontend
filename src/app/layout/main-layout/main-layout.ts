@@ -11,6 +11,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../core/services/auth.service';
 import { BuildingService } from '../../core/services/building.service';
 import { TenantBuildingStateService } from '../../core/services/tenant-building-state.service';
+import { ImageUrlService } from '../../core/services/image-url.service';
+
+import { BehaviorSubject } from 'rxjs';
 
 interface MenuItem {
   label: string;
@@ -38,13 +41,20 @@ interface MenuItem {
 })
 export class MainLayout implements OnInit {
 
+
   private readonly authService = inject(AuthService);
   private readonly buildingService = inject(BuildingService);
   private readonly cdr = inject(ChangeDetectorRef);
-
   private readonly router = inject(Router);
-
   private readonly tenantBuildingState = inject(TenantBuildingStateService);
+
+  currentUser$ = this.authService.currentUser$;
+
+  profile = { avatarUrl: '' };
+
+  constructor(
+    public imageUrlService: ImageUrlService) {
+  }
 
 
 
@@ -121,6 +131,7 @@ export class MainLayout implements OnInit {
   ];
 
   ngOnInit(): void {
+
     if (this.isManagerOrAdmin) {
       this.loadManagerBuildingState();
     }
@@ -128,6 +139,16 @@ export class MainLayout implements OnInit {
     if (this.isTenant) {
       this.loadTenantBuildingState();
     }
+
+    this.authService.getProfile()
+      .subscribe({
+        next: profile => {
+
+          this.profile.avatarUrl =
+            profile.avatarUrl ?? '';
+        }
+      });
+
   }
 
   get isManagerOrAdmin(): boolean {
@@ -138,9 +159,6 @@ export class MainLayout implements OnInit {
     return this.authService.isTenant();
   }
 
-  get displayName(): string {
-    return this.authService.getCurrentUser()?.displayName ?? 'User';
-  }
 
   canShowManagerMenuItem(item: MenuItem): boolean {
     return !item.requiresBuilding || this.managerHasBuilding;

@@ -9,6 +9,10 @@ export interface RegisterRequest {
   role: UserRole;
 }
 
+export interface RegisterResponse {
+  id: number;
+}
+
 export interface LoginRequest {
   usernameOrEmail: string;
   password: string;
@@ -26,6 +30,27 @@ export interface User {
   email: string;
   displayName: string;
   phoneNumber: string;
+  avatarUrl: string | null;
   role: UserRole;
   enabled: boolean;
+}
+
+export interface BuildingUserProfile {
+  id: number;
+  username: string;
+  email: string;
+  displayName: string;
+  phoneNumber: string;
+  avatarUrl: string | null;
+  preferredLanguage: string | null;
+  notificationsEnabled: boolean | null;
+  role: UserRole;
+}
+
+export interface UpdateBuildingUserProfileRequest {
+  displayName: string;
+  phoneNumber: string;
+  avatarUrl: string | null;
+  preferredLanguage: string | null;
+  notificationsEnabled: boolean;
 }

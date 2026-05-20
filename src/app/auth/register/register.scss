@@ -1,94 +1,358 @@
+// ─── register.scss ───────────────────────────────────────────
+
 .auth-page {
   min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  background: #f5f7fb;
-}
-
-.auth-card {
-  width: min(100%, 420px);
-  padding: 32px;
-  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: #ffffff;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+  padding: 2rem 1rem;
+  box-sizing: border-box;
 }
 
-.eyebrow {
-  margin: 0 0 8px;
-  color: #2563eb;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 12px;
-}
-
-h1 {
-  margin: 0;
-  color: #0f172a;
-  font-size: 30px;
-}
-
-.subtitle {
-  margin: 8px 0 24px;
-  color: #64748b;
-}
-
-form {
+.auth-shell {
+  width: 100%;
+  max-width: 1040px;
   display: grid;
-  gap: 12px;
+  grid-template-columns: 1fr;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 40px rgba(99, 102, 241, 0.08);
+  background: #ffffff;
+
+  @media (min-width: 900px) {
+    grid-template-columns: 5fr 6fr;
+  }
 }
 
-label {
-  font-weight: 700;
-  color: #334155;
+// ── Left hero panel ───────────────────────────────────────────
+.auth-hero {
+  display: none;
+  flex-direction: column;
+  padding: 3rem 2.5rem;
+  background: linear-gradient(150deg, #3b82f6 0%, #6366f1 100%);
+  position: relative;
+  overflow: hidden;
+
+  @media (min-width: 900px) {
+    display: flex;
+  }
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+  }
+
+  &::before {
+    width: 320px;
+    height: 320px;
+    bottom: -80px;
+    right: -80px;
+  }
+
+  &::after {
+    width: 180px;
+    height: 180px;
+    top: -50px;
+    left: -50px;
+  }
+
+  .hero-badge {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    padding: 5px 14px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    position: relative;
+    z-index: 1;
+  }
+
+  h1 {
+    color: #ffffff;
+    font-size: 2.1rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    margin: 1rem 0 1.25rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.92rem;
+    line-height: 1.7;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-features {
+    margin-top: auto;
+    padding-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.87rem;
+    color: rgba(255, 255, 255, 0.88);
+
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+  }
 }
 
-input,
-select {
-  min-height: 44px;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  padding: 0 14px;
-  font-size: 15px;
+// ── Right form card ───────────────────────────────────────────
+.auth-card {
+  background: #ffffff !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  @media (min-width: 576px) {
+    padding: 3.5rem 3rem;
+  }
+
+  mat-card-header {
+    padding: 0;
+    margin-bottom: 2rem;
+
+    .mat-mdc-card-header-text {
+      margin: 0;
+    }
+
+    mat-card-title {
+      font-size: 1.6rem !important;
+      font-weight: 700 !important;
+      color: #0f172a !important;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px !important;
+    }
+
+    mat-card-subtitle {
+      font-size: 0.88rem !important;
+      color: #94a3b8 !important;
+      margin: 0 !important;
+    }
+  }
+
+  mat-card-content {
+    padding: 0 !important;
+  }
 }
 
-input:focus,
-select:focus {
-  outline: 2px solid #bfdbfe;
-  border-color: #2563eb;
+// ── Form grid ─────────────────────────────────────────────────
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+
+  @media (min-width: 480px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
 }
 
-button {
-  margin-top: 8px;
-  min-height: 46px;
-  border: 0;
-  border-radius: 12px;
-  background: #2563eb;
-  color: #ffffff;
-  font-weight: 800;
+// ── Angular Material field overrides ──────────────────────────
+mat-form-field {
+  width: 100%;
+  margin-bottom: 6px;
+
+  &.full-width {
+    width: 100%;
+  }
+
+  // White background on the outlined container
+  .mdc-text-field--outlined {
+    --mdc-outlined-text-field-container-shape: 11px;
+    background-color: #ffffff !important;
+
+    &:hover {
+      background-color: #f8fafc !important;
+    }
+  }
+
+  // Remove Material's internal dark fill
+  .mdc-text-field__input {
+    background: transparent !important;
+    color: #0f172a !important;
+  }
+
+  // White fill behind the notched outline
+  .mdc-notched-outline {
+    background-color: #ffffff !important;
+    z-index: 0;
+  }
+
+  // Keep input text above the white background
+  input.mat-mdc-input-element,
+  textarea.mat-mdc-input-element {
+    position: relative;
+    z-index: 1;
+    color: #0f172a !important;
+    font-size: 0.9rem !important;
+    caret-color: #3b82f6;
+
+    &::placeholder {
+      color: #cbd5e1 !important;
+      opacity: 1;
+    }
+  }
+
+  mat-select {
+    position: relative;
+    z-index: 1;
+    color: #0f172a !important;
+    font-size: 0.9rem !important;
+  }
+
+  .mat-mdc-select-value-text {
+    color: #0f172a !important;
+  }
+
+  .mat-mdc-select-arrow {
+    color: #94a3b8 !important;
+  }
+
+  // Border colors
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: #e2e8f0 !important;
+  }
+
+  &.mat-focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #3b82f6 !important;
+      border-width: 1.5px !important;
+    }
+  }
+
+  // Label
+  .mdc-floating-label {
+    color: #94a3b8 !important;
+    font-size: 0.9rem;
+    z-index: 2;
+  }
+
+  mat-error {
+    font-size: 0.78rem !important;
+    color: #ef4444 !important;
+    margin-top: 2px;
+  }
+}
+
+// Fix Material select panel dropdown
+.mat-mdc-select-panel {
+  background: #ffffff !important;
+
+  .mat-mdc-option {
+    color: #0f172a !important;
+
+    &:hover,
+    &.mat-mdc-option-active {
+      background: #eff6ff !important;
+    }
+  }
+}
+
+// ── Error banner ──────────────────────────────────────────────
+.error-message {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 0.85rem 1rem;
+  border-radius: 11px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+// ── Submit button — light blue ────────────────────────────────
+.submit-button {
+  width: 100% !important;
+  margin-top: 8px !important;
+  padding: 13px 0 !important;
+  border-radius: 11px !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border: 1.5px solid #93c5fd !important;
+  box-shadow: none !important;
+  transition: background 0.18s ease, transform 0.15s ease !important;
   cursor: pointer;
+
+  &:hover:not([disabled]) {
+    background: #bfdbfe !important;
+    transform: translateY(-1px);
+  }
+
+  &:active:not([disabled]) {
+    transform: translateY(0);
+  }
+
+  &[disabled] {
+    background: #f1f5f9 !important;
+    color: #94a3b8 !important;
+    border-color: #e2e8f0 !important;
+    cursor: not-allowed;
+  }
 }
 
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+// ── Footer login link ─────────────────────────────────────────
+mat-card-actions {
+  padding: 0 !important;
+  margin-top: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.87rem;
+  color: #94a3b8;
 
-.error {
-  margin: 0;
-  color: #b91c1c;
-  font-weight: 600;
-}
+  a {
+    color: #3b82f6;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.15s;
 
-.switch-auth {
-  margin: 20px 0 0;
-  text-align: center;
-  color: #64748b;
-}
-
-.switch-auth a {
-  color: #2563eb;
-  font-weight: 700;
-  text-decoration: none;
+    &:hover {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+  }
 }

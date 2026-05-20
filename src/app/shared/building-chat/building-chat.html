@@ -74,14 +74,15 @@
             <div class="bubble-line">
 
               <div class="bubble-avatar">
-                <img
-                  *ngIf="message.senderAvatarUrl"
-                  [src]="message.senderAvatarUrl"
-                  [alt]="message.senderDisplayName" />
+  <img
+    *ngIf="hasValidImage(message.senderAvatarUrl); else defaultMessageAvatar"
+    [src]="resolveImageUrl(message.senderAvatarUrl)"
+    [alt]="message.senderDisplayName || 'User avatar'" />
 
-                <mat-icon *ngIf="!message.senderAvatarUrl">person</mat-icon>
-                <span></span>
-              </div>
+  <ng-template #defaultMessageAvatar>
+    <mat-icon>person</mat-icon>
+  </ng-template>
+</div>
 
               <div class="bubble-stack">
 

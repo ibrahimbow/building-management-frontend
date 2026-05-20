@@ -1,8 +1,15 @@
-import { Component } from '@angular/core';
+import { 
+  Component, 
+  ChangeDetectorRef, 
+  ViewChild, 
+  ElementRef ,
+ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { finalize, switchMap } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,24 +18,30 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { AuthService } from '../../core/services/auth.service';
 import { UserRole } from '../../core/models/user.model';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-register',
   standalone: true,
+    encapsulation: ViewEncapsulation.None,
   imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
-    CommonModule,
-    FormsModule,
-    RouterLink],
+    MatSnackBarModule
+  ],
   templateUrl: './register.html',
   styleUrl: './register.scss'
 })
-
 export class Register {
+
+@ViewChild('usernameInput')
+private readonly usernameInput?: ElementRef<HTMLInputElement>;
 
   username = '';
   email = '';
@@ -42,14 +55,41 @@ export class Register {
 
   constructor(
     private readonly authService: AuthService,
-    private readonly router: Router
-  ) { }
+    private readonly router: Router,
+      private readonly cdr: ChangeDetectorRef,
+    private readonly snackBar: MatSnackBar) {
+  }
 
   register(): void {
     this.errorMessage = '';
 
-    if (!this.username || !this.email || !this.displayName || !this.phoneNumber || !this.password) {
+    const username = this.username.trim();
+    const email = this.email.trim().toLowerCase();
+    const displayName = this.displayName.trim();
+    const phoneNumber = this.phoneNumber.trim();
+
+    if (!username || !email || !displayName || !phoneNumber || !this.password) {
       this.errorMessage = 'Please fill in all required fields.';
+      return;
+    }
+
+    if (username.length < 3) {
+      this.errorMessage = 'Username must be at least 3 characters.';
+      return;
+    }
+
+    if (displayName.length < 2) {
+      this.errorMessage = 'Display name must be at least 2 characters.';
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      this.errorMessage = 'Please enter a valid email address.';
+      return;
+    }
+
+    if (!/^\+?[0-9]{8,15}$/.test(phoneNumber)) {
+      this.errorMessage = 'Phone number must contain 8 to 15 digits.';
       return;
     }
 
@@ -58,41 +98,52 @@ export class Register {
       return;
     }
 
-    this.isSubmitting = true;
+   this.isSubmitting = true;
 
-    this.authService.register({
-      username: this.username.trim(),
-      email: this.email.trim(),
-      password: this.password,
-      displayName: this.displayName.trim(),
-      phoneNumber: this.phoneNumber.trim(),
-      role: this.role
+this.authService.register({
+  username,
+  email,
+  password: this.password,
+  displayName,
+  phoneNumber,
+  role: this.role
+}).pipe(
+  finalize(() => {
+  this.isSubmitting = false;
+  this.cdr.detectChanges();
+})
+).subscribe({
+  next: () => {
+    this.authService.login({
+      usernameOrEmail: email,
+      password: this.password
     }).pipe(
-      switchMap(() => this.authService.login({
-        usernameOrEmail: this.email.trim(),
-        password: this.password
-      })),
       switchMap(() => this.authService.loadCurrentUser())
     ).subscribe({
       next: () => {
-        this.isSubmitting = false;
         this.router.navigateByUrl(this.authService.getDashboardUrl());
       },
-      error: (err) => {
-        this.isSubmitting = false;
-
-        if (err.status === 409) {
-          this.errorMessage = 'An account already exists with this email or username.';
-          return;
-        }
-
-        if (err.status === 400) {
-          this.errorMessage = 'Please check your registration details.';
-          return;
-        }
-
-        this.errorMessage = 'Registration failed. Please try again.';
+      error: () => {
+        this.errorMessage = 'Account created, but login failed. Please login manually.';
       }
     });
+  },
+error: (err: HttpErrorResponse) => {
+  if (err.status === 409) {
+    this.errorMessage = 'This email or username is already used. Please use another one.';
+  } else if (err.status === 400) {
+    this.errorMessage = 'Please check your registration details.';
+  } else {
+    this.errorMessage = 'Registration failed. Please try again.';
+  }
+
+  this.snackBar.open(this.errorMessage, 'Close', {
+    duration: 5000,
+    horizontalPosition: 'right',
+    verticalPosition: 'top',
+    panelClass: ['error-snackbar']
+  });
+}
+});
   }
 }

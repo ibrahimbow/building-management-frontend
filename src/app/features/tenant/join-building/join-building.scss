@@ -1,22 +1,138 @@
 .join-card {
-  max-width: 420px;
-  margin: 60px auto;
-  padding: 24px;
-  border-radius: 16px;
-  text-align: center;
+  width: 100%;
+  max-width: 480px;
+  margin: 70px auto;
+  padding: 36px;
+  border-radius: 30px !important;
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.08);
+  text-align: left;
+}
+
+.join-card h2 {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-size: 38px;
+  line-height: 1.05;
+  letter-spacing: -1.4px;
+  font-weight: 800;
+}
+
+.join-card p {
+  margin: 0 0 28px;
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.7;
+  font-weight: 500;
 }
 
 .full-width {
   width: 100%;
-  margin: 16px 0;
+}
+
+// Deep Angular Material Layers Remapping
+::ng-deep {
+  .join-card {
+    
+    .mat-mdc-form-field {
+      position: relative;
+      z-index: 1;
+    }
+
+    .mat-mdc-text-field-wrapper {
+      border-radius: 18px !important;
+      background: #f8fbff !important;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .mdc-text-field--outlined {
+      --mdc-outlined-text-field-container-shape: 18px;
+      --mdc-outlined-text-field-outline-color: #d6deea;
+      --mdc-outlined-text-field-hover-outline-color: #b7c4d8;
+      --mdc-outlined-text-field-focus-outline-color: #2563eb;
+    }
+
+    .mat-mdc-form-field-infix {
+      min-height: 56px !important;
+      padding-top: 15px !important;
+      padding-bottom: 11px !important;
+      position: relative;
+      z-index: 2; // Keeps layout content stable
+    }
+
+    // FIX 1: Allow mouse clicks to pass right through structural layout layers
+    .mdc-notched-outline,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__trailing,
+    .mdc-floating-label {
+      pointer-events: none !important;
+    }
+
+    // FIX 2: Bring the HTML typing input layer to the absolute front
+    input.mat-mdc-input-element {
+      color: #0f172a !important;
+      font-size: 15px !important;
+      font-weight: 500 !important;
+      position: relative !important;
+      z-index: 5 !important;        // Layer priority
+      pointer-events: auto !important; // Forces physical click action
+    }
+
+    .mdc-floating-label {
+      color: #64748b !important;
+      font-size: 14px !important;
+      font-weight: 600 !important;
+    }
+
+    .mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
+      background: #ffffff !important;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    }
+  }
+}
+
+// Button & Status Rules
+button[mat-raised-button] {
+  width: 100%;
+  height: 54px;
+  margin-top: 10px;
+  border-radius: 18px !important;
+  background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+  color: #ffffff !important;
+  font-size: 15px;
+  letter-spacing: -0.2px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.20);
+  transition: all 0.18s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #1d4ed8, #2563eb) !important;
+    box-shadow: 0 16px 32px rgba(37, 99, 235, 0.25);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none !important;
+  }
 }
 
 .error {
-  color: #ef4444;
   margin-top: 12px;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .success {
-  color: #10b981;
   margin-top: 12px;
+  color: #059669;
+  font-size: 14px;
+  font-weight: 600;
 }

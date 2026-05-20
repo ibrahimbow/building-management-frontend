@@ -32,6 +32,7 @@ import { TimeAgoPipe } from '../../core/pipes/time-ago-pipe';
 
 import { BuildingService } from '../../core/services/building.service';
 import { ChatWebSocketService } from '../../core/services/chat-websocket.service';
+import { ImageUrlService } from '../../core/services/image-url.service'
 
 interface ChatMessageGroup {
   label: string;
@@ -69,6 +70,7 @@ export class BuildingChat implements OnInit, AfterViewChecked {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly chatWebSocketService = inject(ChatWebSocketService);
   private readonly buildingService = inject(BuildingService);
+private readonly imageUrlService = inject(ImageUrlService);
 
   private shouldScrollToBottom = false;
 
@@ -356,22 +358,6 @@ const alreadyReacted = this.hasReacted(currentMessage, emoji);
     this.previewImageUrl = null;
   }
 
-  resolveImageUrl(imageUrl: string | null | undefined): string {
-    if (!imageUrl) {
-      return '';
-    }
-
-    if (imageUrl.startsWith('http')) {
-      return imageUrl;
-    }
-
-    if (imageUrl.startsWith('/')) {
-      return `http://localhost:8080${imageUrl}`;
-    }
-
-    return `http://localhost:8080/${imageUrl}`;
-  }
-
   isMyMessage(message: ChatMessage): boolean {
     return message.senderUserId === this.currentUserId;
   }
@@ -557,6 +543,18 @@ private loadTenantBuildingAndMessages(): void {
         this.isLoading = false;
       }
     });
+}
+
+hasValidImage(imageUrl: string | null | undefined): boolean {
+  return !!imageUrl && imageUrl.trim().length > 0;
+}
+
+resolveImageUrl(imageUrl: string | null | undefined): string {
+  if (!imageUrl) {
+    return '';
+  }
+
+  return this.imageUrlService.resolve(imageUrl);
 }
 
 private handleRealtimeMessageCreated(message: ChatMessage): void {

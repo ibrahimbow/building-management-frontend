@@ -1,47 +1,384 @@
-.settings-card {
-  max-width: 700px;
-  margin: 24px auto;
+.settings-page {
+  // Lock the outer page height to a fixed viewport space
+  height: calc(90vh - 80px);
+  min-height: calc(95vh - 90px);
+  max-height: calc(100vh - 0px);
   padding: 24px;
+  box-sizing: border-box;
+  overflow: hidden; // Disables external page shifting
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.06), transparent 28%),
+    linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
 }
 
-.settings-form {
+.settings-card {
+  max-width: 1200px;
+  height: 100%; // Spans perfectly to container height
+  margin: 0 auto;
+  padding: 0 !important; // Controlled padding at internal panel levels
+  border-radius: 28px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.05);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
 
-.actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 16px;
-}
-
-.avatar-section {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.avatar {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  background: #eeeeee;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-
-  img {
-    width: 100%;
+  mat-card-content {
     height: 100%;
-    object-fit: cover;
+    padding: 0 !important;
+  }
+}
+
+// Master Asymmetric Two-Column Flex Grid
+.settings-form {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  height: 100%;
+  width: 100%;
+  align-items: stretch;
+}
+
+// ==========================================================================
+// Left Column Sidebar Styles
+// ==========================================================================
+.settings-sidebar {
+  background: #fdfefe;
+  border-right: 1px solid #f1f5f9;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  .settings-header {
+    margin-bottom: 24px;
+    
+    .eyebrow {
+      margin: 0 0 4px;
+      color: #2563eb;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    h1 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 32px;
+      letter-spacing: -1px;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+  }
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 16px;
+  border-radius: 20px;
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.02);
+
+  .avatar {
+    width: 84px;
+    height: 84px;
+    margin-bottom: 12px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #dbeafe, #eff6ff);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    color: #2563eb;
+    box-shadow: 0 8px 16px rgba(37, 99, 235, 0.08);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    mat-icon { font-size: 36px; width: 36px; height: 36px; }
   }
 
+  .profile-summary h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .profile-summary p {
+    margin: 4px 0 14px;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
+.upload-button {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover { background: #1d4ed8; }
+}
+
+.sidebar-actions {
+  margin-top: auto; // Pins logout to bottom of sidebar
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+
+  .logout-button {
+    width: 100%;
+    height: 44px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+}
+
+// ==========================================================================
+// Right Column Content Component Layouts Override
+// ==========================================================================
+.settings-main-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden; // Crucial layout containment wall
+}
+
+.scrollable-form-body {
+  flex: 1;
+  overflow-y: auto; // Captures local content scrolls natively
+  padding: 32px 40px;
+  
+  // Custom subtle form scrollbar rendering track
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 100px;
+  }
+}
+
+.form-section {
+  padding: 20px 0;
+  border-top: 1px solid #f1f5f9;
+
+  &.no-top-border {
+    border-top: none;
+    padding-top: 0;
+  }
+}
+
+.section-title {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+
   mat-icon {
-    font-size: 48px;
-    width: 48px;
-    height: 48px;
+    padding: 8px;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  h3 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  p {
+    margin: 2px 0 0;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
+.form-grid,
+.security-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.change-password-btn {
+  height: 48px;
+  border-radius: 12px !important;
+  font-weight: 700;
+  font-size: 13px;
+  align-self: start;
+}
+
+.toggle-card {
+  margin-top: 12px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid rgba(15, 23, 42, 0.02);
+
+  strong {
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 2px 0 0;
+    color: #64748b;
+    font-size: 12px;
+  }
+}
+
+// Premium Sticky Action Banner (Bottom Pinning Layer)
+.form-actions-bar {
+  padding: 16px 40px;
+  background: #ffffff;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: flex-start;
+
+  .save-button {
+    height: 46px;
+    padding: 0 32px !important;
+    border-radius: 12px !important;
+    background: #2563eb !important;
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15) !important;
+  }
+}
+
+// ==========================================================================
+// Shared Material Core Field Structural Adjustments
+// ==========================================================================
+::ng-deep {
+  .settings-main-content {
+    .mat-mdc-form-field {
+      margin-bottom: 2px !important;
+    }
+    
+    .mat-mdc-text-field-wrapper {
+      border-radius: 12px !important;
+      background: #f8fafc !important;
+    }
+
+    .mdc-text-field--outlined {
+      --mdc-outlined-text-field-container-shape: 12px;
+      --mdc-outlined-text-field-outline-color: #e2e8f0;
+      --mdc-outlined-text-field-hover-outline-color: #cbd5e1;
+      --mdc-outlined-text-field-focus-outline-color: #2563eb;
+    }
+
+    .mat-mdc-form-field-infix {
+      min-height: 48px !important;
+      padding-top: 13px !important;
+      padding-bottom: 9px !important;
+    }
+  }
+}
+
+// Responsive layout handling for smaller screen viewports
+@media (max-width: 920px) {
+  .settings-page {
+    height: auto;
+    max-height: none;
+    overflow-y: auto;
+  }
+  .settings-form {
+    grid-template-columns: 1fr;
+  }
+  .settings-sidebar {
+    border-right: none;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .scrollable-form-body {
+    overflow-y: visible;
+  }
+}
+
+// Three-column inline presentation for the base layout elements
+.preferences-inline-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr; // Extra fraction size awarded to accommodate text space
+  gap: 12px;
+  align-items: start;
+}
+
+// Seamlessly formatted toggle block fitting inside the row line
+.toggle-card-inline {
+  height: 40px; // Standard cross-match to high-density text fields input height
+  padding: 0 14px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+
+  .toggle-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    strong {
+      color: #0f172a;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    p {
+      margin: 0;
+      color: #64748b;
+      font-size: 10px;
+      line-height: 1.2;
+    }
+  }
+}
+
+// Media responsive scaling back rule block if layout drops on low resolutions
+@media (max-width: 1024px) {
+  .preferences-inline-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .toggle-card-inline {
+    height: auto;
+    padding: 10px 14px;
   }
 }

@@ -261,3 +261,12 @@ mat-sidenav-content {
     font-size: 13px;
   }
 }
+
+.toolbar-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.15);
+}

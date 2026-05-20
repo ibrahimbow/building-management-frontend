@@ -93,15 +93,33 @@
     <mat-toolbar class="topbar">
 
       <div class="topbar-title">
-        <p>Welcome back, {{ displayName }} 👋</p>
+        <p>Welcome back, {{ (currentUser$ | async)?.displayName }} 👋</p>
         <h1>{{ isManagerOrAdmin ? 'Manager Dashboard' : 'Tenant Dashboard' }}</h1>
       </div>
 
       <span class="spacer"></span>
 
-      <button mat-icon-button type="button" class="notification-btn">
-        <mat-icon>notifications_none</mat-icon>
-      </button>
+<div class="toolbar-actions">
+
+  <button mat-icon-button type="button">
+    <mat-icon>notifications_none</mat-icon>
+  </button>
+
+  <button mat-icon-button type="button" class="profile-btn">
+
+    <img
+      *ngIf="imageUrlService.hasImage(profile.avatarUrl)"
+      [src]="imageUrlService.resolve(profile.avatarUrl)"
+      alt="Profile photo"
+      class="toolbar-avatar" />
+
+    <mat-icon *ngIf="!imageUrlService.hasImage(profile.avatarUrl)">
+      person
+    </mat-icon>
+
+  </button>
+
+</div>
 
       <button mat-icon-button type="button" class="profile-btn">
         <mat-icon>account_circle</mat-icon>

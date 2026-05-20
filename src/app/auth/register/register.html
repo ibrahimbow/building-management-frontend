@@ -1,68 +1,89 @@
 <section class="auth-page">
-  <mat-card class="auth-card">
-    <mat-card-title>Create account</mat-card-title>
-    <mat-card-subtitle>Register as tenant or manager</mat-card-subtitle>
+  <div class="auth-shell">
 
-    <mat-card-content>
-      <form (ngSubmit)="register()" #form="ngForm" novalidate>
+    <div class="auth-hero">
+      <div class="hero-badge">Building Management</div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Username</mat-label>
-          <input matInput name="username" [(ngModel)]="username" required />
-        </mat-form-field>
+      <h1>Create your account</h1>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Display name</mat-label>
-          <input matInput name="displayName" [(ngModel)]="displayName" required />
-        </mat-form-field>
+      <p>
+        Join your building community, manage announcements, chat with residents,
+        and keep everything organized in one secure place.
+      </p>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput type="email" name="email" [(ngModel)]="email" required />
-        </mat-form-field>
+ 
+    </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Phone number</mat-label>
-          <input
-            matInput
-            name="phoneNumber"
-            [(ngModel)]="phoneNumber"
-            placeholder="+32465570653"
-            required
-          />
-        </mat-form-field>
+    <mat-card class="auth-card">
+      <mat-card-header>
+        <mat-card-title>Create account</mat-card-title>
+        <mat-card-subtitle>Register as tenant or manager</mat-card-subtitle>
+      </mat-card-header>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Password</mat-label>
-          <input matInput type="password" name="password" [(ngModel)]="password" required />
-        </mat-form-field>
+      <mat-card-content>
+        <form (ngSubmit)="register()" #form="ngForm" novalidate>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Account type</mat-label>
-          <mat-select name="role" [(ngModel)]="role" required>
-            <mat-option value="TENANT">Tenant</mat-option>
-            <mat-option value="MANAGER">Manager</mat-option>
-          </mat-select>
-        </mat-form-field>
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Username</mat-label>
+              <input matInput #usernameInput name="username" [(ngModel)]="username" required minlength="3"
+                autocomplete="username" />
+              <mat-error>Username must be at least 3 characters.</mat-error>
+            </mat-form-field>
 
-        <p class="error-message" *ngIf="errorMessage">
-          {{ errorMessage }}
-        </p>
+            <mat-form-field appearance="outline">
+              <mat-label>Display name</mat-label>
+              <input matInput name="displayName" [(ngModel)]="displayName" required minlength="2" autocomplete="name" />
+              <mat-error>Display name is required.</mat-error>
+            </mat-form-field>
+          </div>
 
-        <button
-          mat-raised-button
-          color="primary"
-          class="full-width"
-          type="submit"
-          [disabled]="isSubmitting">
-          {{ isSubmitting ? 'Creating account...' : 'Create account' }}
-        </button>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" name="email" [(ngModel)]="email" required email autocomplete="email" />
+            <mat-error>Please enter a valid email address.</mat-error>
+          </mat-form-field>
 
-      </form>
-    </mat-card-content>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Phone number</mat-label>
+            <input matInput name="phoneNumber" [(ngModel)]="phoneNumber"  required
+              pattern="^\+?[0-9]{8,15}$" autocomplete="tel" />
+            <mat-error>Phone number must contain 8 to 15 digits.</mat-error>
+          </mat-form-field>
 
-    <mat-card-actions>
-      <a routerLink="/auth/login">Already have an account? Login</a>
-    </mat-card-actions>
-  </mat-card>
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Password</mat-label>
+              <input matInput type="password" name="password" [(ngModel)]="password" required minlength="6"
+                autocomplete="new-password" />
+              <mat-error>Password must be at least 6 characters.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Account type</mat-label>
+              <mat-select name="role" [(ngModel)]="role" required>
+                <mat-option value="TENANT">Tenant</mat-option>
+                <mat-option value="MANAGER">Manager</mat-option>
+              </mat-select>
+              <mat-error>Account type is required.</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="error-message" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+
+          <button mat-raised-button color="primary" class="submit-button" type="submit" [disabled]="isSubmitting">
+            {{ isSubmitting ? 'Creating account...' : 'Create account' }}
+          </button>
+
+        </form>
+      </mat-card-content>
+      <mat-card-actions>
+        <span>Already have an account?</span>
+        <a routerLink="/auth/login">Login</a>
+      </mat-card-actions>
+    </mat-card>
+
+  </div>
 </section>

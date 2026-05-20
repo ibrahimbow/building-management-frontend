@@ -3,33 +3,22 @@
   <h2>Join a Building</h2>
   <p>Enter the building code provided by your manager.</p>
 
-  <form
-    #form="ngForm"
-    (ngSubmit)="joinBuilding(form)"
-    novalidate>
+  <form #form="ngForm" (ngSubmit)="joinBuilding(form)" novalidate>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Building code</mat-label>
 
-      <input
-        matInput
-        name="buildingCode"
-        placeholder="Example: BM-ABC123"
-        required
-        autocomplete="off"
-        [disabled]="isSubmitting"
+      <input matInput name="buildingCode" placeholder="Example: BM-ABC123" 
+      required autocomplete="off"
         [(ngModel)]="buildingCode" />
 
       <mat-error *ngIf="form.submitted && !buildingCode.trim()">
         Building code is required.
       </mat-error>
+
     </mat-form-field>
 
-    <button
-      mat-raised-button
-      color="primary"
-      type="submit"
-      [disabled]="isSubmitting || !buildingCode.trim()">
+    <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting || !buildingCode.trim()">
 
       {{ isSubmitting ? 'Joining...' : 'Join Building' }}
 

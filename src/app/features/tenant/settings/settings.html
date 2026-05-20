@@ -1,78 +1,161 @@
-<mat-card class="settings-card">
-    <mat-card-title>Settings</mat-card-title>
+<main class="settings-page">
+  <mat-card class="settings-card">
+    <form class="settings-form" #settingsForm="ngForm" novalidate>
+      
+      <aside class="settings-sidebar">
+        <header class="settings-header">
+          <p class="eyebrow">Account preferences</p>
+          <h1>Settings</h1>
+          <p class="subtitle">Manage your profile, security, and preferences.</p>
+        </header>
 
-    <mat-card-content>
-        <form class="settings-form">
+        <section class="profile-section">
+          <div class="avatar">
+            <img
+              *ngIf="imageUrlService.hasImage(profile.avatarUrl); else defaultAvatar"
+              [src]="imageUrlService.resolve(profile.avatarUrl)"
+              alt="Profile photo" />
+            <ng-template #defaultAvatar>
+              <mat-icon>person</mat-icon>
+            </ng-template>
+          </div>
 
-            <div class="avatar-section">
-                <div class="avatar">
-                    <img *ngIf="profile.avatarUrl; else defaultAvatar" [src]="profile.avatarUrl" alt="Profile photo" />
+          <div class="profile-summary">
+            <h2>{{ profile.displayName || profile.name || 'Your profile' }}</h2>
+            <p>{{ profile.email || 'No email available' }}</p>
 
-                    <ng-template #defaultAvatar>
-                        <mat-icon>person</mat-icon>
-                    </ng-template>
-                </div>
+            <label class="upload-button">
+              Change photo
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                (change)="onAvatarSelected($event)"
+                hidden />
+            </label>
+          </div>
+        </section>
+      </aside>
 
-                <input type="file" accept="image/*" (change)="onAvatarSelected($event)" />
+      <div class="settings-main-content">
+        <div class="scrollable-form-body">
+          
+          <section class="form-section no-top-border">
+            <div class="section-title">
+              <mat-icon>person</mat-icon>
+              <div>
+                <h3>Personal information</h3>
+                <p>These details are used for public display name.</p>
+              </div>
             </div>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Name private</mat-label>
-                <input matInput name="name" [(ngModel)]="profile.name" />
-            </mat-form-field>
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Username</mat-label>
+                <input matInput name="name" [value]="profile.name" readonly />
+              </mat-form-field>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Email private</mat-label>
-                <input matInput type="email" name="email" [(ngModel)]="profile.email" />
-            </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" name="email" [value]="profile.email" readonly />
+              </mat-form-field>
 
-            <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline">
+                <mat-label>Mobile number</mat-label>
+                <input
+                  matInput
+                  name="mobileNumber"
+                  [(ngModel)]="profile.mobileNumber"
+                  required
+                  pattern="^\+?[0-9]{8,15}$" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Display name</mat-label>
+                <input
+                  matInput
+                  name="displayName"
+                  [(ngModel)]="profile.displayName"
+                  required
+                  minlength="2"
+                  maxlength="150" />
+              </mat-form-field>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <div class="section-title">
+              <mat-icon>lock</mat-icon>
+              <div>
+                <h3>Security</h3>
+                <p>Keep your account protected.</p>
+              </div>
+            </div>
+
+            <div class="security-row">
+              <mat-form-field appearance="outline">
                 <mat-label>Password</mat-label>
-                <input matInput value="********" disabled />
-            </mat-form-field>
+                <input matInput value="********" readonly />
+              </mat-form-field>
 
-            <button mat-stroked-button color="primary" type="button" (click)="openChangePasswordDialog()">
+              <button
+                mat-stroked-button
+                color="primary"
+                type="button"
+                class="change-password-btn"
+                (click)="openChangePasswordDialog()">
                 Change Password
-            </button>
+              </button>
+            </div>
+          </section>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Mobile number private</mat-label>
-                <input matInput name="mobileNumber" [(ngModel)]="profile.mobileNumber" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-                <mat-label>Display name public in posts</mat-label>
-                <!-- <input matInput name="displayName" [(ngModel)]="profile.displayName" /> -->
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-                <mat-label>Role</mat-label>
-                <input matInput [value]="authService.getRole()" disabled />
-            </mat-form-field>
-
-            <mat-slide-toggle name="notifications" [(ngModel)]="profile.notifications">
-                Enable notifications
-            </mat-slide-toggle>
-
-            <mat-form-field appearance="outline">
-                <mat-label>Language</mat-label>
-                <mat-select name="language" [(ngModel)]="profile.language">
-                    <mat-option *ngFor="let lang of languages" [value]="lang.code">
-                        {{ lang.label }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-
-            <div class="actions">
-                <button mat-raised-button color="primary" type="button" (click)="save()">
-                    Save Settings
-                </button>
-
-                <button mat-button color="warn" type="button" (click)="logout()">
-                    Logout
-                </button>
+          <section class="form-section">
+            <div class="section-title">
+              <mat-icon>tune</mat-icon>
+              <div>
+                <h3>Preferences</h3>
+                <p>Choose how the platform should behave.</p>
+              </div>
             </div>
 
-        </form>
-    </mat-card-content>
-</mat-card>
+            <div class="preferences-inline-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Role</mat-label>
+                <input matInput name="role" [(ngModel)]="profile.role" readonly />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Language</mat-label>
+                <mat-select name="language" [(ngModel)]="profile.language" required>
+                  <mat-option *ngFor="let lang of languages" [value]="lang.code">
+                    {{ lang.label }}
+                  </mat-option>
+                </mat-select>
+                <mat-error>Language is required.</mat-error>
+              </mat-form-field>
+
+              <div class="toggle-card-inline">
+                <div class="toggle-info">
+                  <strong>Enable notifications</strong>
+                  <p>Receive important updates about your building.</p>
+                </div>
+                <mat-slide-toggle name="notifications" [(ngModel)]="profile.notifications"></mat-slide-toggle>
+              </div>
+            </div>
+          </section>
+          
+               <button
+            mat-raised-button
+            color="primary"
+            type="button"
+            class="save-button"
+            [disabled]="isSaving || settingsForm.invalid"
+            (click)="save()">
+            {{ isSaving ? 'Saving...' : 'Save Settings' }}
+          </button>
+        </div>
+
+      </div>
+
+    </form>
+  </mat-card>
+</main>

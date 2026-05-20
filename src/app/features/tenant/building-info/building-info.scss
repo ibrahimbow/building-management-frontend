@@ -1,56 +1,108 @@
-.building-page {
-  padding: 8px;
+.content {
+  padding: 30px;
 }
 
-.building-card {
-  padding: 24px;
-  border-radius: 18px;
+.building-info-card {
+  border-radius: 28px;
+  background: #ffffff;
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.08);
+  padding: 18px;
 }
 
-.header {
+.building-overview {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.building-image img {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 24px;
+}
+
+.building-details h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.address {
+  margin: 4px 0 24px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.building-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.info-box {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 20px;
+  padding: 18px;
+  border-radius: 20px;
+  background: #f8fbff;
 }
 
-.header mat-icon {
-  font-size: 42px;
-  width: 42px;
-  height: 42px;
-  color: #1565c0;
-}
-
-.header h2 {
-  margin: 0;
-  font-size: 26px;
-}
-
-.header p {
-  margin: 4px 0 0;
-  color: #6b7280;
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(220px, 1fr));
-  gap: 20px;
-  margin-top: 24px;
-}
-
-.info-item {
-  background: #f8fafc;
-  padding: 16px;
+.info-box mat-icon {
+  padding: 12px;
   border-radius: 14px;
+  background: #dbeafe;
+  color: #2563eb;
 }
 
-.info-item span {
+.info-box span {
   display: block;
-  color: #6b7280;
+  color: #64748b;
   font-size: 13px;
-  margin-bottom: 6px;
+  font-weight: 700;
 }
 
-.info-item strong {
-  font-size: 16px;
+.info-box strong {
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.leave-btn {
+  margin-top: 22px;
+  height: 46px;
+  border-radius: 14px !important;
+  background: #2563eb !important;
+  color: white !important;
+  font-weight: 800;
+}
+
+.loading-state,
+.empty-state {
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #64748b;
+}
+
+.empty-state mat-icon {
+  font-size: 46px;
+  width: 46px;
+  height: 46px;
+  color: #2563eb;
+}
+
+@media (max-width: 900px) {
+  .building-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .building-info-grid {
+    grid-template-columns: 1fr;
+  }
 }
