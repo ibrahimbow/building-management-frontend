@@ -76,6 +76,7 @@ private readonly imageUrlService = inject(ImageUrlService);
 
   readonly currentUserId = this.authService.getCurrentUser()?.id ?? 0;
 
+  currentUser$ = this.authService.currentUser$;
   readonly maxMessageLength = 2000;
 
   readonly emojis = ['👍', '❤️', '😂', '😮', '🙏'];

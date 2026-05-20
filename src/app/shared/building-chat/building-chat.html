@@ -169,10 +169,16 @@
 
       <div class="composer-row">
 
-        <div class="composer-avatar">
-          <mat-icon>person</mat-icon>
-          <span></span>
-        </div>
+    <div class="composer-avatar">
+  <img
+    *ngIf="hasValidImage((currentUser$ | async)?.avatarUrl); else defaultComposerAvatar"
+    [src]="resolveImageUrl((currentUser$ | async)?.avatarUrl)"
+    [alt]="(currentUser$ | async)?.displayName || 'User avatar'" />
+
+  <ng-template #defaultComposerAvatar>
+    <mat-icon>person</mat-icon>
+  </ng-template>
+</div>
 
         <div class="composer-box">
 

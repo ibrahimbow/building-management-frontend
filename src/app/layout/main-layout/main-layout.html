@@ -35,7 +35,7 @@
         <span matListItemTitle>Building Tenants</span>
       </a>
 
-            <a *ngIf="managerHasBuilding" mat-list-item routerLink="/manager/building-chat" routerLinkActive="active">
+      <a *ngIf="managerHasBuilding" mat-list-item routerLink="/manager/building-chat" routerLinkActive="active">
         <mat-icon matListItemIcon>chat</mat-icon>
         <span matListItemTitle>Building Chat</span>
       </a>
@@ -99,31 +99,22 @@
 
       <span class="spacer"></span>
 
-<div class="toolbar-actions">
+      <div class="toolbar-actions">
 
-  <button mat-icon-button type="button">
-    <mat-icon>notifications_none</mat-icon>
-  </button>
+        <button mat-icon-button type="button" class="profile-btn">
 
-  <button mat-icon-button type="button" class="profile-btn">
+          <img *ngIf="imageUrlService.hasImage(profile.avatarUrl)" [src]="imageUrlService.resolve(profile.avatarUrl)"
+            alt="Profile photo" class="toolbar-avatar" />
 
-    <img
-      *ngIf="imageUrlService.hasImage(profile.avatarUrl)"
-      [src]="imageUrlService.resolve(profile.avatarUrl)"
-      alt="Profile photo"
-      class="toolbar-avatar" />
+          <mat-icon *ngIf="!imageUrlService.hasImage(profile.avatarUrl)">
+            person
+          </mat-icon>
 
-    <mat-icon *ngIf="!imageUrlService.hasImage(profile.avatarUrl)">
-      person
-    </mat-icon>
+        </button>
 
-  </button>
+      </div>
 
-</div>
 
-      <button mat-icon-button type="button" class="profile-btn">
-        <mat-icon>account_circle</mat-icon>
-      </button>
 
     </mat-toolbar>
 
