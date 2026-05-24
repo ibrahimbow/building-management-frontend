@@ -8,6 +8,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { Announcement } from '../../../core/models/announcement.model';
 import { AnnouncementService } from '../../../core/services/announcement.service';
+import {NotificationStateService } from '../../../core/services/notification-state.service';
 
 @Component({
   selector: 'app-tenant-announcements',
@@ -26,6 +27,7 @@ export class TenantAnnouncements implements OnInit {
   private readonly announcementService = inject(AnnouncementService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly notificationState = inject(NotificationStateService);
 
   announcements: Announcement[] = [];
 
@@ -33,6 +35,21 @@ export class TenantAnnouncements implements OnInit {
 
   ngOnInit(): void {
     this.loadAnnouncements();
+
+    this.notificationState.latestNotification$
+  .subscribe(notification => {
+
+    if (!notification) {
+      return;
+    }
+
+    if (notification.type !== 'ANNOUNCEMENT') {
+      return;
+    }
+
+    this.loadAnnouncements();
+  });
+  
   }
 
   private loadAnnouncements(): void {

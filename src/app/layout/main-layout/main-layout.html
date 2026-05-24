@@ -101,6 +101,13 @@
 
       <div class="toolbar-actions">
 
+        <button mat-icon-button>
+          <mat-icon [matBadge]="(unreadCount$ | async) || 0" matBadgeColor="warn"
+            [matBadgeHidden]="((unreadCount$ | async) || 0) === 0">
+            notifications
+          </mat-icon>
+        </button>
+
         <button mat-icon-button type="button" class="profile-btn">
 
           <img *ngIf="imageUrlService.hasImage(profile.avatarUrl)" [src]="imageUrlService.resolve(profile.avatarUrl)"
