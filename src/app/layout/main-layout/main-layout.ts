@@ -14,6 +14,10 @@ import { BuildingService } from '../../core/services/building.service';
 import { ImageUrlService } from '../../core/services/image-url.service';
 import { NotificationStateService } from '../../core/services/notification-state.service';
 import { TenantBuildingStateService } from '../../core/services/tenant-building-state.service';
+import {NotificationItem} from '../../core/services/notification.service';
+import { Observable } from 'rxjs';
+import { MatMenuModule } from '@angular/material/menu';
+
 
 interface MenuItem {
   label: string;
@@ -35,7 +39,8 @@ interface MenuItem {
     MatListModule,
     MatIconModule,
     MatButtonModule,
-    MatBadgeModule
+    MatBadgeModule,
+     MatMenuModule
   ],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
@@ -49,6 +54,7 @@ export class MainLayout implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
 
+  readonly notifications$: Observable<NotificationItem[]> = this.notificationState.notifications$;
   readonly currentUser$ = this.authService.currentUser$;
   readonly unreadCount$ = this.notificationState.unreadCount$;
 
@@ -148,6 +154,27 @@ export class MainLayout implements OnInit {
   get isManagerOrAdmin(): boolean {
     return this.authService.isManagerOrAdmin();
   }
+
+  openNotification(notification: NotificationItem): void {
+  if (!notification.read) {
+    this.notificationState.markAsRead(notification.id);
+  }
+
+  if (notification.type === 'ANNOUNCEMENT') {
+    this.router.navigate(['/tenant/announcements']);
+    return;
+  }
+
+  if (notification.type === 'CHAT') {
+    this.router.navigate(['/tenant/building-chat']);
+    return;
+  }
+
+  if (notification.type === 'SHARE_AND_HELP') {
+    this.router.navigate(['/tenant/help-share']);
+  }
+}
+
 
   get isTenant(): boolean {
     return this.authService.isTenant();
