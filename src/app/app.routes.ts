@@ -60,7 +60,7 @@ export const routes: Routes = [
       {
         path: 'help-share',
         loadComponent: () =>
-          import('./features/tenant/share-and-help/share-and-help')
+          import('./shared/share-and-help/share-and-help')
             .then(m => m.ShareAndHelpComponent)
       },
       {
@@ -131,6 +131,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./shared/building-chat/building-chat')
             .then(m => m.BuildingChat)
+      },
+      {
+        path: 'help-share',
+        loadComponent: () =>
+          import('./shared/share-and-help/share-and-help')
+            .then(m => m.ShareAndHelpComponent)
       }
     ]
   },

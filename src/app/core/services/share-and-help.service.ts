@@ -16,7 +16,7 @@ export class ShareAndHelpService {
   private readonly apiUrl = 'http://localhost:8080/api/tenant/share-and-help/posts';
 
   constructor(private readonly http: HttpClient) {}
-
+  
   getAll(): Observable<ShareAndHelp[]> {
     return this.http.get<ShareAndHelp[]>(this.apiUrl);
   }

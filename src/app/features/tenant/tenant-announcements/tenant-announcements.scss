@@ -1,6 +1,9 @@
 .tenant-announcements-page {
   display: grid;
   gap: 22px;
+  max-width: 1500px;
+  margin: 0 auto;
+   padding: 0 42px 50px 0px;
 }
 
 .announcements-hero {
@@ -235,3 +238,4 @@
     flex-direction: column;
   }
 }
+

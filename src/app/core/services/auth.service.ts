@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable,BehaviorSubject , tap } from 'rxjs';
+import { Observable, BehaviorSubject, tap } from 'rxjs';
 
 
 
@@ -100,66 +100,66 @@ export class AuthService {
     return '/tenant/dashboard';
   }
 
-getProfile() {
-  return this.http.get<BuildingUserProfile>(
-    `${this.apiUrl}/profile`);
-}
-
-updateProfile(
-  request: UpdateBuildingUserProfileRequest) {
-
-  return this.http.put<BuildingUserProfile>(
-    `${this.apiUrl}/profile`,
-    request
-  ).pipe(
-    tap(profile => {
-
-      const currentUser =
-        this.getCurrentUser();
-
-      if (!currentUser) {
-        return;
-      }
-
-      const updatedUser: User = {
-        ...currentUser,
-        displayName: profile.displayName,
-        phoneNumber: profile.phoneNumber,
-        avatarUrl: profile.avatarUrl
-      };
-
-      localStorage.setItem(
-        this.CURRENT_USER_KEY,
-        JSON.stringify(updatedUser));
-    })
-  );
-}
-
-updateCurrentUser(profile: BuildingUserProfile): void {
-
-  const currentUser = this.getCurrentUser();
-
-  if (!currentUser) {
-    return;
+  getProfile() {
+    return this.http.get<BuildingUserProfile>(
+      `${this.apiUrl}/profile`);
   }
 
-  const updatedUser: User = {
-    ...currentUser,
-    displayName: profile.displayName,
-    phoneNumber: profile.phoneNumber,
-    avatarUrl: profile.avatarUrl
-  };
+  updateProfile(
+    request: UpdateBuildingUserProfileRequest) {
 
-  localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+    return this.http.put<BuildingUserProfile>(
+      `${this.apiUrl}/profile`,
+      request
+    ).pipe(
+      tap(profile => {
 
-  this.currentUserSubject.next(updatedUser);
-}
+        const currentUser =
+          this.getCurrentUser();
 
-private readonly currentUserSubject = new BehaviorSubject<User | null>(
-  this.getCurrentUser()
-);
+        if (!currentUser) {
+          return;
+        }
 
-currentUser$ = this.currentUserSubject.asObservable();
+        const updatedUser: User = {
+          ...currentUser,
+          displayName: profile.displayName,
+          phoneNumber: profile.phoneNumber,
+          avatarUrl: profile.avatarUrl
+        };
+
+        localStorage.setItem(
+          this.CURRENT_USER_KEY,
+          JSON.stringify(updatedUser));
+      })
+    );
+  }
+
+  updateCurrentUser(profile: BuildingUserProfile): void {
+
+    const currentUser = this.getCurrentUser();
+
+    if (!currentUser) {
+      return;
+    }
+
+    const updatedUser: User = {
+      ...currentUser,
+      displayName: profile.displayName,
+      phoneNumber: profile.phoneNumber,
+      avatarUrl: profile.avatarUrl
+    };
+
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+
+    this.currentUserSubject.next(updatedUser);
+  }
+
+  private readonly currentUserSubject = new BehaviorSubject<User | null>(
+    this.getCurrentUser()
+  );
+
+  currentUser$ = this.currentUserSubject.asObservable();
 
   private storeTokens(response: AuthResponse): void {
     localStorage.setItem(this.ACCESS_TOKEN_KEY, response.accessToken);

@@ -51,28 +51,24 @@ export class TenantDashboard implements OnInit {
       description: 'View your building details',
       icon: 'business',
       route: '/tenant/building-info',
-      notificationCount: 0
     },
     {
       title: 'Announcements',
       description: 'Read updates from your building manager',
       icon: 'campaign',
       route: '/tenant/announcements',
-      notificationCount: 4
     },
     {
       title: 'Chat',
       description: 'Chat with neighbors',
       icon: 'chat',
       route: '/tenant/tenant-chat',
-      notificationCount: 8
     },
     {
       title: 'Help & Share',
       description: 'Share help with your building community',
       icon: 'share',
       route: '/tenant/help-share',
-      notificationCount: 1
     }
   ];
 

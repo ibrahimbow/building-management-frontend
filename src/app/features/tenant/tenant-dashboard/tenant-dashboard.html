@@ -76,9 +76,8 @@
       <article *ngFor="let item of menuItems" class="stat-card" [routerLink]="item.route">
         <mat-icon>{{ item.icon }}</mat-icon>
 
-        <div>
-          <strong>{{ item.notificationCount || 0 }}</strong>
-          <span>{{ item.title }}</span>
+        <div class="stat-content">
+          <span class="card-title">{{ item.title }}</span>
           <small>{{ item.description }}</small>
         </div>
       </article>
@@ -86,8 +85,8 @@
 
     <section class="glance-card">
       <div class="glance-content">
-        <h3>{{ building.buildingName }} at a Glance</h3>
-        <p>A community of comfort, safety, and connection.</p>
+        <h3>Stronger Buildings. Better Communities.</h3>
+        <p>Connected residents, happier homes.</p>
       </div>
     </section>
 

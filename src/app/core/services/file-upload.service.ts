@@ -14,10 +14,10 @@ export class FileUploadService {
 
   private readonly apiUrl = 'http://localhost:8080/api/files/upload';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   upload(file: File,
-         type: FileType): Observable<UploadedFile> {
+    type: FileType): Observable<UploadedFile> {
     const formData = new FormData();
 
     formData.append('file', file);

@@ -14,7 +14,7 @@ import { BuildingService } from '../../core/services/building.service';
 import { ImageUrlService } from '../../core/services/image-url.service';
 import { NotificationStateService } from '../../core/services/notification-state.service';
 import { TenantBuildingStateService } from '../../core/services/tenant-building-state.service';
-import {NotificationItem} from '../../core/services/notification.service';
+import { NotificationItem } from '../../core/services/notification.service';
 import { Observable } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 
@@ -40,7 +40,7 @@ interface MenuItem {
     MatIconModule,
     MatButtonModule,
     MatBadgeModule,
-     MatMenuModule
+    MatMenuModule
   ],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
@@ -93,6 +93,12 @@ export class MainLayout implements OnInit {
       icon: 'chat',
       route: '/manager/building-chat',
       requiresBuilding: true
+    },
+    {
+      label: 'Share & Help',
+      icon: 'volunteer_activism',
+      route: '/manager/help-share',
+      requiresBuilding: true
     }
   ];
 
@@ -120,7 +126,7 @@ export class MainLayout implements OnInit {
       requiresBuilding: true
     },
     {
-      label: 'Help & Share',
+      label: 'Share & Help',
       icon: 'volunteer_activism',
       route: '/tenant/help-share',
       requiresBuilding: true
@@ -156,24 +162,24 @@ export class MainLayout implements OnInit {
   }
 
   openNotification(notification: NotificationItem): void {
-  if (!notification.read) {
-    this.notificationState.markAsRead(notification.id);
-  }
+    if (!notification.read) {
+      this.notificationState.markAsRead(notification.id);
+    }
 
-  if (notification.type === 'ANNOUNCEMENT') {
-    this.router.navigate(['/tenant/announcements']);
-    return;
-  }
+    if (notification.type === 'ANNOUNCEMENT') {
+      this.router.navigate(['/tenant/announcements']);
+      return;
+    }
 
-  if (notification.type === 'CHAT') {
-    this.router.navigate(['/tenant/building-chat']);
-    return;
-  }
+    if (notification.type === 'CHAT') {
+      this.router.navigate(['/tenant/building-chat']);
+      return;
+    }
 
-  if (notification.type === 'SHARE_AND_HELP') {
-    this.router.navigate(['/tenant/help-share']);
+    if (notification.type === 'SHARE_AND_HELP') {
+      this.router.navigate(['/tenant/help-share']);
+    }
   }
-}
 
 
   get isTenant(): boolean {

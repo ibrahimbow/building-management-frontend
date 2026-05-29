@@ -66,18 +66,15 @@
 
           </div>
 
-          <button
-            mat-flat-button
-            class="leave-btn"
-            type="button"
-            (click)="leaveBuilding()"
-            [disabled]="isLeaving">
+          <div class="leave-btn-wrapper">
+            <button mat-flat-button class="leave-btn" type="button"
+             (click)="leaveBuilding()" [disabled]="isLeaving">
 
-            <mat-icon>logout</mat-icon>
-            {{ isLeaving ? 'Leaving...' : 'Leave Building' }}
+              <mat-icon>logout</mat-icon>
+              {{ isLeaving ? 'Leaving...' : 'Leave Building' }}
 
-          </button>
-
+            </button>
+          </div>
         </div>
 
       </section>

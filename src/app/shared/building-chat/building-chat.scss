@@ -147,7 +147,7 @@
 
 .message-group {
   display: grid;
-  gap: 18px;
+  gap: 8px;
 }
 
 .day-separator {
@@ -204,32 +204,42 @@
 
 .bubble-avatar {
   position: relative;
-  display: grid;
-  place-items: center;
-  width: 55px;
-  height: 55px;
-  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+
+  margin-top: 24px;
+
   border-radius: 50%;
-  color: #2563eb;
-  background: #dbeafe;
+
+  background: linear-gradient(
+    135deg,
+    #dbeafe,
+    #bfdbfe
+  );
+
   overflow: hidden;
   flex-shrink: 0;
+
+  box-shadow:
+    0 8px 20px rgba(37, 99, 235, 0.12);
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
   }
 
-  span {
-    position: absolute;
-    right: 5px;
-    bottom: 8px;
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background: #22c55e;
-    border: 2px solid #ffffff;
+  mat-icon {
+    color: #2563eb;
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
   }
 }
 
@@ -287,7 +297,11 @@
 }
 
 .bubble-row.mine .message-bubble {
-  background: #dbeafe;
+  background: linear-gradient(
+  135deg,
+  #dbeafe,
+  #bfdbfe
+);
   border-color: #bfdbfe;
   border-radius: 22px 22px 8px 22px;
 }
@@ -676,6 +690,7 @@
     font-weight: 800;
   }
 }
+
 .composer-icon:disabled {
   opacity: 0.45;
   cursor: not-allowed;
@@ -700,10 +715,7 @@
   justify-content: center;
 
   padding:
-    clamp(20px, 3vw, 40px)
-    clamp(20px, 3vw, 40px)
-    clamp(20px, 3vw, 40px)
-    clamp(90px, 18vw, 320px);
+    clamp(20px, 3vw, 40px) clamp(20px, 3vw, 40px) clamp(20px, 3vw, 40px) clamp(90px, 18vw, 320px);
 
   background: rgba(15, 23, 42, 0.82);
   backdrop-filter: blur(6px);
@@ -724,4 +736,26 @@
 
     transition: all 0.2s ease;
   }
+}
+
+.messages-area::-webkit-scrollbar {
+  width: 10px;
+}
+
+.messages-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messages-area::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+.messages-area::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+
+.message-bubble {
+  animation: messageAppear 0.18s ease;
 }

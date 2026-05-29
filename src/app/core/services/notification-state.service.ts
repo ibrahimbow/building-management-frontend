@@ -132,12 +132,12 @@ export class NotificationStateService {
 
     const updatedNotifications = alreadyExists
       ? currentNotifications.map(current =>
-          current.id === notification.id ? notification : current
-        )
+        current.id === notification.id ? notification : current
+      )
       : [
-          notification,
-          ...currentNotifications
-        ];
+        notification,
+        ...currentNotifications
+      ];
 
     this.notificationsSubject.next(updatedNotifications);
     this.updateUnreadCount(updatedNotifications);

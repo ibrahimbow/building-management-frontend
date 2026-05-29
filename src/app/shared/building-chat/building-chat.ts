@@ -4,15 +4,16 @@ import {
   Component,
   ElementRef,
   HostListener,
+  OnDestroy,
   OnInit,
   ViewChild,
   inject
 } from '@angular/core';
 
+import { finalize, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-import { finalize, Observable, of, switchMap } from 'rxjs';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -55,7 +56,7 @@ interface ChatMessageGroup {
   templateUrl: './building-chat.html',
   styleUrl: './building-chat.scss'
 })
-export class BuildingChat implements OnInit, AfterViewChecked {
+export class BuildingChat implements OnInit, AfterViewChecked, OnDestroy {
 
   @ViewChild('messagesArea')
   private messagesArea?: ElementRef<HTMLDivElement>;
@@ -70,7 +71,9 @@ export class BuildingChat implements OnInit, AfterViewChecked {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly chatWebSocketService = inject(ChatWebSocketService);
   private readonly buildingService = inject(BuildingService);
-private readonly imageUrlService = inject(ImageUrlService);
+  private readonly imageUrlService = inject(ImageUrlService);
+private readonly destroy$ = new Subject<void>();
+private websocketConnected = false;
 
   private shouldScrollToBottom = false;
 
@@ -107,21 +110,27 @@ private readonly imageUrlService = inject(ImageUrlService);
   showEmojiPicker = false;
 
   ngOnInit(): void {
-  setTimeout(() => {
-    this.loadTenantBuildingAndMessages();
-  });
-}
-
-  ngAfterViewChecked(): void {
-  if (!this.shouldScrollToBottom) return;
-
-  const el = this.messagesArea?.nativeElement;
-  if (el) {
-    el.scrollTop = el.scrollHeight;
+    setTimeout(() => {
+      this.loadTenantBuildingAndMessages();
+    });
   }
 
-  this.shouldScrollToBottom = false;
+  ngOnDestroy(): void {
+  this.destroy$.next();
+  this.destroy$.complete();
 }
+
+
+  ngAfterViewChecked(): void {
+    if (!this.shouldScrollToBottom) return;
+
+    const el = this.messagesArea?.nativeElement;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
+    }
+
+    this.shouldScrollToBottom = false;
+  }
 
   @HostListener('document:keydown.escape')
   onEscapePressed(): void {
@@ -209,9 +218,9 @@ private readonly imageUrlService = inject(ImageUrlService);
 
     const upload$: Observable<UploadedFile | null> = this.selectedFile
       ? this.fileUploadService.upload(
-          this.selectedFile,
-          'CHAT_MESSAGE_IMAGE'
-        )
+        this.selectedFile,
+        'CHAT_MESSAGE_IMAGE'
+      )
       : of(null);
 
     upload$
@@ -231,9 +240,9 @@ private readonly imageUrlService = inject(ImageUrlService);
       )
       .subscribe({
         next: () => {
-  this.messageContent = '';
-  this.clearSelectedImage();
-},
+          this.messageContent = '';
+          this.clearSelectedImage();
+        },
         error: error => {
           console.error('Failed to send chat message:', error);
           this.notificationService.error('Failed to send message.');
@@ -252,12 +261,12 @@ private readonly imageUrlService = inject(ImageUrlService);
           this.messages = this.messages.map(currentMessage =>
             currentMessage.id === message.id
               ? {
-                  ...currentMessage,
-                  deleted: true,
-                  content: null,
-                  imageUrl: null,
-                  reactions: []
-                }
+                ...currentMessage,
+                deleted: true,
+                content: null,
+                imageUrl: null,
+                reactions: []
+              }
               : currentMessage
           );
 
@@ -271,26 +280,26 @@ private readonly imageUrlService = inject(ImageUrlService);
   }
 
   reactToMessage(message: ChatMessage,
-                 emoji: string): void {
+    emoji: string): void {
     if (message.deleted) {
       return;
     }
 
     const currentMessage = this.messages.find(
-  current => current.id === message.id
-);
+      current => current.id === message.id
+    );
 
-if (!currentMessage) {
-  return;
-}
+    if (!currentMessage) {
+      return;
+    }
 
-const previousMessages = this.cloneMessages();
-const alreadyReacted = this.hasReacted(currentMessage, emoji);
-      console.log(
-  alreadyReacted ? 'Removing reaction logfile' : 'Adding reaction',
-  message.id,
-  emoji
-);
+    const previousMessages = this.cloneMessages();
+    const alreadyReacted = this.hasReacted(currentMessage, emoji);
+    console.log(
+      alreadyReacted ? 'Removing reaction logfile' : 'Adding reaction',
+      message.id,
+      emoji
+    );
 
     this.toggleReactionLocally(message.id, emoji);
 
@@ -364,24 +373,24 @@ const alreadyReacted = this.hasReacted(currentMessage, emoji);
   }
 
   hasReacted(message: ChatMessage,
-             emoji: string): boolean {
+    emoji: string): boolean {
     return message.reactions.some(
       reaction => reaction.emoji === emoji && reaction.reactedByCurrentUser
     );
   }
 
   trackByMessageId(index: number,
-                   message: ChatMessage): string {
+    message: ChatMessage): string {
     return message.id;
   }
 
   trackByGroupLabel(index: number,
-                    group: ChatMessageGroup): string {
+    group: ChatMessageGroup): string {
     return group.label;
   }
 
   private toggleReactionLocally(messageId: string,
-                                emoji: string): void {
+    emoji: string): void {
     this.messages = this.messages.map(message => {
       if (message.id !== messageId) {
         return message;
@@ -411,12 +420,12 @@ const alreadyReacted = this.hasReacted(currentMessage, emoji);
         .map(reaction =>
           reaction.emoji === emoji
             ? {
-                ...reaction,
-                count: alreadyReacted
-                  ? Math.max(reaction.count - 1, 0)
-                  : reaction.count + 1,
-                reactedByCurrentUser: !alreadyReacted
-              }
+              ...reaction,
+              count: alreadyReacted
+                ? Math.max(reaction.count - 1, 0)
+                : reaction.count + 1,
+              reactedByCurrentUser: !alreadyReacted
+            }
             : reaction
         )
         .filter(reaction => reaction.count > 0);
@@ -470,23 +479,17 @@ const alreadyReacted = this.hasReacted(currentMessage, emoji);
     });
   }
 
-  private scrollToBottom(): void {
-    const element = this.messagesArea?.nativeElement;
-
-    if (!element) {
-      return;
-    }
-
-    element.scrollTop = element.scrollHeight;
+private connectWebSocketMessages(): void {
+  if (this.websocketConnected) {
+    return;
   }
 
-private connectWebSocketMessages(): void {
+  this.websocketConnected = true;
 
   this.chatWebSocketService.events$
+    .pipe(takeUntil(this.destroy$))
     .subscribe(event => {
-console.log('Chat websocket event received:', event);
       switch (event.type) {
-
         case 'MESSAGE_CREATED':
           this.handleRealtimeMessageCreated(event.message);
           break;
@@ -497,105 +500,118 @@ console.log('Chat websocket event received:', event);
 
         case 'REACTION_UPDATED':
           this.handleRealtimeReactionUpdated(event.message);
-         break;
+          break;
       }
     });
 }
 
-private loadTenantBuildingAndMessages(): void {
+  private loadTenantBuildingAndMessages(): void {
 
-  this.buildingService
-    .getCurrentBuildingForChat(
-      this.authService.isManagerOrAdmin()
-    )
-    .subscribe({
-      next: building => {
+    this.buildingService
+      .getCurrentBuildingForChat(
+        this.authService.isManagerOrAdmin()
+      )
+      .subscribe({
+        next: building => {
 
-        if (!building) {
+          if (!building) {
+            this.notificationService.error(
+              'No building found for chat.'
+            );
+
+            this.isLoading = false;
+            return;
+          }
+
+          this.chatWebSocketService.connect(building.id);
+
+          console.log(
+            'Loading building chat messages:',
+            building.id
+          );
+
+          this.connectWebSocketMessages();
+          this.loadMessages();
+        },
+
+        error: error => {
+          console.error(
+            'Failed to load building chat:',
+            error
+          );
+
           this.notificationService.error(
-            'No building found for chat.'
+            'Failed to load your building chat.'
           );
 
           this.isLoading = false;
-          return;
         }
+      });
+  }
 
-        this.chatWebSocketService.connect(building.id);
-
-        console.log(
-          'Loading building chat messages:',
-          building.id
-        );
-
-        this.connectWebSocketMessages();
-        this.loadMessages();
-      },
-
-      error: error => {
-        console.error(
-          'Failed to load building chat:',
-          error
-        );
-
-        this.notificationService.error(
-          'Failed to load your building chat.'
-        );
-
-        this.isLoading = false;
-      }
-    });
-}
-
-hasValidImage(imageUrl: string | null | undefined): boolean {
-  return !!imageUrl && imageUrl.trim().length > 0;
-}
+  hasValidImage(imageUrl: string | null | undefined): boolean {
+    return !!imageUrl && imageUrl.trim().length > 0;
+  }
 
 resolveImageUrl(imageUrl: string | null | undefined): string {
   if (!imageUrl) {
     return '';
   }
+  const normalizedUrl = imageUrl
+    .replace('/profile_avatar/', '/PROFILE_AVATAR/')
+    .replace('/announcement_image/', '/ANNOUNCEMENT_IMAGE/')
+    .replace('/share_and_help_image/', '/SHARE_AND_HELP_IMAGE/')
+    .replace('/chat_message_image/', '/CHAT_MESSAGE_IMAGE/');
 
-  return this.imageUrlService.resolve(imageUrl);
-}
-
-private handleRealtimeMessageCreated(message: ChatMessage): void {
-  const alreadyExists = this.messages.some(
-    currentMessage => currentMessage.id === message.id
-  );
-
-  if (alreadyExists) {
-    return;
+  if (normalizedUrl.startsWith('http')) {
+    return normalizedUrl;
   }
 
-  this.messages = [
-    ...this.messages,
-    message
-  ];
+  if (normalizedUrl.startsWith('/')) {
+    return `http://localhost:8080${normalizedUrl}`;
+  }
 
-  this.shouldScrollToBottom = true;
-  this.cdr.markForCheck();
+  return `http://localhost:8080/${normalizedUrl}`;
 }
 
-private handleRealtimeMessageDeleted(message: ChatMessage): void {
-  this.messages = this.messages.map(currentMessage =>
-    currentMessage.id === message.id
-      ? message
-      : currentMessage
-  );
+  private handleRealtimeMessageCreated(message: ChatMessage): void {
+    const alreadyExists = this.messages.some(
+      currentMessage => currentMessage.id === message.id
+    );
 
-  this.cdr.markForCheck();
-}
+    if (alreadyExists) {
+      return;
+    }
 
-private handleRealtimeReactionUpdated(message: ChatMessage): void {
-  this.messages = this.messages.map(currentMessage =>
-    currentMessage.id === message.id
-      ? {
+    this.messages = [
+      ...this.messages,
+      message
+    ];
+
+    this.shouldScrollToBottom = true;
+    this.cdr.markForCheck();
+  }
+
+  private handleRealtimeMessageDeleted(message: ChatMessage): void {
+    this.messages = this.messages.map(currentMessage =>
+      currentMessage.id === message.id
+        ? message
+        : currentMessage
+    );
+
+    this.cdr.markForCheck();
+  }
+
+  private handleRealtimeReactionUpdated(message: ChatMessage): void {
+    this.messages = this.messages.map(currentMessage =>
+      currentMessage.id === message.id
+        ? {
           ...currentMessage,
           reactions: message.reactions
         }
-      : currentMessage
-  );
+        : currentMessage
+    );
 
-  this.cdr.markForCheck();
-}
+    this.cdr.markForCheck();
+  }
 }
