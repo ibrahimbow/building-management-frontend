@@ -6,9 +6,7 @@
   padding: 24px;
   box-sizing: border-box;
   overflow: hidden; // Disables external page shifting
-  background:
-    radial-gradient(circle at top left, rgba(59, 130, 246, 0.06), transparent 28%),
-    linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+  background:transparent;
 }
 
 .settings-card {
