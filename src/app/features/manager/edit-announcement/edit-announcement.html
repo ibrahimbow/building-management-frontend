@@ -1,14 +1,16 @@
 <section class="edit-announcement-page">
 
-  <p *ngIf="isLoading">
+  <div *ngIf="isLoading" class="loading-state">
     Loading announcement...
-  </p>
+  </div>
 
   <mat-card *ngIf="!isLoading" class="form-card">
-    <mat-card-title>Edit Announcement</mat-card-title>
-    <mat-card-subtitle>
-      Update the announcement details for your tenants.
-    </mat-card-subtitle>
+
+    <div class="form-header">
+      <span class="page-label">Manager Dashboard</span>
+      <h1>Edit Announcement</h1>
+      <p>Update the announcement details and image for your tenants.</p>
+    </div>
 
     <mat-card-content>
       <form #form="ngForm" (ngSubmit)="updateAnnouncement(form)" novalidate>
@@ -30,7 +32,7 @@
             matInput
             name="message"
             [(ngModel)]="message"
-            rows="5"
+            rows="4"
             maxlength="5000"
             required>
           </textarea>
@@ -50,16 +52,39 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Image URL</mat-label>
+        <div class="upload-section">
+          <label for="announcement-image">
+            Image optional
+          </label>
+
           <input
-            matInput
-            name="imageUrl"
-            [(ngModel)]="imageUrl"
-            maxlength="500"
-            placeholder="Optional image URL"
+            id="announcement-image"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            (change)="onImageSelected($event)"
+            [disabled]="isSubmitting || isUploading"
           />
-        </mat-form-field>
+
+          <small>
+            Allowed formats: JPG, PNG, WEBP. Maximum size: 5MB.
+          </small>
+        </div>
+
+        <div class="preview-grid" *ngIf="hasValidImage(imageUrl)">
+          <img
+            [src]="resolveImageUrl(imageUrl)"
+            alt="Selected announcement image preview"
+          />
+
+          <button
+            mat-button
+            color="warn"
+            type="button"
+            (click)="removeImage()"
+            [disabled]="isSubmitting || isUploading">
+            Remove image
+          </button>
+        </div>
 
         <div class="actions">
           <button
@@ -73,13 +98,14 @@
             mat-raised-button
             color="primary"
             type="submit"
-            [disabled]="isSubmitting">
+            [disabled]="isSubmitting || isUploading">
             {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
           </button>
         </div>
 
       </form>
     </mat-card-content>
+
   </mat-card>
 
 </section>

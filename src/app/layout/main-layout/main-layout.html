@@ -1,7 +1,5 @@
 <mat-sidenav-container class="layout">
-
   <mat-sidenav mode="side" [opened]="true" class="sidebar">
-
     <div class="logo">
       <div class="logo-icon">
         <mat-icon>apartment</mat-icon>
@@ -14,7 +12,6 @@
     </div>
 
     <mat-nav-list *ngIf="isManagerOrAdmin" class="nav-list">
-
       <a mat-list-item routerLink="/manager/dashboard" routerLinkActive="active">
         <mat-icon matListItemIcon>dashboard</mat-icon>
         <span matListItemTitle>Dashboard</span>
@@ -39,16 +36,19 @@
         <mat-icon matListItemIcon>chat</mat-icon>
         <span matListItemTitle>Building Chat</span>
       </a>
-        
-      <a *ngIf="managerHasBuilding"  mat-list-item routerLink="/manager/help-share" routerLinkActive="active">
+
+      <a *ngIf="managerHasBuilding" mat-list-item routerLink="/manager/help-share" routerLinkActive="active">
         <mat-icon matListItemIcon>share</mat-icon>
-        <span matListItemTitle>share & Help</span>
+        <span matListItemTitle>Share & Help</span>
       </a>
 
+      <a mat-list-item routerLink="/manager/settings" routerLinkActive="active">
+        <mat-icon matListItemIcon>settings</mat-icon>
+        <span matListItemTitle>Settings</span>
+      </a>
     </mat-nav-list>
 
     <mat-nav-list *ngIf="isTenant" class="nav-list">
-
       <a mat-list-item routerLink="/tenant/dashboard" routerLinkActive="active">
         <mat-icon matListItemIcon>home</mat-icon>
         <span matListItemTitle>Dashboard</span>
@@ -83,29 +83,25 @@
         <mat-icon matListItemIcon>settings</mat-icon>
         <span matListItemTitle>Settings</span>
       </a>
-
     </mat-nav-list>
+
+    <div class="sidebar-illustration"></div>
 
     <button mat-list-item type="button" class="logout-btn" (click)="logout()">
       <mat-icon matListItemIcon>logout</mat-icon>
       <span matListItemTitle>Logout</span>
     </button>
-
   </mat-sidenav>
 
-  <mat-sidenav-content>
-
+  <mat-sidenav-content class="main-shell">
     <mat-toolbar class="topbar">
-
       <div class="topbar-title">
-        <h1>{{ isManagerOrAdmin ? 'Manager Dashboard' : 'Tenant Dashboard' }}</h1>
-        <p>Welcome back, {{ (currentUser$ | async)?.displayName }} 👋</p>
+        <p>Welcome, {{ (currentUser$ | async)?.displayName }} 👋</p>
       </div>
 
       <span class="spacer"></span>
 
       <div class="toolbar-actions">
-
         <button mat-icon-button type="button" class="notification-btn" [matMenuTriggerFor]="notificationMenu"
           aria-label="Open notifications">
 
@@ -114,78 +110,70 @@
             notifications
           </mat-icon>
         </button>
-
-        <mat-menu #notificationMenu="matMenu" panelClass="notification-menu-panel" xPosition="before">
-
-          <div class="notification-panel" (click)="$event.stopPropagation()">
-
-            <div class="notification-header">
-              <div>
-                <h3>Notifications</h3>
-                <p>Latest building updates</p>
-              </div>
-
-              <span class="notification-count" *ngIf="((unreadCount$ | async) || 0) > 0">
-                {{ unreadCount$ | async }} new
-              </span>
-            </div>
-
-            <ng-container *ngIf="(notifications$ | async) as notifications">
-
-              <div *ngIf="notifications.length === 0" class="notification-empty">
-                <mat-icon>notifications_none</mat-icon>
-                <h4>No notifications yet</h4>
-                <p>You are all caught up.</p>
-              </div>
-
-              <div class="notification-list" *ngIf="notifications.length > 0">
-                <button mat-menu-item type="button" class="notification-item" *ngFor="let notification of notifications"
-                  [class.unread]="!notification.read" (click)="openNotification(notification)">
-
-                  <div class="notification-icon">
-                    <mat-icon *ngIf="notification.type === 'ANNOUNCEMENT'">campaign</mat-icon>
-                    <mat-icon *ngIf="notification.type === 'CHAT'">chat</mat-icon>
-                    <mat-icon *ngIf="notification.type === 'SHARE_AND_HELP'">volunteer_activism</mat-icon>
-                  </div>
-
-                  <div class="notification-content">
-                    <div class="notification-title-row">
-                      <strong>{{ notification.title }}</strong>
-                      <span *ngIf="!notification.read" class="unread-dot"></span>
-                    </div>
-
-                    <p>{{ notification.message }}</p>
-                    <small>{{ notification.createdAt | date:'short' }}</small>
-                  </div>
-                </button>
-              </div>
-
-            </ng-container>
-
-          </div>
-        </mat-menu>
-
         <button mat-icon-button type="button" class="profile-btn">
 
-          <img *ngIf="imageUrlService.hasImage(profile.avatarUrl)" [src]="imageUrlService.resolve(profile.avatarUrl)"
-            alt="Profile photo" class="toolbar-avatar" />
+          <ng-container *ngIf="(currentUser$ | async) as currentUser">
 
-          <mat-icon *ngIf="!imageUrlService.hasImage(profile.avatarUrl)">
-            person
-          </mat-icon>
+            <img *ngIf="imageUrlService.hasImage(currentUser.avatarUrl)"
+              [src]="imageUrlService.resolve(currentUser.avatarUrl)" alt="Profile photo" class="toolbar-avatar" />
+
+            <mat-icon *ngIf="!imageUrlService.hasImage(currentUser.avatarUrl)">
+              person
+            </mat-icon>
+
+          </ng-container>
 
         </button>
-
       </div>
-
-
-
     </mat-toolbar>
+
+    <mat-menu #notificationMenu="matMenu" panelClass="notification-menu-panel" xPosition="before">
+      <div class="notification-panel" (click)="$event.stopPropagation()">
+        <div class="notification-header">
+          <div>
+            <h3>Notifications</h3>
+            <p>Latest building updates</p>
+          </div>
+
+          <span class="notification-count" *ngIf="((unreadCount$ | async) || 0) > 0">
+            {{ unreadCount$ | async }} new
+          </span>
+        </div>
+
+        <ng-container *ngIf="(notifications$ | async) as notifications">
+          <div *ngIf="notifications.length === 0" class="notification-empty">
+            <mat-icon>notifications_none</mat-icon>
+            <h4>No notifications yet</h4>
+            <p>You are all caught up.</p>
+          </div>
+
+          <div class="notification-list" *ngIf="notifications.length > 0">
+            <button mat-menu-item type="button" class="notification-item" *ngFor="let notification of notifications"
+              [class.unread]="!notification.read" (click)="openNotification(notification)">
+
+              <div class="notification-icon">
+                <mat-icon *ngIf="notification.type === 'ANNOUNCEMENT'">campaign</mat-icon>
+                <mat-icon *ngIf="notification.type === 'CHAT'">chat</mat-icon>
+                <mat-icon *ngIf="notification.type === 'SHARE_AND_HELP'">volunteer_activism</mat-icon>
+              </div>
+
+              <div class="notification-content">
+                <div class="notification-title-row">
+                  <strong>{{ notification.title }}</strong>
+                  <span *ngIf="!notification.read" class="unread-dot"></span>
+                </div>
+
+                <p>{{ notification.message }}</p>
+                <small>{{ notification.createdAt | date:'short' }}</small>
+              </div>
+            </button>
+          </div>
+        </ng-container>
+      </div>
+    </mat-menu>
 
     <main class="page-content" [class.chat-page-mode]="isChatPage">
       <router-outlet></router-outlet>
     </main>
-
   </mat-sidenav-content>
-
 </mat-sidenav-container>

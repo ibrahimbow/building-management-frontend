@@ -98,36 +98,40 @@ export class TenantDashboard implements OnInit {
     });
   }
 
-  leaveBuilding(): void {
-    if (this.isLeaving) {
-      return;
-    }
-
-    this.isLeaving = true;
-    this.errorMessage = null;
-
-    this.buildingService.leaveBuilding().pipe(
-      finalize(() => {
-        this.isLeaving = false;
-        this.cdr.markForCheck();
-      })
-    ).subscribe({
-      next: () => {
-        this.building = null;
-        this.hasJoinedBuilding = false;
-        this.errorMessage = 'You are not connected to a building yet.';
-
-        this.snackBar.open('You left the building successfully.', 'Close', {
-          duration: 3000
-        });
-        this.tenantBuildingState.markLeft();
-        this.router.navigate(['/tenant/dashboard']);
-      },
-      error: () => {
-        this.snackBar.open('Could not leave the building.', 'Close', {
-          duration: 3000
-        });
-      }
-    });
+leaveBuilding(): void {
+  if (this.isLeaving) {
+    return;
   }
+
+  this.isLeaving = true;
+  this.errorMessage = null;
+
+  this.buildingService.leaveBuilding().pipe(
+    finalize(() => {
+      this.isLeaving = false;
+      this.cdr.markForCheck();
+    })
+  ).subscribe({
+    next: () => {
+      this.building = null;
+      this.hasJoinedBuilding = false;
+      this.errorMessage = 'You are not connected to a building yet.';
+
+      this.tenantBuildingState.markLeft();
+
+      this.snackBar.open('You left the building successfully.', 'Close', {
+        duration: 2000
+      });
+
+      this.router.navigateByUrl('/tenant/join-building').then(() => {
+        window.location.reload();
+      });
+    },
+    error: () => {
+      this.snackBar.open('Could not leave the building.', 'Close', {
+        duration: 3000
+      });
+    }
+  });
+}
 }

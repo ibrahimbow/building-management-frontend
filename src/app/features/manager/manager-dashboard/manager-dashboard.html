@@ -1,64 +1,179 @@
 <section class="manager-dashboard" *ngIf="isReady">
-
-  <h1>Manager Dashboard</h1>
-
-  <p class="page-subtitle">
-    Manage your building, announcements, and tenants from one place.
-  </p>
+  <div class="dashboard-header">
+    <p>Manage your building, announcements, and tenants from one place.</p>
+  </div>
 
   <mat-card *ngIf="!hasBuilding" class="empty-state-card">
     <mat-card-title>No building created yet</mat-card-title>
 
     <mat-card-content>
-      <p>
-        Create your building to start managing announcements and tenants.
-      </p>
+      <p>Create your building to start managing announcements and tenants.</p>
 
-      <button mat-raised-button color="primary" routerLink="/manager/create-building">
+      <button mat-raised-button routerLink="/manager/create-building">
         Create Building
       </button>
     </mat-card-content>
   </mat-card>
 
-  <section *ngIf="hasBuilding && building" class="dashboard-grid">
+  <ng-container *ngIf="hasBuilding && building">
+    <section class="top-cards">
+      <mat-card class="building-card dashboard-card">
+        <div class="card-icon blue">
+          <mat-icon>apartment</mat-icon>
+        </div>
 
-    <mat-card class="building-card">
-      <mat-card-title>{{ building.buildingName }}</mat-card-title>
+        <div class="building-info">
+          <h2>{{ building.buildingName }}</h2>
 
-      <mat-card-content>
-        <p><strong>Code:</strong> {{ building.code }}</p>
-        <p><strong>Address:</strong> {{ building.address }}</p>
-        <p><strong>Total Apartments:</strong> {{ building.totalApartments }}</p>
-        <p><strong>Emergency Phone:</strong> {{ building.emergencyPhone }}</p>
-      </mat-card-content>
-    </mat-card>
+          <p><mat-icon>confirmation_number</mat-icon><strong>Code:</strong> {{ building.code }}</p>
+          <p><mat-icon>location_on</mat-icon><strong>Address:</strong> {{ building.address }}</p>
+          <p><mat-icon>apartment</mat-icon><strong>Total Apartments:</strong> {{ building.totalApartments }}</p>
+          <p><mat-icon>phone_in_talk</mat-icon><strong>Emergency Phone:</strong> {{ building.emergencyPhone }}</p>
+        </div>
+      </mat-card>
 
-    <mat-card class="action-card">
-      <mat-icon>campaign</mat-icon>
-      <mat-card-title>Announcements</mat-card-title>
+      <mat-card class="action-card dashboard-card">
+        <div class="card-icon green">
+          <mat-icon>campaign</mat-icon>
+        </div>
 
-      <mat-card-content>
+        <h2>Announcements</h2>
         <p>Create, edit, and manage announcements for your tenants.</p>
 
-        <button mat-raised-button color="primary" routerLink="/manager/announcements">
+        <button mat-button routerLink="/manager/announcements">
           Manage Announcements
         </button>
-      </mat-card-content>
-    </mat-card>
+      </mat-card>
 
-    <mat-card class="action-card">
-      <mat-icon>groups</mat-icon>
-      <mat-card-title>Tenants</mat-card-title>
+      <mat-card class="action-card dashboard-card">
+        <div class="card-icon purple">
+          <mat-icon>groups</mat-icon>
+        </div>
 
-      <mat-card-content>
+        <h2>Tenants</h2>
         <p>View and manage tenants currently joined to your building.</p>
 
-        <button mat-raised-button color="primary" routerLink="/manager/building-tenants">
+        <button mat-button routerLink="/manager/building-tenants">
           View Tenants
         </button>
-      </mat-card-content>
-    </mat-card>
+      </mat-card>
+    </section>
 
-  </section>
+    <section class="dashboard-bottom-grid">
+      <mat-card class="overview-card dashboard-card">
+        <div class="section-title-row">
+          <div>
+            <h2>Building Overview</h2>
+            <p>Your building activity at a glance.</p>
+          </div>
 
+       
+        </div>
+
+        <div class="overview-stats">
+          <div class="stat-card blue-soft">
+            <div class="stat-icon">
+              <mat-icon>apartment</mat-icon>
+            </div>
+            <strong>{{ building.totalApartments }}</strong>
+            <span>Total Apartments</span>
+          </div>
+
+          <div class="stat-card green-soft">
+            <div class="stat-icon">
+              <mat-icon>groups</mat-icon>
+            </div>
+            <strong>{{ totalTenants }}</strong>
+            <span>Total Tenants</span>
+          </div>
+
+          <div class="stat-card orange-soft">
+            <div class="stat-icon">
+              <mat-icon>campaign</mat-icon>
+            </div>
+            <strong>{{ totalAnnouncements }}</strong>
+            <span>Announcements</span>
+          </div>
+
+          <div class="stat-card red-soft">
+            <div class="stat-icon">
+              <mat-icon>chat</mat-icon>
+            </div>
+            <strong>{{ totalMessages }}</strong>
+            <span>Messages</span>
+          </div>
+        </div>
+
+        <div class="activity-preview">
+          <div class="activity-header">
+            <h3>Activity Overview</h3>
+          </div>
+
+
+          <div class="real-chart">
+            <div class="chart-y-axis">
+              <span *ngFor="let label of activityYAxisLabels">{{ label }}</span>
+            </div>
+
+            <div class="chart-body">
+              <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path class="activity-area" [attr.d]="activityAreaPath"></path>
+                <path class="activity-line" [attr.d]="activityPath"></path>
+              </svg>
+
+              <div class="activity-point" *ngFor="let point of visibleActivityPoints" [style.left.%]="point.x"
+                [style.top.%]="point.y">
+
+                <div class="activity-dot"></div>
+
+                <div class="activity-tooltip">
+                  <strong>{{ point.label }}</strong>
+                  <span>{{ point.count }} Activities</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-x-axis">
+              <span *ngFor="let label of activityXAxisLabels">{{ label }}</span>
+            </div>
+          </div>
+
+        </div>
+      </mat-card>
+
+      <mat-card class="recent-card dashboard-card">
+        <div class="section-title-row compact">
+          <h2>Recent Announcements</h2>
+
+  
+        </div>
+
+        <div class="announcement-list" *ngIf="recentAnnouncements.length > 0; else noRecentAnnouncements">
+          <div class="announcement-item" *ngFor="let announcement of recentAnnouncements">
+            <div class="announcement-icon">
+              <mat-icon>{{ announcement.icon || 'campaign' }}</mat-icon>
+            </div>
+
+            <div>
+              <h3>{{ announcement.title }}</h3>
+              <p>
+                {{ announcement.createdAt | date:'MMM d, y' }}
+                ·
+                {{ announcement.message }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noRecentAnnouncements>
+          <div class="mini-empty-state empty-announcements-action empty-state">
+            <mat-icon>campaign</mat-icon>
+            <p>No announcements yet.</p>
+          </div>
+        </ng-template>
+
+    
+      </mat-card>
+    </section>
+  </ng-container>
 </section>

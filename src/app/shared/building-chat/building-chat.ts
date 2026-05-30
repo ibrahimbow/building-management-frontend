@@ -10,10 +10,10 @@ import {
   inject
 } from '@angular/core';
 
-import { finalize, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
-
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
+import { finalize, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -25,15 +25,14 @@ import { AuthService } from '../../core/services/auth.service';
 import { ChatService } from '../../core/services/chat.service';
 import { FileUploadService } from '../../core/services/file-upload.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { BuildingService } from '../../core/services/building.service';
+import { ChatWebSocketService } from '../../core/services/chat-websocket.service';
+import { ImageUrlService } from '../../core/services/image-url.service';
 
 import { ChatMessage } from '../../core/models/chat-message.model';
 import { UploadedFile } from '../../core/models/uploaded-file.model';
 
 import { TimeAgoPipe } from '../../core/pipes/time-ago-pipe';
-
-import { BuildingService } from '../../core/services/building.service';
-import { ChatWebSocketService } from '../../core/services/chat-websocket.service';
-import { ImageUrlService } from '../../core/services/image-url.service'
 
 interface ChatMessageGroup {
   label: string;
@@ -72,15 +71,16 @@ export class BuildingChat implements OnInit, AfterViewChecked, OnDestroy {
   private readonly chatWebSocketService = inject(ChatWebSocketService);
   private readonly buildingService = inject(BuildingService);
   private readonly imageUrlService = inject(ImageUrlService);
-private readonly destroy$ = new Subject<void>();
-private websocketConnected = false;
+  private readonly destroy$ = new Subject<void>();
 
+  private websocketConnected = false;
   private shouldScrollToBottom = false;
 
   readonly currentUserId = this.authService.getCurrentUser()?.id ?? 0;
-
-  currentUser$ = this.authService.currentUser$;
+  readonly currentUser$ = this.authService.currentUser$;
   readonly maxMessageLength = 2000;
+
+  currentUserAvatarUrl = '';
 
   readonly emojis = ['👍', '❤️', '😂', '😮', '🙏'];
 
@@ -98,7 +98,6 @@ private websocketConnected = false;
   ];
 
   messages: ChatMessage[] = [];
-
   messageContent = '';
 
   selectedFile: File | null = null;
@@ -110,23 +109,33 @@ private websocketConnected = false;
   showEmojiPicker = false;
 
   ngOnInit(): void {
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        this.currentUserAvatarUrl = user?.avatarUrl ?? '';
+        this.cdr.markForCheck();
+      });
+
     setTimeout(() => {
       this.loadTenantBuildingAndMessages();
     });
   }
 
   ngOnDestroy(): void {
-  this.destroy$.next();
-  this.destroy$.complete();
-}
-
+    this.clearSelectedImage();
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   ngAfterViewChecked(): void {
-    if (!this.shouldScrollToBottom) return;
+    if (!this.shouldScrollToBottom) {
+      return;
+    }
 
-    const el = this.messagesArea?.nativeElement;
-    if (el) {
-      el.scrollTop = el.scrollHeight;
+    const element = this.messagesArea?.nativeElement;
+
+    if (element) {
+      element.scrollTop = element.scrollHeight;
     }
 
     this.shouldScrollToBottom = false;
@@ -178,6 +187,7 @@ private websocketConnected = false;
 
     this.chatService.getMessages()
       .pipe(
+        takeUntil(this.destroy$),
         finalize(() => {
           setTimeout(() => {
             this.isLoading = false;
@@ -225,6 +235,7 @@ private websocketConnected = false;
 
     upload$
       .pipe(
+        takeUntil(this.destroy$),
         switchMap(uploadedFile =>
           this.chatService.sendMessage(
             content || null,
@@ -256,6 +267,7 @@ private websocketConnected = false;
     }
 
     this.chatService.deleteMessage(message.id)
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
           this.messages = this.messages.map(currentMessage =>
@@ -279,8 +291,10 @@ private websocketConnected = false;
       });
   }
 
-  reactToMessage(message: ChatMessage,
-    emoji: string): void {
+  reactToMessage(
+    message: ChatMessage,
+    emoji: string
+  ): void {
     if (message.deleted) {
       return;
     }
@@ -295,11 +309,6 @@ private websocketConnected = false;
 
     const previousMessages = this.cloneMessages();
     const alreadyReacted = this.hasReacted(currentMessage, emoji);
-    console.log(
-      alreadyReacted ? 'Removing reaction logfile' : 'Adding reaction',
-      message.id,
-      emoji
-    );
 
     this.toggleReactionLocally(message.id, emoji);
 
@@ -307,22 +316,23 @@ private websocketConnected = false;
       ? this.chatService.removeReaction(message.id, emoji)
       : this.chatService.reactToMessage(message.id, emoji);
 
+    request$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        error: error => {
+          console.error('Reaction failed:', error);
 
+          this.messages = previousMessages;
 
-    request$.subscribe({
-      error: error => {
-        console.error('Reaction failed:', error);
+          this.notificationService.error(
+            alreadyReacted
+              ? 'Failed to remove reaction.'
+              : 'Failed to react to message.'
+          );
 
-        this.messages = previousMessages;
-        this.notificationService.error(
-          alreadyReacted
-            ? 'Failed to remove reaction.'
-            : 'Failed to react to message.'
-        );
-
-        this.cdr.markForCheck();
-      }
-    });
+          this.cdr.markForCheck();
+        }
+      });
   }
 
   onImageSelected(event: Event): void {
@@ -372,25 +382,122 @@ private websocketConnected = false;
     return message.senderUserId === this.currentUserId;
   }
 
-  hasReacted(message: ChatMessage,
-    emoji: string): boolean {
+  hasReacted(
+    message: ChatMessage,
+    emoji: string
+  ): boolean {
     return message.reactions.some(
       reaction => reaction.emoji === emoji && reaction.reactedByCurrentUser
     );
   }
 
-  trackByMessageId(index: number,
-    message: ChatMessage): string {
+  getAvatarUrl(message: ChatMessage): string | null {
+    if (this.isMyMessage(message) && this.currentUserAvatarUrl) {
+      return this.resolveImageUrl(this.currentUserAvatarUrl);
+    }
+
+    if (message.senderAvatarUrl) {
+      return this.resolveImageUrl(message.senderAvatarUrl);
+    }
+
+    return null;
+  }
+
+  hasValidImage(imageUrl: string | null | undefined): boolean {
+    return !!imageUrl && imageUrl.trim().length > 0;
+  }
+
+  resolveImageUrl(imageUrl: string | null | undefined): string {
+    if (!imageUrl) {
+      return '';
+    }
+
+    const normalizedUrl = imageUrl
+      .replace('/profile_avatar/', '/PROFILE_AVATAR/')
+      .replace('/announcement_image/', '/ANNOUNCEMENT_IMAGE/')
+      .replace('/share_and_help_image/', '/SHARE_AND_HELP_IMAGE/')
+      .replace('/chat_message_image/', '/CHAT_MESSAGE_IMAGE/');
+
+    return this.imageUrlService.resolve(normalizedUrl);
+  }
+
+  trackByMessageId(
+    index: number,
+    message: ChatMessage
+  ): string {
     return message.id;
   }
 
-  trackByGroupLabel(index: number,
-    group: ChatMessageGroup): string {
+  trackByGroupLabel(
+    index: number,
+    group: ChatMessageGroup
+  ): string {
     return group.label;
   }
 
-  private toggleReactionLocally(messageId: string,
-    emoji: string): void {
+  private connectWebSocketMessages(): void {
+    if (this.websocketConnected) {
+      return;
+    }
+
+    this.websocketConnected = true;
+
+    this.chatWebSocketService.events$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(event => {
+        switch (event.type) {
+          case 'MESSAGE_CREATED':
+            this.handleRealtimeMessageCreated(event.message);
+            break;
+
+          case 'MESSAGE_DELETED':
+            this.handleRealtimeMessageDeleted(event.message);
+            break;
+
+          case 'REACTION_UPDATED':
+            this.handleRealtimeReactionUpdated(event.message);
+            break;
+        }
+      });
+  }
+
+  private loadTenantBuildingAndMessages(): void {
+    this.buildingService
+      .getCurrentBuildingForChat(
+        this.authService.isManagerOrAdmin()
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: building => {
+          if (!building) {
+            this.notificationService.error(
+              'No building found for chat.'
+            );
+
+            this.isLoading = false;
+            return;
+          }
+
+          this.chatWebSocketService.connect(building.id);
+          this.connectWebSocketMessages();
+          this.loadMessages();
+        },
+        error: error => {
+          console.error('Failed to load building chat:', error);
+
+          this.notificationService.error(
+            'Failed to load your building chat.'
+          );
+
+          this.isLoading = false;
+        }
+      });
+  }
+
+  private toggleReactionLocally(
+    messageId: string,
+    emoji: string
+  ): void {
     this.messages = this.messages.map(message => {
       if (message.id !== messageId) {
         return message;
@@ -478,101 +585,6 @@ private websocketConnected = false;
       year: 'numeric'
     });
   }
-
-private connectWebSocketMessages(): void {
-  if (this.websocketConnected) {
-    return;
-  }
-
-  this.websocketConnected = true;
-
-  this.chatWebSocketService.events$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(event => {
-      switch (event.type) {
-        case 'MESSAGE_CREATED':
-          this.handleRealtimeMessageCreated(event.message);
-          break;
-
-        case 'MESSAGE_DELETED':
-          this.handleRealtimeMessageDeleted(event.message);
-          break;
-
-        case 'REACTION_UPDATED':
-          this.handleRealtimeReactionUpdated(event.message);
-          break;
-      }
-    });
-}
-
-  private loadTenantBuildingAndMessages(): void {
-
-    this.buildingService
-      .getCurrentBuildingForChat(
-        this.authService.isManagerOrAdmin()
-      )
-      .subscribe({
-        next: building => {
-
-          if (!building) {
-            this.notificationService.error(
-              'No building found for chat.'
-            );
-
-            this.isLoading = false;
-            return;
-          }
-
-          this.chatWebSocketService.connect(building.id);
-
-          console.log(
-            'Loading building chat messages:',
-            building.id
-          );
-
-          this.connectWebSocketMessages();
-          this.loadMessages();
-        },
-
-        error: error => {
-          console.error(
-            'Failed to load building chat:',
-            error
-          );
-
-          this.notificationService.error(
-            'Failed to load your building chat.'
-          );
-
-          this.isLoading = false;
-        }
-      });
-  }
-
-  hasValidImage(imageUrl: string | null | undefined): boolean {
-    return !!imageUrl && imageUrl.trim().length > 0;
-  }
-
-resolveImageUrl(imageUrl: string | null | undefined): string {
-  if (!imageUrl) {
-    return '';
-  }
-  const normalizedUrl = imageUrl
-    .replace('/profile_avatar/', '/PROFILE_AVATAR/')
-    .replace('/announcement_image/', '/ANNOUNCEMENT_IMAGE/')
-    .replace('/share_and_help_image/', '/SHARE_AND_HELP_IMAGE/')
-    .replace('/chat_message_image/', '/CHAT_MESSAGE_IMAGE/');
-
-  if (normalizedUrl.startsWith('http')) {
-    return normalizedUrl;
-  }
-
-  if (normalizedUrl.startsWith('/')) {
-    return `http://localhost:8080${normalizedUrl}`;
-  }
-
-  return `http://localhost:8080/${normalizedUrl}`;
-}
 
   private handleRealtimeMessageCreated(message: ChatMessage): void {
     const alreadyExists = this.messages.some(

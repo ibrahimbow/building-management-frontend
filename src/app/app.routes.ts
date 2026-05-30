@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
   {
@@ -9,8 +10,18 @@ export const routes: Routes = [
     redirectTo: 'auth/login',
     pathMatch: 'full'
   },
-
   {
+    path: 'auth/login',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./auth/login/login').then(m => m.Login)
+  },
+  {
+    path: 'auth/register',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./auth/register/register').then(m => m.Register)
+  }, {
     path: 'auth/login',
     loadComponent: () =>
       import('./auth/login/login').then(m => m.Login)
@@ -137,6 +148,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./shared/share-and-help/share-and-help')
             .then(m => m.ShareAndHelpComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/manager/manager-settings/manager-settings')
+            .then(m => m.ManagerSettings)
       }
     ]
   },

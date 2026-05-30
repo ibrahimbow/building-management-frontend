@@ -65,12 +65,15 @@
             <div class="bubble-line">
 
               <div class="bubble-avatar">
-                <img *ngIf="hasValidImage(message.senderAvatarUrl); else defaultMessageAvatar"
-                  [src]="resolveImageUrl(message.senderAvatarUrl)" [alt]="message.senderDisplayName || 'User avatar'" />
+<img
+  *ngIf="getAvatarUrl(message) as avatarUrl; else defaultAvatar"
+  [src]="avatarUrl"
+  alt="User avatar"
+/>
 
-                <ng-template #defaultMessageAvatar>
-                  <mat-icon>person</mat-icon>
-                </ng-template>
+<ng-template #defaultAvatar>
+  <mat-icon>person</mat-icon>
+</ng-template>
               </div>
 
               <div class="bubble-stack">
@@ -139,7 +142,7 @@
       <div class="composer-row">
 
         <div class="composer-avatar">
-          <img *ngIf="hasValidImage((currentUser$ | async)?.avatarUrl); else defaultComposerAvatar"
+          <img *ngIf="hasValidImage((currentUser$ | async)?.avatarUrl);"
             [src]="resolveImageUrl((currentUser$ | async)?.avatarUrl)"
             [alt]="(currentUser$ | async)?.displayName || 'User avatar'" />
 

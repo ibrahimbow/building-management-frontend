@@ -113,9 +113,31 @@ export class ManagerAnnouncements implements OnInit {
     });
   }
 
-  hasValidImage(imageUrl: string | null | undefined): boolean {
-    return !!imageUrl && imageUrl.startsWith('http');
+hasValidImage(imageUrl: string | null | undefined): boolean {
+  return !!imageUrl && imageUrl.trim().length > 0;
+}
+
+resolveImageUrl(imageUrl: string | null | undefined): string {
+  if (!imageUrl) {
+    return '';
   }
+
+  const normalizedUrl = imageUrl
+    .replace('/profile_avatar/', '/PROFILE_AVATAR/')
+    .replace('/announcement_image/', '/ANNOUNCEMENT_IMAGE/')
+    .replace('/share_and_help_image/', '/SHARE_AND_HELP_IMAGE/')
+    .replace('/chat_message_image/', '/CHAT_MESSAGE_IMAGE/');
+
+  if (normalizedUrl.startsWith('http')) {
+    return normalizedUrl;
+  }
+
+  if (normalizedUrl.startsWith('/')) {
+    return `http://localhost:8080${normalizedUrl}`;
+  }
+
+  return `http://localhost:8080/${normalizedUrl}`;
+}
 
 
 }

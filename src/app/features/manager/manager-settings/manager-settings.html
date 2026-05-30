@@ -1,0 +1,179 @@
+<main class="settings-page">
+  <mat-card class="settings-card">
+    <form class="settings-form" #settingsForm="ngForm" novalidate>
+
+      <aside class="settings-sidebar">
+        <header class="settings-header">
+          <p class="eyebrow">Manager preferences</p>
+          <h1>Settings</h1>
+          <p class="subtitle">Manage your manager profile, photo, and preferences.</p>
+        </header>
+
+        <section class="profile-section">
+          <div class="avatar">
+            <img
+              *ngIf="imageUrlService.hasImage(profile.avatarUrl); else defaultAvatar"
+              [src]="imageUrlService.resolve(profile.avatarUrl)"
+              alt="Manager profile photo" />
+
+            <ng-template #defaultAvatar>
+              <mat-icon>person</mat-icon>
+            </ng-template>
+          </div>
+
+          <div class="profile-summary">
+            <h2>{{ profile.displayName || profile.username || 'Manager profile' }}</h2>
+            <p>{{ profile.email || 'No email available' }}</p>
+
+            <label class="upload-button">
+              Change photo
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                (change)="onAvatarSelected($event)"
+                hidden />
+            </label>
+          </div>
+        </section>
+
+        <div class="sidebar-actions">
+          <button
+            mat-stroked-button
+            color="warn"
+            type="button"
+            class="logout-button"
+            (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            Logout
+          </button>
+        </div>
+      </aside>
+
+      <div class="settings-main-content">
+        <div class="scrollable-form-body">
+
+          <section class="form-section no-top-border">
+            <div class="section-title">
+              <mat-icon>person</mat-icon>
+              <div>
+                <h3>Personal information</h3>
+                <p>These details are used across your manager account.</p>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Username</mat-label>
+                <input matInput name="username" [value]="profile.username" readonly />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput name="email" type="email" [value]="profile.email" readonly />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Phone number</mat-label>
+                <input
+                  matInput
+                  name="phoneNumber"
+                  [(ngModel)]="profile.phoneNumber"
+                  required
+                  pattern="^\+?[0-9]{8,15}$" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Display name</mat-label>
+                <input
+                  matInput
+                  name="displayName"
+                  [(ngModel)]="profile.displayName"
+                  required
+                  minlength="2"
+                  maxlength="150" />
+              </mat-form-field>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <div class="section-title">
+              <mat-icon>lock</mat-icon>
+              <div>
+                <h3>Security</h3>
+                <p>Password changes stay separated from profile updates.</p>
+              </div>
+            </div>
+
+            <div class="security-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Password</mat-label>
+                <input matInput value="********" readonly />
+              </mat-form-field>
+
+              <button
+                mat-stroked-button
+                color="primary"
+                type="button"
+                class="change-password-btn"
+                (click)="openChangePasswordDialog()">
+                Change Password
+              </button>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <div class="section-title">
+              <mat-icon>tune</mat-icon>
+              <div>
+                <h3>Preferences</h3>
+                <p>Choose how Building Management should behave for you.</p>
+              </div>
+            </div>
+
+            <div class="preferences-inline-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Role</mat-label>
+                <input matInput name="role" [(ngModel)]="profile.role" readonly />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Language</mat-label>
+                <mat-select name="language" [(ngModel)]="profile.language" required>
+                  <mat-option *ngFor="let language of languages" [value]="language.code">
+                    {{ language.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <div class="toggle-card-inline">
+                <div class="toggle-info">
+                  <strong>Enable notifications</strong>
+                  <p>Receive tenant and building updates.</p>
+                </div>
+
+                <mat-slide-toggle
+                  name="notifications"
+                  [(ngModel)]="profile.notifications">
+                </mat-slide-toggle>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <div class="form-actions-bar">
+          <button
+            mat-raised-button
+            color="primary"
+            type="button"
+            class="save-button"
+            [disabled]="isSaving || settingsForm.invalid"
+            (click)="save()">
+            {{ isSaving ? 'Saving...' : 'Save Settings' }}
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </mat-card>
+</main>

@@ -1,85 +1,158 @@
 <section class="create-announcement-page">
 
-  <mat-card *ngIf="isReady && !hasBuilding" class="state-card">
-    <mat-card-title>No building found</mat-card-title>
-
+  <mat-card *ngIf="isReady && !hasBuilding" class="empty-card">
     <mat-card-content>
+      <div class="empty-icon">
+        <mat-icon>apartment</mat-icon>
+      </div>
+      <h2>No building found</h2>
       <p>You need to create a building before creating announcements.</p>
-
-      <button
-        mat-raised-button
-        color="primary"
-        routerLink="/manager/create-building">
+      <button mat-raised-button routerLink="/manager/create-building">
         Create Building
       </button>
     </mat-card-content>
   </mat-card>
 
-  <mat-card *ngIf="isReady && hasBuilding" class="form-card">
-    <mat-card-title>Create Announcement</mat-card-title>
+  <mat-card *ngIf="isReady && hasBuilding" class="announcement-form-card">
 
-    <mat-card-subtitle>
-      Publish an announcement for your building tenants.
-    </mat-card-subtitle>
+    <div class="form-header">
+      <div class="header-icon">
+        <mat-icon>campaign</mat-icon>
+      </div>
+      <div class="header-text">
+        <span class="eyebrow">Manager Area</span>
+        <h1>Create Announcement</h1>
+        <p>Publish an announcement for your building tenants.</p>
+      </div>
+    </div>
 
     <mat-card-content>
       <form #form="ngForm" (ngSubmit)="createAnnouncement(form)" novalidate>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Title</mat-label>
-          <input
-            matInput
-            name="title"
-            [(ngModel)]="title"
-            maxlength="255"
-            required />
-        </mat-form-field>
+        <!-- Title -->
+        <div class="field-block">
+          <label>Title <span class="req">*</span></label>
+          <mat-form-field appearance="outline">
+            <mat-icon matPrefix>title</mat-icon>
+            <input
+              matInput
+              name="title"
+              placeholder="Enter announcement title"
+              [(ngModel)]="title"
+              #titleCtrl="ngModel"
+              required
+              minlength="3"
+              maxlength="255"
+              [disabled]="isSubmitting" />
+            <mat-error *ngIf="titleCtrl.hasError('required')">Title is required.</mat-error>
+            <mat-error *ngIf="titleCtrl.hasError('minlength')">At least 3 characters.</mat-error>
+            <mat-error *ngIf="titleCtrl.hasError('maxlength')">Max 255 characters.</mat-error>
+          </mat-form-field>
+        </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Message</mat-label>
-          <textarea
-            matInput
-            name="message"
-            [(ngModel)]="message"
-            rows="5"
-            maxlength="5000"
-            required>
-          </textarea>
-        </mat-form-field>
+        <!-- Message -->
+        <div class="field-block">
+          <label>Message <span class="req">*</span></label>
+          <mat-form-field appearance="outline" class="textarea-field">
+            <mat-icon matPrefix class="textarea-prefix">notes</mat-icon>
+            <textarea
+              matInput
+              name="message"
+              placeholder="Write your announcement message"
+              [(ngModel)]="message"
+              #messageCtrl="ngModel"
+              rows="4"
+              required
+              minlength="10"
+              maxlength="5000"
+              [disabled]="isSubmitting">
+            </textarea>
+            <mat-error *ngIf="messageCtrl.hasError('required')">Message is required.</mat-error>
+            <mat-error *ngIf="messageCtrl.hasError('minlength')">At least 10 characters.</mat-error>
+            <mat-error *ngIf="messageCtrl.hasError('maxlength')">Max 5000 characters.</mat-error>
+          </mat-form-field>
+        </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Category</mat-label>
+        <!-- Category + Image URL -->
+        <div class="form-grid">
 
-          <mat-select
-            name="category"
-            [(ngModel)]="category"
-            required>
-            <mat-option
-              *ngFor="let category of categories"
-              [value]="category">
-              {{ category }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+          <div class="field-block">
+            <label>Category <span class="req">*</span></label>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>category</mat-icon>
+              <mat-select
+                name="category"
+                [(ngModel)]="category"
+                #categoryCtrl="ngModel"
+                required
+                [disabled]="isSubmitting">
+                <mat-option *ngFor="let category of categories" [value]="category">
+                  {{ category }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="categoryCtrl.hasError('required')">Category is required.</mat-error>
+            </mat-form-field>
+          </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Image URL</mat-label>
+          <div class="field-block">
+            <label>Image <span class="optional">(optional)</span></label>
 
-          <input
-            matInput
-            name="imageUrl"
-            [(ngModel)]="imageUrl"
-            maxlength="500"
-            placeholder="Optional image URL" />
-        </mat-form-field>
+            <!-- Drop zone -->
+            <div
+              class="upload-zone"
+              [class.has-image]="imagePreviewUrl"
+              [class.disabled]="isSubmitting"
+              (click)="!isSubmitting && announcementImageInput.click()"
+              (dragover)="$event.preventDefault()"
+              (drop)="!isSubmitting && onImageDrop($event)">
 
-        <button
-          mat-raised-button
-          color="primary"
-          type="submit"
-          [disabled]="form.invalid || isSubmitting || !hasBuilding">
-          {{ isSubmitting ? 'Creating...' : 'Create Announcement' }}
-        </button>
+              <ng-container *ngIf="!imagePreviewUrl">
+                <mat-icon class="upload-icon">cloud_upload</mat-icon>
+                <span class="upload-label">Click or drag image here</span>
+                <span class="upload-hint">JPG, PNG, WEBP · max 5 MB</span>
+              </ng-container>
+
+              <ng-container *ngIf="imagePreviewUrl">
+                <img [src]="imagePreviewUrl" alt="Preview" class="image-preview" />
+                <button
+                  mat-icon-button
+                  type="button"
+                  class="remove-btn"
+                  (click)="$event.stopPropagation(); removeImage()"
+                  [disabled]="isSubmitting">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </ng-container>
+            </div>
+
+            <input
+              #announcementImageInput
+              id="announcement-image"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              (change)="onImageSelected($event)"
+              [disabled]="isSubmitting"
+              hidden />
+          </div>
+
+        </div>
+
+        <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button
+            mat-raised-button
+            type="submit"
+            [disabled]="!isFormReady || form.invalid || isSubmitting">
+            <mat-icon>{{ isSubmitting ? 'hourglass_top' : 'add' }}</mat-icon>
+            {{ isSubmitting ? 'Creating...' : 'Create Announcement' }}
+          </button>
+          <span class="helper-text">
+            <mat-icon>shield</mat-icon>
+            Tenants will see this in their dashboard.
+          </span>
+        </div>
 
       </form>
     </mat-card-content>

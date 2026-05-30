@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, OnInit, inject } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
@@ -8,6 +8,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatMenuModule } from '@angular/material/menu';
+
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth.service';
 import { BuildingService } from '../../core/services/building.service';
@@ -15,9 +18,6 @@ import { ImageUrlService } from '../../core/services/image-url.service';
 import { NotificationStateService } from '../../core/services/notification-state.service';
 import { TenantBuildingStateService } from '../../core/services/tenant-building-state.service';
 import { NotificationItem } from '../../core/services/notification.service';
-import { Observable } from 'rxjs';
-import { MatMenuModule } from '@angular/material/menu';
-
 
 interface MenuItem {
   label: string;
@@ -45,7 +45,7 @@ interface MenuItem {
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
 })
-export class MainLayout implements OnInit {
+export class MainLayout implements OnInit, OnDestroy {
 
   private readonly authService = inject(AuthService);
   private readonly buildingService = inject(BuildingService);
@@ -53,100 +53,38 @@ export class MainLayout implements OnInit {
   private readonly notificationState = inject(NotificationStateService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
+  private readonly destroy$ = new Subject<void>();
+
+  readonly imageUrlService = inject(ImageUrlService);
 
   readonly notifications$: Observable<NotificationItem[]> = this.notificationState.notifications$;
   readonly currentUser$ = this.authService.currentUser$;
   readonly unreadCount$ = this.notificationState.unreadCount$;
 
-  profile = {
-    avatarUrl: ''
-  };
-
   managerHasBuilding = false;
   tenantHasJoinedBuilding = false;
 
-  constructor(
-    public imageUrlService: ImageUrlService
-  ) {
-  }
-
   readonly managerMenuItems: MenuItem[] = [
-    {
-      label: 'Dashboard',
-      icon: 'dashboard',
-      route: '/manager/dashboard'
-    },
-    {
-      label: 'Building Tenants',
-      icon: 'groups',
-      route: '/manager/building-tenants',
-      requiresBuilding: true
-    },
-    {
-      label: 'Announcements',
-      icon: 'campaign',
-      route: '/manager/announcements',
-      requiresBuilding: true
-    },
-    {
-      label: 'Building Chat',
-      icon: 'chat',
-      route: '/manager/building-chat',
-      requiresBuilding: true
-    },
-    {
-      label: 'Share & Help',
-      icon: 'volunteer_activism',
-      route: '/manager/help-share',
-      requiresBuilding: true
-    }
+    { label: 'Dashboard', icon: 'dashboard', route: '/manager/dashboard' },
+    { label: 'Building Tenants', icon: 'groups', route: '/manager/building-tenants', requiresBuilding: true },
+    { label: 'Announcements', icon: 'campaign', route: '/manager/announcements', requiresBuilding: true },
+    { label: 'Building Chat', icon: 'chat', route: '/manager/building-chat', requiresBuilding: true },
+    { label: 'Share & Help', icon: 'volunteer_activism', route: '/manager/help-share', requiresBuilding: true },
+    { label: 'Settings', icon: 'settings', route: '/manager/settings' }
   ];
 
   readonly tenantMenuItems: MenuItem[] = [
-    {
-      label: 'Dashboard',
-      icon: 'dashboard',
-      route: '/tenant/dashboard'
-    },
-    {
-      label: 'Join Building',
-      icon: 'apartment',
-      route: '/tenant/join-building'
-    },
-    {
-      label: 'Building Info',
-      icon: 'business',
-      route: '/tenant/building-info',
-      requiresBuilding: true
-    },
-    {
-      label: 'Announcements',
-      icon: 'campaign',
-      route: '/tenant/announcements',
-      requiresBuilding: true
-    },
-    {
-      label: 'Share & Help',
-      icon: 'volunteer_activism',
-      route: '/tenant/help-share',
-      requiresBuilding: true
-    },
-    {
-      label: 'Building Chat',
-      icon: 'chat',
-      route: '/tenant/building-chat',
-      requiresBuilding: true
-    },
-    {
-      label: 'Settings',
-      icon: 'settings',
-      route: '/tenant/settings'
-    }
+    { label: 'Dashboard', icon: 'dashboard', route: '/tenant/dashboard' },
+    { label: 'Join Building', icon: 'apartment', route: '/tenant/join-building' },
+    { label: 'Building Info', icon: 'business', route: '/tenant/building-info', requiresBuilding: true },
+    { label: 'Announcements', icon: 'campaign', route: '/tenant/announcements', requiresBuilding: true },
+    { label: 'Share & Help', icon: 'volunteer_activism', route: '/tenant/help-share', requiresBuilding: true },
+    { label: 'Building Chat', icon: 'chat', route: '/tenant/building-chat', requiresBuilding: true },
+    { label: 'Settings', icon: 'settings', route: '/tenant/settings' }
   ];
 
   ngOnInit(): void {
     this.initializeNotifications();
-    this.loadProfile();
 
     if (this.isManagerOrAdmin) {
       this.loadManagerBuildingState();
@@ -157,8 +95,29 @@ export class MainLayout implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   get isManagerOrAdmin(): boolean {
     return this.authService.isManagerOrAdmin();
+  }
+
+  get isTenant(): boolean {
+    return this.authService.isTenant();
+  }
+
+  get isChatPage(): boolean {
+    return this.router.url.includes('/chat');
+  }
+
+  canShowManagerMenuItem(item: MenuItem): boolean {
+    return !item.requiresBuilding || this.managerHasBuilding;
+  }
+
+  canShowTenantMenuItem(item: MenuItem): boolean {
+    return !item.requiresBuilding || this.tenantHasJoinedBuilding;
   }
 
   openNotification(notification: NotificationItem): void {
@@ -181,32 +140,16 @@ export class MainLayout implements OnInit {
     }
   }
 
-
-  get isTenant(): boolean {
-    return this.authService.isTenant();
-  }
-
-  get isChatPage(): boolean {
-    return this.router.url.includes('/chat');
-  }
-
-  canShowManagerMenuItem(item: MenuItem): boolean {
-    return !item.requiresBuilding || this.managerHasBuilding;
-  }
-
-  canShowTenantMenuItem(item: MenuItem): boolean {
-    return !item.requiresBuilding || this.tenantHasJoinedBuilding;
-  }
-
   logout(): void {
     this.notificationState.reset();
     this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
 
   private initializeNotifications(): void {
     this.authService.currentUser$
+      .pipe(takeUntil(this.destroy$))
       .subscribe(currentUser => {
-
         if (!currentUser?.id) {
           return;
         }
@@ -215,18 +158,9 @@ export class MainLayout implements OnInit {
       });
   }
 
-  private loadProfile(): void {
-    this.authService.getProfile()
-      .subscribe({
-        next: profile => {
-          this.profile.avatarUrl = profile.avatarUrl ?? '';
-          this.cdr.markForCheck();
-        }
-      });
-  }
-
   private loadManagerBuildingState(): void {
     this.buildingService.getMyManagedBuilding()
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: building => {
           this.managerHasBuilding = building !== null;
@@ -241,6 +175,7 @@ export class MainLayout implements OnInit {
 
   private loadTenantBuildingState(): void {
     this.tenantBuildingState.tenantHasJoinedBuilding$
+      .pipe(takeUntil(this.destroy$))
       .subscribe(value => {
         this.tenantHasJoinedBuilding = value;
         this.cdr.markForCheck();

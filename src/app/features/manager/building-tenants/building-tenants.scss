@@ -1,27 +1,262 @@
 .building-tenants-page {
-    padding: 24px;
+  padding: 32px;
 }
 
 .page-header {
-    margin-bottom: 24px;
+  margin-bottom: 28px;
+
+  .eyebrow {
+    color: #2563eb;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 6px 0 6px;
+    font-size: 32px;
+    font-weight: 800;
+    color: #071437;
+  }
+
+  p {
+    margin: 0;
+    color: #64748b;
+  }
 }
 
-.page-header p {
+.loading-state {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  color: #64748b;
+}
+
+.empty-card {
+  max-width: 520px;
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+
+  mat-card-content {
+    text-align: center;
+
+    mat-icon {
+      width: 56px;
+      height: 56px;
+      font-size: 56px;
+      color: #2563eb;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      margin: 0 0 8px;
+      color: #071437;
+    }
+
+    p {
+      color: #64748b;
+      margin-bottom: 20px;
+    }
+  }
+}
+
+.tenants-table-card {
+  border-radius: 26px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+}
+
+.table-toolbar {
+  padding: 24px 28px;
+  border-bottom: 1px solid #eef2f7;
+  background: linear-gradient(135deg, #ffffff, #f8fbff);
+
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: #071437;
+  }
+
+  p {
     margin: 4px 0 0;
-    color: #666;
+    color: #64748b;
+  }
 }
 
-.tenants-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 20px;
+.tenants-table {
+  width: 100%;
+  background: #ffffff;
+
+  th {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: #f8fafc;
+  }
+
+  td {
+    color: #0f172a;
+    font-size: 14px;
+  }
+
+  tr.mat-mdc-row {
+    transition: background 0.2s ease;
+  }
+
+  tr.mat-mdc-row:hover {
+    background: #f8fbff;
+  }
 }
 
-.empty-card,
-.tenant-card {
-    border-radius: 16px;
+.tenant-cell {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+
+  strong {
+    display: block;
+    font-size: 15px;
+    color: #071437;
+  }
+
+  span {
+    display: block;
+    margin-top: 3px;
+    font-size: 12px;
+    color: #64748b;
+  }
 }
 
-mat-card-content p {
-    margin: 8px 0;
+.tenant-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.actions-cell {
+  text-align: right;
+}
+
+.danger-action {
+  color: #dc2626;
+}
+
+@media (max-width: 900px) {
+  .building-tenants-page {
+    padding: 20px;
+  }
+
+  .tenants-table-card {
+    overflow-x: auto;
+  }
+
+  .tenants-table {
+    min-width: 760px;
+  }
+}
+
+.empty-tenants-card {
+  min-height: 330px;
+  border-radius: 26px !important;
+  border: 1px solid #dfe8f5;
+  background: #ffffff !important;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  padding: 44px 28px !important;
+}
+
+.empty-visual {
+  width: 96px;
+  height: 96px;
+  border-radius: 30px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #eef6ff, #ffffff);
+}
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  background: #eef6ff;
+  color: #2563eb;
+}
+
+.empty-icon mat-icon {
+  width: 34px;
+  height: 34px;
+  font-size: 34px;
+}
+
+.empty-tenants-card h2 {
+  margin: 4px 0 0;
+  font-size: 24px;
+  font-weight: 900;
+  color: #071b4d;
+}
+
+.empty-tenants-card p {
+  max-width: 520px;
+  margin: 0;
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.building-code-box {
+  margin-top: 12px;
+  min-width: 260px;
+  padding: 16px 22px;
+  border-radius: 18px;
+  background: #f8fbff;
+  border: 1px solid #dbeafe;
+}
+
+.building-code-box span {
+  display: block;
+  margin-bottom: 4px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.building-code-box strong {
+  color: #005be8;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
 }

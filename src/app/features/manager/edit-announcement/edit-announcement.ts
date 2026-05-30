@@ -54,6 +54,7 @@ export class EditAnnouncement implements OnInit {
 
   isLoading = true;
   isSubmitting = false;
+  isUploading = false;
 
   readonly categories: AnnouncementCategory[] = [
     'GENERAL',
@@ -90,7 +91,7 @@ export class EditAnnouncement implements OnInit {
         this.cdr.markForCheck();
       })
     ).subscribe({
-      next: (announcement) => {
+      next: announcement => {
         this.title = announcement.title;
         this.message = announcement.message;
         this.category = announcement.category;
@@ -107,7 +108,7 @@ export class EditAnnouncement implements OnInit {
   }
 
   updateAnnouncement(form: NgForm): void {
-    if (form.invalid || this.isSubmitting) {
+    if (form.invalid || this.isSubmitting || this.isUploading) {
       form.form.markAllAsTouched();
 
       this.snackBar.open('Please fill all required fields.', 'Close', {
@@ -147,8 +148,80 @@ export class EditAnnouncement implements OnInit {
     });
   }
 
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      this.snackBar.open('Please select a valid image file.', 'Close', {
+        duration: 3000
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      this.imageUrl = reader.result as string;
+      this.cdr.markForCheck();
+    };
+
+    reader.readAsDataURL(file);
+
+    /**
+     * Later we connect this to backend upload:
+     * POST /api/files/upload
+     * type = ANNOUNCEMENT_IMAGE
+     *
+     * After upload success:
+     * this.imageUrl = response.url;
+     */
+  }
+
+  removeImage(): void {
+    this.imageUrl = '';
+  }
+
+  hasValidImage(imageUrl: string | null | undefined): boolean {
+    return !!imageUrl && imageUrl.trim().length > 0;
+  }
+
+  resolveImageUrl(imageUrl: string | null | undefined): string {
+    if (!imageUrl) {
+      return '';
+    }
+
+    const normalizedUrl = imageUrl
+      .replace('/profile_avatar/', '/PROFILE_AVATAR/')
+      .replace('/announcement_image/', '/ANNOUNCEMENT_IMAGE/')
+      .replace('/share_and_help_image/', '/SHARE_AND_HELP_IMAGE/')
+      .replace('/chat_message_image/', '/CHAT_MESSAGE_IMAGE/');
+
+    if (
+      normalizedUrl.startsWith('http') ||
+      normalizedUrl.startsWith('data:image')
+    ) {
+      return normalizedUrl;
+    }
+
+    if (normalizedUrl.startsWith('/')) {
+      return `http://localhost:8080${normalizedUrl}`;
+    }
+
+    return `http://localhost:8080/${normalizedUrl}`;
+  }
+
   private normalizeImageUrl(value: string): string | null {
     const trimmed = value.trim();
-    return trimmed ? trimmed : null;
+
+    if (!trimmed || trimmed.startsWith('data:image')) {
+      return null;
+    }
+
+    return trimmed;
   }
-}
+} 

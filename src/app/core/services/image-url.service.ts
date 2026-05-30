@@ -5,8 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class ImageUrlService {
 
-  private readonly apiUrl =
-    'http://localhost:8080';
+  private readonly apiUrl = 'http://localhost:8080';
 
   resolve(url: string | null | undefined): string {
 
