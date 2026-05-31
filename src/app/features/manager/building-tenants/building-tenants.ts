@@ -44,7 +44,6 @@ export class BuildingTenants implements OnInit {
 
   displayedColumns: string[] = [
     'tenant',
-    'displayName',
     'email',
     'phone',
     'status',

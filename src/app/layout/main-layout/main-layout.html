@@ -59,9 +59,9 @@
         <span matListItemTitle>Join Building</span>
       </a>
 
-      <a *ngIf="tenantHasJoinedBuilding" mat-list-item routerLink="/tenant/building-info" routerLinkActive="active">
+      <a *ngIf="tenantHasJoinedBuilding" mat-list-item routerLink="/tenant/building-details" routerLinkActive="active">
         <mat-icon matListItemIcon>apartment</mat-icon>
-        <span matListItemTitle>Building Info</span>
+        <span matListItemTitle>Building details</span>
       </a>
 
       <a *ngIf="tenantHasJoinedBuilding" mat-list-item routerLink="/tenant/announcements" routerLinkActive="active">
@@ -146,7 +146,7 @@
           </div>
 
           <div class="notification-list" *ngIf="notifications.length > 0">
-            <button mat-menu-item type="button" class="notification-item" *ngFor="let notification of notifications"
+            <button type="button" class="notification-item" *ngFor="let notification of notifications"
               [class.unread]="!notification.read" (click)="openNotification(notification)">
 
               <div class="notification-icon">

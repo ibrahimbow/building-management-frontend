@@ -59,13 +59,14 @@
           </span>
         </div>
 
-        <div
-          class="image-container"
-          *ngIf="hasValidImage(announcement.imageUrl)">
+        <div >
 
-          <img
-            [src]="announcement.imageUrl"
-            alt="announcement image" />
+                <img
+  *ngIf="hasValidImage(announcement.imageUrl)"
+  [src]="resolveImageUrl(announcement.imageUrl)"
+  alt="Announcement image"
+  class="announcement-image"
+/>
         </div>
 
         <p class="message">{{ announcement.message }}</p>

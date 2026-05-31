@@ -120,25 +120,23 @@ export class MainLayout implements OnInit, OnDestroy {
     return !item.requiresBuilding || this.tenantHasJoinedBuilding;
   }
 
-  openNotification(notification: NotificationItem): void {
-    if (!notification.read) {
-      this.notificationState.markAsRead(notification.id);
-    }
+openNotification(notification: NotificationItem): void {
+  this.notificationState.markAsReadAndRemove(notification.id);
 
-    if (notification.type === 'ANNOUNCEMENT') {
-      this.router.navigate(['/tenant/announcements']);
-      return;
-    }
-
-    if (notification.type === 'CHAT') {
-      this.router.navigate(['/tenant/building-chat']);
-      return;
-    }
-
-    if (notification.type === 'SHARE_AND_HELP') {
-      this.router.navigate(['/tenant/help-share']);
-    }
+  if (notification.type === 'ANNOUNCEMENT') {
+    this.router.navigate(['/tenant/announcements']);
+    return;
   }
+
+  if (notification.type === 'CHAT') {
+    this.router.navigate(['/tenant/building-chat']);
+    return;
+  }
+
+  if (notification.type === 'SHARE_AND_HELP') {
+    this.router.navigate(['/tenant/help-share']);
+  }
+}
 
   logout(): void {
     this.notificationState.reset();

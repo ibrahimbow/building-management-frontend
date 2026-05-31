@@ -44,8 +44,7 @@ export class NotificationStateService {
 
     this.initializedUserId = userId;
 
-    this.loadNotifications();
-    this.loadUnreadCount();
+    this.loadUnreadNotifications();
 
     this.websocketSubscription =
       this.notificationWebSocketService.notifications$
@@ -56,29 +55,26 @@ export class NotificationStateService {
     this.notificationWebSocketService.connect(userId);
   }
 
-  markAsRead(notificationId: string): void {
+  markAsReadAndRemove(notificationId: string): void {
     const currentNotifications = this.notificationsSubject.value;
 
-    const optimisticNotifications = currentNotifications.map(notification =>
-      notification.id === notificationId
-        ? { ...notification, read: true, readAt: new Date().toISOString() }
-        : notification
+    const updatedNotifications = currentNotifications.filter(
+      notification => notification.id !== notificationId
     );
 
-    this.notificationsSubject.next(optimisticNotifications);
-    this.updateUnreadCount(optimisticNotifications);
+    this.notificationsSubject.next(updatedNotifications);
+    this.updateUnreadCount(updatedNotifications);
 
     this.notificationService.markAsRead(notificationId)
       .pipe(take(1))
       .subscribe({
-        next: updatedNotification => {
-          this.updateNotification(updatedNotification);
-        },
         error: error => {
           console.error('FAILED TO MARK NOTIFICATION AS READ:', error);
 
           this.notificationsSubject.next(currentNotifications);
           this.updateUnreadCount(currentNotifications);
+
+          this.notificationService.error('Could not update notification.');
         }
       });
   }
@@ -96,13 +92,17 @@ export class NotificationStateService {
     this.notificationWebSocketService.disconnect();
   }
 
-  private loadNotifications(): void {
+  private loadUnreadNotifications(): void {
     this.notificationService.getMyNotifications()
       .pipe(take(1))
       .subscribe({
         next: notifications => {
-          this.notificationsSubject.next(notifications);
-          this.updateUnreadCount(notifications);
+          const unreadNotifications = notifications.filter(
+            notification => !notification.read
+          );
+
+          this.notificationsSubject.next(unreadNotifications);
+          this.unreadCountSubject.next(unreadNotifications.length);
         },
         error: error => {
           console.error('FAILED TO LOAD NOTIFICATIONS:', error);
@@ -110,20 +110,11 @@ export class NotificationStateService {
       });
   }
 
-  private loadUnreadCount(): void {
-    this.notificationService.getUnreadCount()
-      .pipe(take(1))
-      .subscribe({
-        next: count => {
-          this.unreadCountSubject.next(count);
-        },
-        error: error => {
-          console.error('FAILED TO LOAD UNREAD COUNT:', error);
-        }
-      });
-  }
-
   private handleRealtimeNotification(notification: NotificationItem): void {
+    if (notification.read) {
+      return;
+    }
+
     const currentNotifications = this.notificationsSubject.value;
 
     const alreadyExists = currentNotifications.some(current =>
@@ -142,28 +133,14 @@ export class NotificationStateService {
     this.notificationsSubject.next(updatedNotifications);
     this.updateUnreadCount(updatedNotifications);
 
-    if (!alreadyExists && !notification.read) {
+    if (!alreadyExists) {
       this.latestNotificationSubject.next(notification);
       this.showNotificationPopup(notification);
     }
   }
 
-  private updateNotification(updatedNotification: NotificationItem): void {
-    const updatedNotifications =
-      this.notificationsSubject.value.map(notification =>
-        notification.id === updatedNotification.id
-          ? updatedNotification
-          : notification
-      );
-
-    this.notificationsSubject.next(updatedNotifications);
-    this.updateUnreadCount(updatedNotifications);
-  }
-
   private updateUnreadCount(notifications: NotificationItem[]): void {
-    this.unreadCountSubject.next(
-      notifications.filter(notification => !notification.read).length
-    );
+    this.unreadCountSubject.next(notifications.length);
   }
 
   private showNotificationPopup(notification: NotificationItem): void {

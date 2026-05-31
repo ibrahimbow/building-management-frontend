@@ -3,7 +3,6 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-
 export type NotificationType =
   | 'ANNOUNCEMENT'
   | 'SHARE_AND_HELP'
@@ -27,9 +26,9 @@ export interface NotificationItem {
 export class NotificationService {
 
   private readonly http = inject(HttpClient);
+  private readonly snackBar = inject(MatSnackBar);
 
   private readonly baseUrl = '/api/notifications';
-  private readonly snackBar = inject(MatSnackBar);
 
   getMyNotifications(): Observable<NotificationItem[]> {
     return this.http.get<NotificationItem[]>(this.baseUrl);

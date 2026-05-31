@@ -49,12 +49,8 @@
 
           </div>
 
-          <img
-  *ngIf="hasValidImage(announcement.imageUrl)"
-  [src]="resolveImageUrl(announcement.imageUrl)"
-  alt="Announcement image"
-  class="announcement-image"
-/>
+          <img *ngIf="hasValidImage(announcement.imageUrl)" [src]="resolveImageUrl(announcement.imageUrl)"
+            alt="Announcement image" class="announcement-image" />
 
           <p class="announcement-message">
             {{ announcement.message }}
