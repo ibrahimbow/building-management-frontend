@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 
 import {
-  BuildingInfo,
+  Building,
   CreateBuildingRequest,
   UpdateBuildingRequest
 } from '../models/building.model';
@@ -20,29 +20,29 @@ export class BuildingService {
   private readonly managerBuildingsUrl = 'http://localhost:8080/api/manager/buildings';
   private readonly tenantBuildingsUrl = 'http://localhost:8080/api/tenant/buildings';
 
-  createBuilding(request: CreateBuildingRequest): Observable<BuildingInfo> {
-    return this.http.post<BuildingInfo>(this.managerBuildingsUrl, request);
+  createBuilding(request: CreateBuildingRequest): Observable<Building> {
+    return this.http.post<Building>(this.managerBuildingsUrl, request);
   }
 
-  getMyManagedBuildings(): Observable<BuildingInfo[]> {
-    return this.http.get<BuildingInfo[]>(this.managerBuildingsUrl);
+  getMyManagedBuildings(): Observable<Building[]> {
+    return this.http.get<Building[]>(this.managerBuildingsUrl);
   }
 
-  getMyManagedBuilding(): Observable<BuildingInfo | null> {
+  getMyManagedBuilding(): Observable<Building | null> {
     return this.getMyManagedBuildings().pipe(
       map(buildings => buildings.length > 0 ? buildings[0] : null)
     );
   }
 
-  getMyBuildingById(id: string): Observable<BuildingInfo> {
-    return this.http.get<BuildingInfo>(`${this.managerBuildingsUrl}/${id}`);
+  getMyBuildingById(id: string): Observable<Building> {
+    return this.http.get<Building>(`${this.managerBuildingsUrl}/${id}`);
   }
 
   updateMyBuilding(
     id: string,
     request: UpdateBuildingRequest
-  ): Observable<BuildingInfo> {
-    return this.http.put<BuildingInfo>(
+  ): Observable<Building> {
+    return this.http.put<Building>(
       `${this.managerBuildingsUrl}/${id}`,
       request
     );
@@ -67,27 +67,27 @@ export class BuildingService {
     );
   }
 
-  getMyJoinedBuilding(): Observable<BuildingInfo> {
-    return this.http.get<BuildingInfo>(
+  getMyJoinedBuilding(): Observable<Building> {
+    return this.http.get<Building>(
       `${this.tenantBuildingsUrl}/my-building`
     );
   }
 
-  getCurrentBuildingForChat(isManagerOrAdmin: boolean): Observable<BuildingInfo | null> {
+  getCurrentBuildingForChat(isManagerOrAdmin: boolean): Observable<Building | null> {
     return isManagerOrAdmin
       ? this.getMyManagedBuilding()
       : this.getMyJoinedBuilding();
   }
 
-  joinBuilding(code: string): Observable<BuildingInfo> {
-    return this.http.post<BuildingInfo>(
+  joinBuilding(code: string): Observable<Building> {
+    return this.http.post<Building>(
       `${this.tenantBuildingsUrl}/join`,
       { code }
     );
   }
 
-  getBuildingByCode(code: string): Observable<BuildingInfo> {
-    return this.http.get<BuildingInfo>(
+  getBuildingByCode(code: string): Observable<Building> {
+    return this.http.get<Building>(
       `${this.tenantBuildingsUrl}/code/${code}`
     );
   }

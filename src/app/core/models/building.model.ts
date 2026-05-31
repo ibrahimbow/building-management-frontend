@@ -5,7 +5,7 @@ export interface CreateBuildingRequest {
   emergencyPhone: string;
 }
 
-export interface BuildingInfo {
+export interface Building {
   id: string;
   buildingName: string;
   code: string;

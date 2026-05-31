@@ -11,7 +11,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { BuildingService } from '../../../core/services/building.service';
 import { BuildingTenant } from '../../../core/models/building-tenant.model';
-import { BuildingInfo } from '../../../core/models/building.model';
+import { Building } from '../../../core/models/building.model';
 
 import { MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
@@ -21,18 +21,18 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-building-tenants',
   standalone: true,
-imports: [
-  CommonModule,
-  RouterLink,
-  MatCardModule,
-  MatIconModule,
-  MatButtonModule,
-  MatSnackBarModule,
-  MatTableModule,
-  MatMenuModule,
-  MatTooltipModule,
-  MatProgressSpinnerModule
-],
+  imports: [
+    CommonModule,
+    RouterLink,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    MatTableModule,
+    MatMenuModule,
+    MatTooltipModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './building-tenants.html',
   styleUrl: './building-tenants.scss'
 })
@@ -43,15 +43,15 @@ export class BuildingTenants implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
 
   displayedColumns: string[] = [
-  'tenant',
-  'displayName',
-  'email',
-  'phone',
-  'status',
-  'actions'
-];
+    'tenant',
+    'displayName',
+    'email',
+    'phone',
+    'status',
+    'actions'
+  ];
 
-  building: BuildingInfo | null = null;
+  building: Building | null = null;
   tenants: BuildingTenant[] = [];
 
   isLoading = true;
@@ -62,13 +62,13 @@ export class BuildingTenants implements OnInit {
   }
 
   getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map(part => part.charAt(0))
-    .join('')
-    .substring(0, 2)
-    .toUpperCase();
-}
+    return name
+      .split(' ')
+      .map(part => part.charAt(0))
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+  }
 
   removeTenant(tenantUserId: number): void {
     if (!this.building || this.removingTenantUserId !== null) {

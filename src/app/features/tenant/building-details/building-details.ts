@@ -10,10 +10,10 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
 
 import { BuildingService } from '../../../core/services/building.service';
-import { BuildingInfo as BuildingInfoModel } from '../../../core/models/building.model';
+import { Building } from '../../../core/models/building.model';
 
 @Component({
-  selector: 'app-building-info',
+  selector: 'app-building-details',
   standalone: true,
   imports: [
     NgIf,
@@ -24,16 +24,16 @@ import { BuildingInfo as BuildingInfoModel } from '../../../core/models/building
     MatSnackBarModule,
     MatButtonModule
   ],
-  templateUrl: './building-info.html',
-  styleUrl: './building-info.scss'
+  templateUrl: './building-details.html',
+  styleUrl: './building-details.scss'
 })
-export class BuildingInfo implements OnInit {
+export class BuildingDetails implements OnInit {
 
   private readonly buildingService = inject(BuildingService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  building: BuildingInfoModel | null = null;
+  building: Building | null = null;
   isLoading = false;
   isLeaving = false;
   errorMessage: string | null = null;

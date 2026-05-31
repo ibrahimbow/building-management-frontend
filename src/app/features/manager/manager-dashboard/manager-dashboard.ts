@@ -13,7 +13,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
 import { ChatService } from '../../../core/services/chat.service';
 
 import { BuildingTenant } from '../../../core/models/building-tenant.model';
-import { BuildingInfo } from '../../../core/models/building.model';
+import { Building } from '../../../core/models/building.model';
 import { Announcement } from '../../../core/models/announcement.model';
 import { ChatMessage } from '../../../core/models/chat-message.model';
 
@@ -44,7 +44,7 @@ export class ManagerDashboard implements OnInit {
   private readonly chatService = inject(ChatService);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  building: BuildingInfo | null = null;
+  building: Building | null = null;
   tenants: BuildingTenant[] = [];
   recentAnnouncements: Announcement[] = [];
 

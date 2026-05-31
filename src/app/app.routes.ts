@@ -57,10 +57,10 @@ export const routes: Routes = [
             .then(m => m.JoinBuilding)
       },
       {
-        path: 'building-info',
+        path: 'building-details',
         loadComponent: () =>
-          import('./features/tenant/building-info/building-info')
-            .then(m => m.BuildingInfo)
+          import('./features/tenant/building-details/building-details')
+            .then(m => m.BuildingDetails)
       },
       {
         path: 'announcements',
