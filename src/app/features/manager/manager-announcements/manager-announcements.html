@@ -1,7 +1,6 @@
-<section class="manager-announcements-page">
-
   <div class="page-header">
-    <div>
+    <section class="announcements-hero">
+    <div >
       <span class="page-label">Manager Dashboard</span>
       <h1>Announcements</h1>
       <p>Manage and publish important updates for your building tenants.</p>
@@ -11,7 +10,11 @@
       <mat-icon>add</mat-icon>
       Create Announcement
     </button>
+  </section>
   </div>
+
+
+<section class="manager-announcements-page">
 
   <section *ngIf="announcements.length > 0; else noAnnouncements" class="announcement-feed">
 
@@ -57,9 +60,11 @@
           </p>
 
           <div class="announcement-bottom">
-            <span class="category">
-              {{ announcement.category }}
-            </span>
+            <span
+            class="category-badge"
+            [ngClass]="announcement.category.toLowerCase()">
+            {{ announcement.category }}
+          </span>
           </div>
 
         </div>

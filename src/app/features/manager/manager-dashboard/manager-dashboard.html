@@ -159,7 +159,9 @@
               <p>
                 {{ announcement.createdAt | date:'MMM d, y' }}
                 ·
-                {{ announcement.message }}
+                <span class="announcement-description">
+                  {{ announcement.message }}
+                </span>
               </p>
             </div>
           </div>

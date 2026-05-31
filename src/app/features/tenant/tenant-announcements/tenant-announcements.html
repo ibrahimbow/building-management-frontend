@@ -1,6 +1,5 @@
-<section class="tenant-announcements-page">
-
-  <section class="announcements-hero">
+<div class="page-header">
+<section class="announcements-hero">
     <div>
       <p class="eyebrow">Building updates</p>
       <h2>Announcements</h2>
@@ -11,15 +10,16 @@
       <mat-icon>campaign</mat-icon>
     </div>
   </section>
+</div>
+
+<section class="tenant-announcements-page">
 
   <div *ngIf="isLoading" class="loading-state">
     <mat-icon>hourglass_top</mat-icon>
     <p>Loading announcements...</p>
   </div>
 
-  <mat-card
-    *ngIf="!isLoading && announcements.length === 0"
-    class="empty-card">
+  <mat-card *ngIf="!isLoading && announcements.length === 0" class="empty-card">
 
     <mat-icon>notifications_off</mat-icon>
     <mat-card-title>No announcements yet</mat-card-title>
@@ -32,9 +32,7 @@
 
   <section class="announcements-list">
 
-    <mat-card
-      *ngFor="let announcement of announcements"
-      class="announcement-card"
+    <mat-card *ngFor="let announcement of announcements" class="announcement-card"
       [ngClass]="announcement.category.toLowerCase()">
 
       <div class="announcement-icon">
@@ -52,21 +50,15 @@
             </p>
           </div>
 
-          <span
-            class="category-badge"
-            [ngClass]="announcement.category.toLowerCase()">
+          <span class="category-badge" [ngClass]="announcement.category.toLowerCase()">
             {{ announcement.category }}
           </span>
         </div>
 
-        <div >
+        <div>
 
-                <img
-  *ngIf="hasValidImage(announcement.imageUrl)"
-  [src]="resolveImageUrl(announcement.imageUrl)"
-  alt="Announcement image"
-  class="announcement-image"
-/>
+          <img *ngIf="hasValidImage(announcement.imageUrl)" [src]="resolveImageUrl(announcement.imageUrl)"
+            alt="Announcement image" class="announcement-image" />
         </div>
 
         <p class="message">{{ announcement.message }}</p>

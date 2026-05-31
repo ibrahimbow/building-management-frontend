@@ -11,10 +11,8 @@
 
         <section class="profile-section">
           <div class="avatar">
-            <img
-              *ngIf="imageUrlService.hasImage(profile.avatarUrl); else defaultAvatar"
-              [src]="imageUrlService.resolve(profile.avatarUrl)"
-              alt="Manager profile photo" />
+            <img *ngIf="imageUrlService.hasImage(profile.avatarUrl); else defaultAvatar"
+              [src]="imageUrlService.resolve(profile.avatarUrl)" alt="Manager profile photo" />
 
             <ng-template #defaultAvatar>
               <mat-icon>person</mat-icon>
@@ -27,26 +25,11 @@
 
             <label class="upload-button">
               Change photo
-              <input
-                type="file"
-                accept="image/png,image/jpeg,image/webp"
-                (change)="onAvatarSelected($event)"
-                hidden />
+              <input type="file" accept="image/png,image/jpeg,image/webp" (change)="onAvatarSelected($event)" hidden />
             </label>
           </div>
         </section>
 
-        <div class="sidebar-actions">
-          <button
-            mat-stroked-button
-            color="warn"
-            type="button"
-            class="logout-button"
-            (click)="logout()">
-            <mat-icon>logout</mat-icon>
-            Logout
-          </button>
-        </div>
       </aside>
 
       <div class="settings-main-content">
@@ -64,32 +47,23 @@
             <div class="form-grid">
               <mat-form-field appearance="outline">
                 <mat-label>Username</mat-label>
-                <input matInput name="username" [value]="profile.username" readonly />
+                <input matInput name="username" [value]="profile.username" readonly disabled />
               </mat-form-field>
 
               <mat-form-field appearance="outline">
                 <mat-label>Email</mat-label>
-                <input matInput name="email" type="email" [value]="profile.email" readonly />
+                <input matInput name="email" type="email" [value]="profile.email" readonly disabled />
               </mat-form-field>
 
               <mat-form-field appearance="outline">
                 <mat-label>Phone number</mat-label>
-                <input
-                  matInput
-                  name="phoneNumber"
-                  [(ngModel)]="profile.phoneNumber"
-                  required
+                <input matInput name="phoneNumber" [(ngModel)]="profile.phoneNumber" required
                   pattern="^\+?[0-9]{8,15}$" />
               </mat-form-field>
 
               <mat-form-field appearance="outline">
                 <mat-label>Display name</mat-label>
-                <input
-                  matInput
-                  name="displayName"
-                  [(ngModel)]="profile.displayName"
-                  required
-                  minlength="2"
+                <input matInput name="displayName" [(ngModel)]="profile.displayName" required minlength="2"
                   maxlength="150" />
               </mat-form-field>
             </div>
@@ -110,11 +84,7 @@
                 <input matInput value="********" readonly />
               </mat-form-field>
 
-              <button
-                mat-stroked-button
-                color="primary"
-                type="button"
-                class="change-password-btn"
+              <button mat-stroked-button color="primary" type="button" class="change-password-btn"
                 (click)="openChangePasswordDialog()">
                 Change Password
               </button>
@@ -133,42 +103,19 @@
             <div class="preferences-inline-grid">
               <mat-form-field appearance="outline">
                 <mat-label>Role</mat-label>
-                <input matInput name="role" [(ngModel)]="profile.role" readonly />
+                <input matInput name="role" [(ngModel)]="profile.role" readonly disabled />
               </mat-form-field>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Language</mat-label>
-                <mat-select name="language" [(ngModel)]="profile.language" required>
-                  <mat-option *ngFor="let language of languages" [value]="language.code">
-                    {{ language.label }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
 
-              <div class="toggle-card-inline">
-                <div class="toggle-info">
-                  <strong>Enable notifications</strong>
-                  <p>Receive tenant and building updates.</p>
-                </div>
 
-                <mat-slide-toggle
-                  name="notifications"
-                  [(ngModel)]="profile.notifications">
-                </mat-slide-toggle>
-              </div>
             </div>
           </section>
 
         </div>
 
         <div class="form-actions-bar">
-          <button
-            mat-raised-button
-            color="primary"
-            type="button"
-            class="save-button"
-            [disabled]="isSaving || settingsForm.invalid"
-            (click)="save()">
+          <button mat-raised-button color="primary" type="button" class="save-button"
+            [disabled]="isSaving || settingsForm.invalid" (click)="save()">
             {{ isSaving ? 'Saving...' : 'Save Settings' }}
           </button>
         </div>

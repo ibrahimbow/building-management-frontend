@@ -51,12 +51,12 @@
             <div class="form-grid">
               <mat-form-field appearance="outline">
                 <mat-label>Username</mat-label>
-                <input matInput name="name" [value]="profile.name" readonly />
+                <input matInput name="name" [value]="profile.name" readonly  disabled/>
               </mat-form-field>
 
               <mat-form-field appearance="outline">
                 <mat-label>Email</mat-label>
-                <input matInput type="email" name="email" [value]="profile.email" readonly />
+                <input matInput type="email" name="email" [value]="profile.email" readonly disabled/>
               </mat-form-field>
 
               <mat-form-field appearance="outline">
@@ -120,26 +120,9 @@
             <div class="preferences-inline-grid">
               <mat-form-field appearance="outline">
                 <mat-label>Role</mat-label>
-                <input matInput name="role" [(ngModel)]="profile.role" readonly />
+                <input matInput name="role" [(ngModel)]="profile.role" readonly disabled />
               </mat-form-field>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Language</mat-label>
-                <mat-select name="language" [(ngModel)]="profile.language" required>
-                  <mat-option *ngFor="let lang of languages" [value]="lang.code">
-                    {{ lang.label }}
-                  </mat-option>
-                </mat-select>
-                <mat-error>Language is required.</mat-error>
-              </mat-form-field>
-
-              <div class="toggle-card-inline">
-                <div class="toggle-info">
-                  <strong>Enable notifications</strong>
-                  <p>Receive important updates about your building.</p>
-                </div>
-                <mat-slide-toggle name="notifications" [(ngModel)]="profile.notifications"></mat-slide-toggle>
-              </div>
             </div>
           </section>
           

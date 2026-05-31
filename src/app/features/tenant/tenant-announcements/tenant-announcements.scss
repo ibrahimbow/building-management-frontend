@@ -1,9 +1,15 @@
+.page-header {
+  position: sticky;
+  top: 0px;
+  z-index: 50;
+}
+
 .tenant-announcements-page {
   display: grid;
   gap: 22px;
-  max-width: 1500px;
+  max-width: 1400px;
   margin: 0 auto;
-   padding: 0 42px 50px 0px;
+  padding: 0 10px 50px 0px;
 }
 
 .announcements-hero {
