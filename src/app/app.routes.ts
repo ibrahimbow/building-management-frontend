@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
-import { roleGuard } from './core/guards/role.guard';
 import { guestGuard } from './core/guards/guest.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -154,6 +154,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/manager/manager-settings/manager-settings')
             .then(m => m.ManagerSettings)
+      },
+      {
+        path: 'buildings/:id/edit',
+        loadComponent: () =>
+          import('./features/manager/update-building/update-building')
+            .then(m => m.UpdateBuilding)
       }
     ]
   },

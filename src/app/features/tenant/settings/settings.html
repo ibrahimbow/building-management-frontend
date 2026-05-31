@@ -1,7 +1,7 @@
 <main class="settings-page">
   <mat-card class="settings-card">
     <form class="settings-form" #settingsForm="ngForm" novalidate>
-      
+
       <aside class="settings-sidebar">
         <header class="settings-header">
           <p class="eyebrow">Account preferences</p>
@@ -11,10 +11,8 @@
 
         <section class="profile-section">
           <div class="avatar">
-            <img
-              *ngIf="imageUrlService.hasImage(profile.avatarUrl); else defaultAvatar"
-              [src]="imageUrlService.resolve(profile.avatarUrl)"
-              alt="Profile photo" />
+            <img *ngIf="imageUrlService.hasImage(profile.avatarUrl); else defaultAvatar"
+              [src]="imageUrlService.resolve(profile.avatarUrl)" alt="Profile photo" />
             <ng-template #defaultAvatar>
               <mat-icon>person</mat-icon>
             </ng-template>
@@ -26,11 +24,7 @@
 
             <label class="upload-button">
               Change photo
-              <input
-                type="file"
-                accept="image/png,image/jpeg,image/webp"
-                (change)="onAvatarSelected($event)"
-                hidden />
+              <input type="file" accept="image/png,image/jpeg,image/webp" (change)="onAvatarSelected($event)" hidden />
             </label>
           </div>
         </section>
@@ -38,7 +32,7 @@
 
       <div class="settings-main-content">
         <div class="scrollable-form-body">
-          
+
           <section class="form-section no-top-border">
             <div class="section-title">
               <mat-icon>person</mat-icon>
@@ -51,32 +45,23 @@
             <div class="form-grid">
               <mat-form-field appearance="outline">
                 <mat-label>Username</mat-label>
-                <input matInput name="name" [value]="profile.name" readonly  disabled/>
+                <input matInput name="name" [value]="profile.name" readonly disabled />
               </mat-form-field>
 
               <mat-form-field appearance="outline">
                 <mat-label>Email</mat-label>
-                <input matInput type="email" name="email" [value]="profile.email" readonly disabled/>
+                <input matInput type="email" name="email" [value]="profile.email" readonly disabled />
               </mat-form-field>
 
               <mat-form-field appearance="outline">
                 <mat-label>Mobile number</mat-label>
-                <input
-                  matInput
-                  name="mobileNumber"
-                  [(ngModel)]="profile.mobileNumber"
-                  required
+                <input matInput name="mobileNumber" [(ngModel)]="profile.mobileNumber" required
                   pattern="^\+?[0-9]{8,15}$" />
               </mat-form-field>
 
               <mat-form-field appearance="outline">
                 <mat-label>Display name</mat-label>
-                <input
-                  matInput
-                  name="displayName"
-                  [(ngModel)]="profile.displayName"
-                  required
-                  minlength="2"
+                <input matInput name="displayName" [(ngModel)]="profile.displayName" required minlength="2"
                   maxlength="150" />
               </mat-form-field>
             </div>
@@ -97,11 +82,7 @@
                 <input matInput value="********" readonly />
               </mat-form-field>
 
-              <button
-                mat-stroked-button
-                color="primary"
-                type="button"
-                class="change-password-btn"
+              <button mat-stroked-button color="primary" type="button" class="change-password-btn"
                 (click)="openChangePasswordDialog()">
                 Change Password
               </button>
@@ -125,14 +106,9 @@
 
             </div>
           </section>
-          
-               <button
-            mat-raised-button
-            color="primary"
-            type="button"
-            class="save-button"
-            [disabled]="isSaving || settingsForm.invalid"
-            (click)="save()">
+
+          <button mat-raised-button color="primary" type="button" class="save-button"
+            [disabled]="isSaving || settingsForm.invalid" (click)="save()">
             {{ isSaving ? 'Saving...' : 'Save Settings' }}
           </button>
         </div>

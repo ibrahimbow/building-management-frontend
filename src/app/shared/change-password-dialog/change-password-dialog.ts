@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
 
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,34 +24,29 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './change-password-dialog.html',
   styleUrl: './change-password-dialog.scss'
 })
-
 export class ChangePasswordDialog {
   currentPassword = '';
   newPassword = '';
   confirmPassword = '';
 
   errorMessage = '';
+  isSaving = false;
 
   constructor(
-    private dialogRef: MatDialogRef<ChangePasswordDialog>,
-    private authService: AuthService
+    private readonly dialogRef: MatDialogRef<ChangePasswordDialog>,
+    private readonly authService: AuthService
   ) {}
 
   save(): void {
-    const currentUser = this.authService.getCurrentUser();
+    this.errorMessage = '';
 
-    if (!currentUser) {
-      this.errorMessage = 'No user is logged in.';
+    if (!this.currentPassword.trim()) {
+      this.errorMessage = 'Current password is required.';
       return;
     }
 
-    // if (this.currentPassword !== currentUser.password) {
-    //   this.errorMessage = 'Current password is incorrect.';
-    //   return;
-    // }
-
-    if (!this.newPassword || this.newPassword.length < 6) {
-      this.errorMessage = 'New password must be at least 6 characters.';
+    if (!this.newPassword || this.newPassword.length < 8) {
+      this.errorMessage = 'New password must be at least 8 characters.';
       return;
     }
 
@@ -59,11 +55,42 @@ export class ChangePasswordDialog {
       return;
     }
 
-    // this.authService.updatePassword(this.newPassword);
-    this.dialogRef.close(true);
+    if (this.currentPassword === this.newPassword) {
+      this.errorMessage = 'New password must be different from current password.';
+      return;
+    }
+
+    this.isSaving = true;
+
+    this.authService.changePassword(
+      {
+        currentPassword: this.currentPassword,
+        newPassword: this.newPassword,
+        confirmPassword: this.confirmPassword
+      }
+    )
+      .pipe(
+        finalize(() => {
+          this.isSaving = false;
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.dialogRef.close(true);
+        },
+        error: (error) => {
+          this.errorMessage =
+            error?.error?.message ||
+            'Password could not be changed. Please check your current password.';
+        }
+      });
   }
 
   cancel(): void {
+    if (this.isSaving) {
+      return;
+    }
+
     this.dialogRef.close(false);
   }
 }

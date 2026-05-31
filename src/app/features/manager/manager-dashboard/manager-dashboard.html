@@ -23,12 +23,25 @@
         </div>
 
         <div class="building-info">
-          <h2>{{ building.buildingName }}</h2>
+
+          <div class="building-header">
+
+            <h2>{{ building.buildingName }}</h2>
+
+          </div>
 
           <p><mat-icon>confirmation_number</mat-icon><strong>Code:</strong> {{ building.code }}</p>
           <p><mat-icon>location_on</mat-icon><strong>Address:</strong> {{ building.address }}</p>
           <p><mat-icon>apartment</mat-icon><strong>Total Apartments:</strong> {{ building.totalApartments }}</p>
           <p><mat-icon>phone_in_talk</mat-icon><strong>Emergency Phone:</strong> {{ building.emergencyPhone }}</p>
+
+          <div class="building-actions">
+
+            <button mat-button [routerLink]="['/manager/buildings', building.id, 'edit']">
+              Edit Building
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
         </div>
       </mat-card>
 
@@ -37,12 +50,15 @@
           <mat-icon>campaign</mat-icon>
         </div>
 
+
         <h2>Announcements</h2>
         <p>Create, edit, and manage announcements for your tenants.</p>
 
-        <button mat-button routerLink="/manager/announcements">
-          Manage Announcements
-        </button>
+        <div class="building-actions">
+          <button mat-button routerLink="/manager/announcements">
+            Manage Announcements
+          </button>
+        </div>
       </mat-card>
 
       <mat-card class="action-card dashboard-card">
@@ -53,9 +69,11 @@
         <h2>Tenants</h2>
         <p>View and manage tenants currently joined to your building.</p>
 
-        <button mat-button routerLink="/manager/building-tenants">
-          View Tenants
-        </button>
+        <div class="building-actions">
+          <button mat-button routerLink="/manager/building-tenants">
+            View Tenants
+          </button>
+        </div>
       </mat-card>
     </section>
 
@@ -67,7 +85,7 @@
             <p>Your building activity at a glance.</p>
           </div>
 
-       
+
         </div>
 
         <div class="overview-stats">
@@ -145,7 +163,7 @@
         <div class="section-title-row compact">
           <h2>Recent Announcements</h2>
 
-  
+
         </div>
 
         <div class="announcement-list" *ngIf="recentAnnouncements.length > 0; else noRecentAnnouncements">
@@ -174,7 +192,7 @@
           </div>
         </ng-template>
 
-    
+
       </mat-card>
     </section>
   </ng-container>

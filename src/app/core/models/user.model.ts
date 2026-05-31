@@ -54,3 +54,9 @@ export interface UpdateBuildingUserProfileRequest {
   preferredLanguage: string | null;
   notificationsEnabled: boolean;
 }
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}

@@ -1,0 +1,348 @@
+/* ── Page wrapper ────────────────────────────────────────────────── */
+.create-building-page {
+    padding: 0;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ── Main card ───────────────────────────────────────────────────── */
+.create-building-card {
+    width: 100%;
+    border-radius: 18px !important;
+    border: 1px solid #e2eaf6;
+    background: #ffffff;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(15, 23, 42, 0.07);
+    padding: 0 !important;
+}
+
+/* ── Hero section ────────────────────────────────────────────────── */
+.hero-section {
+    height: 190px;
+    padding: 34px 30px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    min-height: 200px;
+}
+
+.hero-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+/* Round icon bubble */
+.hero-icon {
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #eef4ff;
+    color: #2563eb;
+    flex-shrink: 0;
+}
+
+.hero-icon mat-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 42px;
+    line-height: 42px;
+}
+
+/* Title + subtitle */
+.hero-text {
+    padding-top: 8px;
+}
+
+.hero-text h1 {
+    margin: 0;
+    font-size: 36px;
+    line-height: 1.1;
+    font-weight: 900;
+    letter-spacing: -0.8px;
+    color: #071b4d;
+}
+
+.hero-text p {
+    margin: 10px 0 0;
+    font-size: 15px;
+    color: #4a6080;
+    font-weight: 400;
+}
+
+/* Building illustration */
+.building-art {
+    width: 400px;
+    height: 250px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.building-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom;
+}
+
+/* ── Form content ────────────────────────────────────────────────── */
+mat-card-content {
+    padding: 36px 40px 44px !important;
+}
+
+/* 4-column grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+/* Field label */
+.field-block label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f2044;
+    letter-spacing: 0;
+}
+
+.field-block label .required {
+    color: #2563eb;
+    margin-left: 2px;
+}
+
+/* mat-form-field fill */
+mat-form-field {
+    width: 100%;
+}
+
+/* Hide the subscript (error/hint row) */
+::ng-deep .create-building-page .mat-mdc-form-field-subscript-wrapper {
+    display: none !important;
+}
+
+/* Wrapper height */
+::ng-deep .create-building-page .mat-mdc-text-field-wrapper {
+    height: 54px !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+}
+
+::ng-deep .create-building-page .mat-mdc-form-field-flex {
+    height: 54px;
+    align-items: center;
+}
+
+::ng-deep .create-building-page .mat-mdc-form-field-infix {
+    padding: 0 !important;
+    min-height: 54px !important;
+    display: flex;
+    align-items: center;
+}
+
+/* Outline border — light, 1.5 px */
+::ng-deep .create-building-page .mdc-notched-outline__leading,
+::ng-deep .create-building-page .mdc-notched-outline__notch,
+::ng-deep .create-building-page .mdc-notched-outline__trailing {
+    border-color: #d8e4f0 !important;
+    border-width: 1.5px !important;
+}
+
+::ng-deep .create-building-page .mdc-notched-outline__leading {
+    border-radius: 10px 0 0 10px !important;
+}
+
+::ng-deep .create-building-page .mdc-notched-outline__trailing {
+    border-radius: 0 10px 10px 0 !important;
+}
+
+/* Input text */
+::ng-deep .create-building-page .mat-mdc-input-element {
+    font-size: 14px !important;
+    color: #071b4d !important;
+    font-weight: 500 !important;
+}
+
+/* Placeholder */
+::ng-deep .create-building-page .mat-mdc-input-element::placeholder {
+    color: #a0b0c8 !important;
+    font-weight: 400 !important;
+}
+
+/* Prefix icon */
+mat-icon[matPrefix] {
+    margin-left: 14px;
+    margin-right: 14px;
+    color: #8fa3be;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+}
+
+/* ── Error message ───────────────────────────────────────────────── */
+.error-message {
+    margin: 16px 0 0;
+    color: #dc2626;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+/* ── Form actions ────────────────────────────────────────────────── */
+.form-actions {
+    margin-top: 36px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+/* Submit button */
+.form-actions button {
+    height: 56px;
+    min-width: 210px;
+    border-radius: 12px !important;
+    background: linear-gradient(135deg, #2f46f5 0%, #1a8fff 100%) !important;
+    color: #ffffff !important;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.1px;
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.30) !important;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.form-actions button mat-icon {
+    margin-right: 6px;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.form-actions button[disabled] {
+    background: linear-gradient(135deg, #d1d5db, #cbd5e1) !important;
+    color: #f8fafc !important;
+    box-shadow: none !important;
+}
+
+/* Helper text beside button */
+.helper-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.helper-text mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+    color: #94a3b8;
+}
+
+/* ── Info card (bottom strip) ────────────────────────────────────── */
+.info-card {
+    display: flex !important;
+    align-items: center;
+    gap: 20px;
+    padding: 22px 32px;
+    border-radius: 16px;
+    background: #eef4ff;
+    border: 1px solid #d6e4fa;
+}
+
+.info-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #2563eb;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.info-icon mat-icon {
+    color: #ffffff;
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+}
+
+.info-text h3 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #071b4d;
+}
+
+.info-text p {
+    margin: 0;
+    font-size: 14px;
+    color: #4a6080;
+    line-height: 1.5;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+    .building-art {
+        display: none;
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .hero-section {
+        padding: 28px 24px 0;
+    }
+
+    mat-card-content {
+        padding: 28px 24px 36px !important;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+::ng-deep .create-building-page .mat-mdc-form-field-invalid .mdc-notched-outline__leading,
+::ng-deep .create-building-page .mat-mdc-form-field-invalid .mdc-notched-outline__notch,
+::ng-deep .create-building-page .mat-mdc-form-field-invalid .mdc-notched-outline__trailing {
+    border-color: #dc2626 !important;
+}
+
+::ng-deep .create-building-page .mat-mdc-form-field-error {
+    font-size: 12px;
+    font-weight: 700;
+    color: #dc2626;
+}
+
+::ng-deep .create-building-page .mat-mdc-form-field-subscript-wrapper {
+    display: block;
+    min-height: 18px;
+    margin-top: 4px;
+}
+
+.error-message {
+    margin: 14px 0 0;
+    color: #dc2626;
+    font-weight: 800;
+}

@@ -13,7 +13,8 @@ import {
   User,
   UserRole,
   BuildingUserProfile,
-  UpdateBuildingUserProfileRequest
+  UpdateBuildingUserProfileRequest,
+  ChangePasswordRequest
 } from '../models/user.model';
 
 @Injectable({
@@ -136,7 +137,6 @@ export class AuthService {
   }
 
   updateCurrentUser(profile: BuildingUserProfile): void {
-
     const currentUser = this.getCurrentUser();
 
     if (!currentUser) {
@@ -153,6 +153,14 @@ export class AuthService {
     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
 
     this.currentUserSubject.next(updatedUser);
+  }
+
+
+  changePassword(request: ChangePasswordRequest) {
+    return this.http.patch<void>(
+      `${this.apiUrl}/change-password`,
+      request
+    );
   }
 
   private readonly currentUserSubject = new BehaviorSubject<User | null>(

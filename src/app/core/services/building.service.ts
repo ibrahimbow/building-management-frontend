@@ -48,9 +48,6 @@ export class BuildingService {
     );
   }
 
-  deleteMyBuilding(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.managerBuildingsUrl}/${id}`);
-  }
 
   getBuildingTenants(buildingId: string): Observable<BuildingTenant[]> {
     return this.http.get<BuildingTenant[]>(

@@ -131,11 +131,9 @@
   button {
     height: 40px;
     padding: 0 24px;
-    border-radius: 999px;
     color: #0057dc;
-    font-weight: 900;
     background: #ffffff;
-    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.09);
+
   }
 }
 
@@ -543,4 +541,37 @@
 
   line-height: 1.6;
   max-width: 100%;
+}
+
+
+.building-card {
+  position: relative;
+}
+
+.building-actions {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+}
+
+
+.edit-building-button {
+  height: 52px !important;
+  padding: 0 22px !important;
+
+  background: transparent !important;
+
+
+}
+
+.edit-building-button:hover {
+  background: rgba(11, 99, 229, 0.04) !important;
+  transition: background-color 0.18s ease;
+
+
+}
+
+.edit-building-button mat-icon {
+  margin-right: 19px;
+  color: #0b63e5;
 }

@@ -1,0 +1,164 @@
+<section class="create-building-page">
+
+    <mat-card class="create-building-card">
+
+        <div class="hero-section">
+            <div class="hero-title">
+                <div class="hero-icon">
+                    <mat-icon>apartment</mat-icon>
+                </div>
+
+                <div class="hero-text">
+                    <h1>Update Building</h1>
+                    <p>Update your building details at any time.</p>
+                </div>
+            </div>
+
+            <div class="building-art">
+                <img src="assets/images/building-illustration.png" alt="Modern building illustration" />
+            </div>
+        </div>
+
+        <mat-card-content>
+            <form #form="ngForm" (ngSubmit)="updateBuilding(form)" novalidate>
+
+                <div class="form-grid">
+
+                    <div class="field-block">
+                        <label>Building name <span class="required">*</span></label>
+
+                        <mat-form-field appearance="outline">
+                            <mat-icon matPrefix>business</mat-icon>
+
+                            <input matInput name="buildingName" placeholder="Enter building name"
+                                [(ngModel)]="buildingName" #buildingNameCtrl="ngModel" required minlength="2"
+                                maxlength="80" [disabled]="isSubmitting" />
+
+                            <mat-error *ngIf="buildingNameCtrl.hasError('required')">
+                                Building name is required.
+                            </mat-error>
+
+                            <mat-error *ngIf="buildingNameCtrl.hasError('minlength')">
+                                Building name must be at least 2 characters.
+                            </mat-error>
+
+                            <mat-error *ngIf="buildingNameCtrl.hasError('maxlength')">
+                                Building name cannot be longer than 80 characters.
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="field-block">
+                        <label>Address <span class="required">*</span></label>
+
+                        <mat-form-field appearance="outline">
+                            <mat-icon matPrefix>location_on</mat-icon>
+
+                            <input matInput name="address" placeholder="Enter full address" [(ngModel)]="address"
+                                #addressCtrl="ngModel" required minlength="5" maxlength="150"
+                                [disabled]="isSubmitting" />
+
+                            <mat-error *ngIf="addressCtrl.hasError('required')">
+                                Address is required.
+                            </mat-error>
+
+                            <mat-error *ngIf="addressCtrl.hasError('minlength')">
+                                Address must be at least 5 characters.
+                            </mat-error>
+
+                            <mat-error *ngIf="addressCtrl.hasError('maxlength')">
+                                Address cannot be longer than 150 characters.
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="field-block">
+                        <label>Total apartments <span class="required">*</span></label>
+
+                        <mat-form-field appearance="outline">
+                            <mat-icon matPrefix>home</mat-icon>
+
+                            <input matInput type="number" name="totalApartments" placeholder="e.g. 24"
+                                [(ngModel)]="totalApartments" #totalApartmentsCtrl="ngModel" required min="4" max="500"
+                                [disabled]="isSubmitting" />
+
+                            <mat-error *ngIf="totalApartmentsCtrl.hasError('required')">
+                                Total apartments is required.
+                            </mat-error>
+
+                            <mat-error *ngIf="totalApartmentsCtrl.hasError('min')">
+                                Building must have at least 4 apartments.
+                            </mat-error>
+
+                            <mat-error *ngIf="totalApartmentsCtrl.hasError('max')">
+                                Total apartments cannot be more than 500.
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="field-block">
+                        <label>Emergency phone <span class="required">*</span></label>
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-icon matPrefix>call</mat-icon>
+
+                            <input matInput type="tel" name="emergencyPhone" placeholder="e.g. +32 471 00 11 22"
+                                [(ngModel)]="emergencyPhone" #emergencyPhoneCtrl="ngModel" required minlength="10"
+                                maxlength="25" pattern="^\+?[0-9\s().-]+$"
+                                [class.invalid-phone]="emergencyPhoneCtrl.touched && !isEmergencyPhoneValid()"
+                                [disabled]="isSubmitting" />
+
+                            <mat-error *ngIf="emergencyPhoneCtrl.hasError('required')">
+                                Emergency phone is required.
+                            </mat-error>
+
+                            <mat-error *ngIf="emergencyPhoneCtrl.hasError('pattern')">
+                                Phone number can only contain numbers, spaces, +, -, dots or brackets.
+                            </mat-error>
+
+                            <mat-error
+                                *ngIf="emergencyPhoneCtrl.touched && !emergencyPhoneCtrl.hasError('required') && !emergencyPhoneCtrl.hasError('pattern') && !isEmergencyPhoneValid()">
+                                Please enter a valid phone number with 10 to 15 digits.
+                            </mat-error>
+
+                        </mat-form-field>
+                    </div>
+
+                </div>
+
+                <p class="error-message" *ngIf="errorMessage">
+                    {{ errorMessage }}
+                </p>
+
+                <div class="form-actions">
+                    <button mat-raised-button type="submit" [disabled]="form.invalid || !isFormReady || isSubmitting">
+                        <mat-icon>
+                            {{ isSubmitting ? 'hourglass_top' : 'add' }}
+                        </mat-icon>
+
+                        {{ isSubmitting ? 'Updating...' : 'Update Building' }}
+                    </button>
+
+                </div>
+
+            </form>
+        </mat-card-content>
+
+    </mat-card>
+
+    <div class="info-card">
+        <div class="info-icon">
+            <mat-icon>info</mat-icon>
+        </div>
+
+        <div class="info-text">
+            <h3>Why update your building first?</h3>
+            <p>
+                Updating your building details ensures that all information is accurate and up-to-date for your tenants
+                and management purposes.
+            </p>
+        </div>
+    </div>
+
+</section>
