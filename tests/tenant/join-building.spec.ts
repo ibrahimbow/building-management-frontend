@@ -1,4 +1,5 @@
 import { expect, Page, test } from '@playwright/test';
+import { login } from '../shared/auth-helper';
 
 const MANAGER_EMAIL = 'manager1@bm.test';
 const TENANT_EMAIL = 'tenant1@bm.test';
@@ -21,7 +22,11 @@ test.describe('Building Management MVP Smoke Test', () => {
 
       await login(tenantPage, TENANT_EMAIL, PASSWORD, /\/tenant/);
 
-      await safeGoto(tenantPage, '/tenant/join-building');
+      await tenantPage.goto('/tenant/join-building', {
+        waitUntil: 'domcontentloaded'
+      }).catch(() => {
+        // The route may redirect if the tenant already belongs to a building.
+      });
 
       if (!tenantPage.url().includes('/tenant/join-building')) {
         await expect(tenantPage).toHaveURL(/\/tenant/);
@@ -42,41 +47,6 @@ test.describe('Building Management MVP Smoke Test', () => {
   });
 });
 
-async function login(
-  page: Page,
-  email: string,
-  password: string,
-  expectedUrl: RegExp
-): Promise<void> {
-  await page.goto('/auth/login', {
-    waitUntil: 'domcontentloaded'
-  });
-
-  await page.getByLabel(/username or email/i).fill(email);
-  await page.getByLabel(/password/i).fill(password);
-
-  await Promise.all([
-    page.waitForURL(expectedUrl, {
-      timeout: 15_000,
-      waitUntil: 'domcontentloaded'
-    }),
-    page.getByRole('button', { name: /^login$/i }).click()
-  ]);
-
-  await expect(page).toHaveURL(expectedUrl);
-}
-
-async function safeGoto(page: Page, url: string): Promise<void> {
-  try {
-    await page.goto(url, {
-      waitUntil: 'domcontentloaded',
-      timeout: 15_000
-    });
-  } catch {
-    // Angular route guards can abort navigation when they redirect.
-  }
-}
-
 async function getBuildingCodeFromDashboard(page: Page): Promise<string> {
   const codeLocator = page.locator('p').filter({ hasText: /Code:/i }).first();
 
@@ -85,7 +55,6 @@ async function getBuildingCodeFromDashboard(page: Page): Promise<string> {
   });
 
   const codeText = await codeLocator.innerText();
-
   const match = codeText.match(/BM-[A-Za-z0-9-]+/i);
 
   if (!match?.[0]) {

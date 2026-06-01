@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ShareAndHelp } from './share-and-help';
+import { ShareAndHelpComponent } from './share-and-help';
 
-describe('ShareAndHelp', () => {
-  let component: ShareAndHelp;
-  let fixture: ComponentFixture<ShareAndHelp>;
+describe('ShareAndHelpComponent', () => {
+  let component: ShareAndHelpComponent;
+  let fixture: ComponentFixture<ShareAndHelpComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ShareAndHelp],
+      imports: [ShareAndHelpComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ShareAndHelp);
+    fixture = TestBed.createComponent(ShareAndHelpComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
