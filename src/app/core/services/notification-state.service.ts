@@ -92,6 +92,19 @@ export class NotificationStateService {
     this.notificationWebSocketService.disconnect();
   }
 
+  resetAndClearAll(): void {
+  const currentNotifications = this.notificationsSubject.value;
+  
+  currentNotifications.forEach(notification => {
+    this.notificationService.markAsRead(notification.id)
+      .pipe(take(1))
+      .subscribe({
+        error: err => console.error('Failed to mark notification as read on leave:', err)
+      });
+  });
+
+  this.reset();
+}
   private loadUnreadNotifications(): void {
     this.notificationService.getMyNotifications()
       .pipe(take(1))

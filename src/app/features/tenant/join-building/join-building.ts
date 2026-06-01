@@ -58,9 +58,11 @@ export class JoinBuilding {
         this.snackBar.open('Successfully joined building.', 'Close', {
           duration: 2500
         });
-
         this.tenantBuildingState.markJoined();
-this.router.navigate(['/tenant/dashboard']);
+        this.router.navigate(['/tenant/dashboard'], { replaceUrl: true })
+          .then(() => {
+            window.location.reload();
+          });
       },
       error: () => {
         this.snackBar.open('Invalid building code or already joined.', 'Close', {

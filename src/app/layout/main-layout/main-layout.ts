@@ -120,34 +120,63 @@ export class MainLayout implements OnInit, OnDestroy {
     return !item.requiresBuilding || this.tenantHasJoinedBuilding;
   }
 
-openNotification(notification: NotificationItem): void {
-  this.notificationState.markAsReadAndRemove(notification.id);
+  openNotification(notification: NotificationItem): void {
+    this.notificationState.markAsReadAndRemove(notification.id);
 
-  if (notification.type === 'ANNOUNCEMENT') {
-    this.router.navigate(['/tenant/announcements']);
-    return;
-  }
+    if (notification.type === 'ANNOUNCEMENT') {
+      this.router.navigate(['/tenant/announcements']);
+      return;
+    }
 
-  if (notification.type === 'CHAT') {
-    this.router.navigate(['/tenant/building-chat']);
-    return;
-  }
+    if (notification.type === 'CHAT') {
+      this.router.navigate(['/tenant/building-chat']);
+      return;
+    }
 
-  if (notification.type === 'SHARE_AND_HELP') {
-    this.router.navigate(['/tenant/help-share']);
+    if (notification.type === 'SHARE_AND_HELP') {
+      this.router.navigate(['/tenant/help-share']);
+    }
+
+      if (notification.type === 'SHARE_AND_HELP') {
+      this.router.navigate(['/manager/help-share']);
+    }
   }
-}
 
   logout(): void {
+    
     this.notificationState.reset();
     this.authService.logout();
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/auth/login']).then(() => {
+      window.location.reload()
+    });
   }
 
   private initializeNotifications(): void {
+
+    if (this.isTenant) {
+
+      this.buildingService.getMyJoinedBuilding()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.initializeCurrentUserNotifications();
+          },
+          error: () => {
+            this.notificationState.reset();
+          }
+        });
+
+      return;
+    }
+
+    this.initializeCurrentUserNotifications();
+  }
+
+  private initializeCurrentUserNotifications(): void {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroy$))
       .subscribe(currentUser => {
+
         if (!currentUser?.id) {
           return;
         }

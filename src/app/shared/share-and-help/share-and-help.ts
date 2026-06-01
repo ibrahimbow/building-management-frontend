@@ -215,4 +215,12 @@ resolveImageUrl(imageUrl: string | null | undefined): string {
         }
       });
   }
+
+onAvatarError(event: Event): void {
+  (event.target as HTMLImageElement).src = 'assets/images/default-avatar.png';
+}
+
+onImageError(event: Event): void {
+  (event.target as HTMLImageElement).src = 'assets/images/default-post-image.png';
+}
 }

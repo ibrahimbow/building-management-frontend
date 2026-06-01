@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { buildingGuard } from './core/guards/buildingGuard';
 
 export const routes: Routes = [
   {
@@ -21,17 +22,7 @@ export const routes: Routes = [
     canActivate: [guestGuard],
     loadComponent: () =>
       import('./auth/register/register').then(m => m.Register)
-  }, {
-    path: 'auth/login',
-    loadComponent: () =>
-      import('./auth/login/login').then(m => m.Login)
-  },
-  {
-    path: 'auth/register',
-    loadComponent: () =>
-      import('./auth/register/register').then(m => m.Register)
-  },
-
+  }, 
   {
     path: 'tenant',
     canActivate: [authGuard, roleGuard],
@@ -58,24 +49,28 @@ export const routes: Routes = [
       },
       {
         path: 'building-details',
+        canActivate: [buildingGuard],
         loadComponent: () =>
           import('./features/tenant/building-details/building-details')
             .then(m => m.BuildingDetails)
       },
       {
         path: 'announcements',
+        canActivate: [buildingGuard],
         loadComponent: () =>
           import('./features/tenant/tenant-announcements/tenant-announcements')
             .then(m => m.TenantAnnouncements)
       },
       {
         path: 'help-share',
+        canActivate: [buildingGuard],
         loadComponent: () =>
           import('./shared/share-and-help/share-and-help')
             .then(m => m.ShareAndHelpComponent)
       },
       {
         path: 'building-chat',
+        canActivate: [buildingGuard],
         loadComponent: () =>
           import('./shared/building-chat/building-chat')
             .then(m => m.BuildingChat)

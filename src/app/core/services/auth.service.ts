@@ -49,13 +49,16 @@ export class AuthService {
     );
   }
 
-  logout(): void {
-    localStorage.removeItem(this.CURRENT_USER_KEY);
-    localStorage.removeItem(this.ACCESS_TOKEN_KEY);
-    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+logout(): void {
+  localStorage.removeItem(this.CURRENT_USER_KEY);
+  localStorage.removeItem(this.ACCESS_TOKEN_KEY);
+  localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+  localStorage.removeItem('currentUser');
 
-    this.router.navigate(['/auth/login']);
-  }
+  this.currentUserSubject.next(null);
+
+  this.router.navigate(['/auth/login'], { replaceUrl: true });
+}
 
   getCurrentUser(): User | null {
     const data = localStorage.getItem(this.CURRENT_USER_KEY);
@@ -150,13 +153,16 @@ export class AuthService {
       avatarUrl: profile.avatarUrl
     };
 
-    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+    localStorage.setItem(
+      this.CURRENT_USER_KEY,
+      JSON.stringify(updatedUser)
+    );
 
     this.currentUserSubject.next(updatedUser);
   }
 
 
-  changePassword(request: ChangePasswordRequest) {
+  changePassword(request: ChangePasswordRequest): Observable<void> {
     return this.http.patch<void>(
       `${this.apiUrl}/change-password`,
       request

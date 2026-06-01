@@ -2,8 +2,6 @@
 
   <header class="chat-header">
     <div>
-      <span class="eyebrow">Building community</span>
-      <h2>Resident Chat</h2>
       <p>Share updates, questions, and helpful messages with your neighbors.</p>
     </div>
 
@@ -25,7 +23,7 @@
 
         <div>
           <h3>Public building room</h3>
-          <p>Messages are visible to all active residents</p>
+          <p>Messages are only visible to all active residents in the building.</p>
         </div>
       </div>
 
@@ -65,15 +63,12 @@
             <div class="bubble-line">
 
               <div class="bubble-avatar">
-<img
-  *ngIf="getAvatarUrl(message) as avatarUrl; else defaultAvatar"
-  [src]="avatarUrl"
-  alt="User avatar"
-/>
+                <img *ngIf="getAvatarUrl(message) as avatarUrl; else defaultAvatar" [src]="avatarUrl"
+                  alt="User avatar" />
 
-<ng-template #defaultAvatar>
-  <mat-icon>person</mat-icon>
-</ng-template>
+                <ng-template #defaultAvatar>
+                  <mat-icon>person</mat-icon>
+                </ng-template>
               </div>
 
               <div class="bubble-stack">
@@ -154,7 +149,7 @@
         <div class="composer-box">
 
           <input class="message-textbox" name="messageContent" maxlength="2000" [(ngModel)]="messageContent"
-            [disabled]="isSending" placeholder="Message @Residents..."
+            [disabled]="isSending" placeholder="Message..."
             (keydown.enter)="!isSending && sendMessage(); $event.preventDefault()" />
 
           <input #imageFileInput type="file" accept="image/*" hidden (change)="onImageSelected($event)" />

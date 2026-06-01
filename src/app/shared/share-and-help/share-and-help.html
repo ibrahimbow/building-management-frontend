@@ -50,16 +50,17 @@
 
       <mat-card-header>
 
-        <div class="avatar">
-          <img
-            *ngIf="hasValidImage(post.createdByAvatarUrl); else defaultAvatar"
-            [src]="resolveImageUrl(post.createdByAvatarUrl)"
-            alt="User avatar" />
+   <div class="avatar">
+  <img
+    *ngIf="hasValidImage(post.createdByAvatarUrl); else defaultAvatar"
+    [src]="resolveImageUrl(post.createdByAvatarUrl)"
+    (error)="onAvatarError($event)"
+    alt="User avatar" />
 
-          <ng-template #defaultAvatar>
-            <mat-icon>person</mat-icon>
-          </ng-template>
-        </div>
+  <ng-template #defaultAvatar>
+    <mat-icon>person</mat-icon>
+  </ng-template>
+</div>
 
         <div class="post-header-text">
           <mat-card-title>{{ post.createdByDisplayName }}</mat-card-title>

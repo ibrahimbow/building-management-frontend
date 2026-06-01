@@ -11,6 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { BuildingService } from '../../../core/services/building.service';
 import { Building } from '../../../core/models/building.model';
+import { Router } from '@angular/router';
+import { NotificationStateService } from '../../../core/services/notification-state.service';
 
 @Component({
   selector: 'app-building-details',
@@ -32,6 +34,8 @@ export class BuildingDetails implements OnInit {
   private readonly buildingService = inject(BuildingService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
+  private readonly notificationState = inject(NotificationStateService);
 
   building: Building | null = null;
   isLoading = false;
@@ -81,12 +85,15 @@ export class BuildingDetails implements OnInit {
       })
     ).subscribe({
       next: () => {
+        this.notificationState.resetAndClearAll();
         this.building = null;
-        this.errorMessage = 'You are not connected to a building yet.';
 
         this.snackBar.open('You left the building successfully.', 'Close', {
           duration: 3000
         });
+
+         this.router.navigate(['/tenant/dashboard'], { replaceUrl: true });
+         window.location.reload();
       },
       error: () => {
         this.snackBar.open('Could not leave the building.', 'Close', {

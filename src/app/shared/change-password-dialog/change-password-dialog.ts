@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,ChangeDetectorRef  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
@@ -7,6 +7,8 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+
 
 import { AuthService } from '../../core/services/auth.service';
 
@@ -19,7 +21,8 @@ import { AuthService } from '../../core/services/auth.service';
     MatDialogModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatIconModule
   ],
   templateUrl: './change-password-dialog.html',
   styleUrl: './change-password-dialog.scss'
@@ -29,13 +32,18 @@ export class ChangePasswordDialog {
   newPassword = '';
   confirmPassword = '';
 
+  hideCurrentPassword = true;
+  hideNewPassword = true;
+  hideConfirmPassword = true;
+
   errorMessage = '';
   isSaving = false;
 
   constructor(
     private readonly dialogRef: MatDialogRef<ChangePasswordDialog>,
-    private readonly authService: AuthService
-  ) {}
+    private readonly authService: AuthService,
+    private readonly cdr: ChangeDetectorRef
+  ) { }
 
   save(): void {
     this.errorMessage = '';
@@ -65,8 +73,7 @@ export class ChangePasswordDialog {
     this.authService.changePassword(
       {
         currentPassword: this.currentPassword,
-        newPassword: this.newPassword,
-        confirmPassword: this.confirmPassword
+        newPassword: this.newPassword
       }
     )
       .pipe(
@@ -78,11 +85,21 @@ export class ChangePasswordDialog {
         next: () => {
           this.dialogRef.close(true);
         },
-        error: (error) => {
-          this.errorMessage =
-            error?.error?.message ||
-            'Password could not be changed. Please check your current password.';
-        }
+    error: (error) => {
+
+  if (error.status === 401) {
+    this.errorMessage = 'Current password is incorrect.';
+    this.cdr.detectChanges();
+    return;
+  }
+
+  this.errorMessage =
+    error?.error?.message ||
+    'Password could not be changed. Please try again.';
+
+  this.cdr.detectChanges();
+}
+
       });
   }
 

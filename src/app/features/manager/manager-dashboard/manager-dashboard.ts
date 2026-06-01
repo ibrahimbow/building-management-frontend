@@ -10,12 +10,12 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { BuildingService } from '../../../core/services/building.service';
 import { AnnouncementService } from '../../../core/services/announcement.service';
-import { ChatService } from '../../../core/services/chat.service';
 
 import { BuildingTenant } from '../../../core/models/building-tenant.model';
 import { Building } from '../../../core/models/building.model';
 import { Announcement } from '../../../core/models/announcement.model';
-import { ChatMessage } from '../../../core/models/chat-message.model';
+import { ShareAndHelp } from '../../../core/models/share-and-help';
+import { ShareAndHelpService } from '../../../core/services/share-and-help.service';
 
 interface ActivityPoint {
   label: string;
@@ -41,7 +41,7 @@ export class ManagerDashboard implements OnInit {
 
   private readonly buildingService = inject(BuildingService);
   private readonly announcementService = inject(AnnouncementService);
-  private readonly chatService = inject(ChatService);
+  private readonly shareAndHelpService = inject(ShareAndHelpService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   building: Building | null = null;
@@ -53,7 +53,7 @@ export class ManagerDashboard implements OnInit {
 
   totalTenants = 0;
   totalAnnouncements = 0;
-  totalMessages = 0;
+  totalPosts = 0;
 
   activityYAxisLabels = [40, 30, 20, 10, 0];
   activityXAxisLabels: string[] = [];
@@ -79,7 +79,7 @@ export class ManagerDashboard implements OnInit {
           return of({
             tenants: [] as BuildingTenant[],
             announcements: [] as Announcement[],
-            messages: [] as ChatMessage[]
+            totalPosts: [] as ShareAndHelp[]
           });
         }
 
@@ -90,19 +90,19 @@ export class ManagerDashboard implements OnInit {
           announcements: this.announcementService.getManagerAnnouncements().pipe(
             catchError(() => of([] as Announcement[]))
           ),
-          messages: this.chatService.getMessages().pipe(
-            catchError(() => of([] as ChatMessage[]))
+          totalPosts: this.shareAndHelpService.getAll().pipe(
+            catchError(() => of([] as ShareAndHelp[]))
           )
         });
       })
     ).subscribe({
-      next: ({ tenants, announcements, messages }) => {
-        const activeMessages = messages.filter(message => !message.deleted);
+      next: ({ tenants, announcements, totalPosts }) => {
+        
 
         this.tenants = tenants;
         this.totalTenants = tenants.length;
         this.totalAnnouncements = announcements.length;
-        this.totalMessages = activeMessages.length;
+        this.totalPosts  = totalPosts.length;
 
         this.recentAnnouncements = announcements
           .slice()
@@ -111,7 +111,7 @@ export class ManagerDashboard implements OnInit {
           )
           .slice(0, 5);
 
-        this.buildActivityOverview(announcements, activeMessages, tenants);
+        this.buildActivityOverview(announcements, totalPosts, tenants);
 
         this.isReady = true;
         this.cdr.markForCheck();
@@ -126,7 +126,7 @@ export class ManagerDashboard implements OnInit {
 
   private buildActivityOverview(
     announcements: Announcement[],
-    messages: ChatMessage[],
+    totalPosts: ShareAndHelp[],
     tenants: BuildingTenant[]
   ): void {
     const today = new Date();
@@ -144,8 +144,8 @@ export class ManagerDashboard implements OnInit {
       this.addToDailyCount(dailyCounts, announcement.createdAt, year, month)
     );
 
-    messages.forEach(message =>
-      this.addToDailyCount(dailyCounts, message.createdAt, year, month)
+    totalPosts.forEach(post =>
+      this.addToDailyCount(dailyCounts, post.createdAt, year, month)
     );
 
     tenants.forEach(tenant => {
@@ -271,7 +271,7 @@ export class ManagerDashboard implements OnInit {
 
     this.totalTenants = 0;
     this.totalAnnouncements = 0;
-    this.totalMessages = 0;
+    this.totalPosts = 0;
 
     this.activityPoints = [];
     this.visibleActivityPoints = [];
