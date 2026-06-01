@@ -62,7 +62,7 @@ export class TenantDashboard implements OnInit {
       title: 'Chat',
       description: 'Chat with neighbors',
       icon: 'chat',
-      route: '/tenant/tenant-chat',
+      route: '/tenant/building-chat',
     },
     {
       title: 'Help & Share',
