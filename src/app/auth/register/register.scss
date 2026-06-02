@@ -1,13 +1,26 @@
 // ─── register.scss ───────────────────────────────────────────
-
 .auth-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center;
-  background: #ffffff;
-  padding: 2rem 1rem;
+  justify-content: flex-start;
+  padding: 5rem 20rem;
   box-sizing: border-box;
+
+  background:
+    radial-gradient(circle at top right,
+      rgba(37, 99, 235, 0.18),
+      transparent 28%),
+
+    radial-gradient(circle at bottom left,
+      rgba(14, 165, 233, 0.12),
+      transparent 30%),
+
+    url('/assets/images/login-community-bg.png');
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .auth-shell {

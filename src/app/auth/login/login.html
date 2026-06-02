@@ -1,66 +1,161 @@
 <section class="auth-page">
 
-  <div class="auth-card">
+  <div class="auth-overlay"></div>
 
-    <p class="eyebrow">Building Management</p>
+  <div class="auth-layout">
 
-    <h1>Welcome back</h1>
+    <section class="auth-intro">
 
-    <p class="subtitle">
-      Login to continue to your dashboard.
-    </p>
+      <h2>
+        Building better
+        <span>communities</span>
+      </h2>
 
-    <form
-      #loginForm="ngForm"
-      (ngSubmit)="login()"
-      novalidate>
+      <div class="intro-line"></div>
 
-      <label for="email">
-        Username or Email
-      </label>
-
-      <input
-        id="email"
-        name="email"
-        type="text"
-        [(ngModel)]="email"
-        required
-        placeholder="Enter your username or email" />
-
-      <label for="password">
-        Password
-      </label>
-
-      <input
-        id="password"
-        name="password"
-        type="password"
-        [(ngModel)]="password"
-        required
-        minlength="6"
-        placeholder="Enter your password" />
-
-      <p class="error" *ngIf="errorMessage">
-        {{ errorMessage }}
+      <p class="intro-description">
+        A modern platform that connects residents, managers,
+        and services to create a safer, smarter, and stronger community.
       </p>
 
-      <button
-        type="submit"
-        [disabled]="isSubmitting || loginForm.invalid">
+      <div class="intro-features">
 
-        {{ isSubmitting ? 'Logging in...' : 'Login' }}
+        <div class="intro-feature">
 
-      </button>
+          <div class="feature-icon">
+           <mat-icon>chat</mat-icon>
+          </div>
 
-    </form>
+          <div>
+            <h3>Stay Connected</h3>
 
-    <p class="switch-auth">
-      New here?
+            <p class="intro-description">
+              Chat with neighbors and stay up to date.
+            </p>
+          </div>
 
-      <a routerLink="/auth/register">
-        Create an account
-      </a>
-    </p>
+        </div>
+
+        <div class="intro-feature">
+
+          <div class="feature-icon">
+            <mat-icon>campaign</mat-icon>
+          </div>
+
+          <div>
+            <h3>Important Announcements</h3>
+            <p class="intro-description">
+              Never miss important building updates.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="intro-feature">
+          <div class="feature-icon">
+           <mat-icon matListItemIcon>share</mat-icon>
+          </div>
+
+          <div>
+            <h3>Share & Help</h3>
+            <p class="intro-description">
+              Share items, ask for help, and support your community.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="intro-feature">
+
+          <div class="feature-icon">
+            <mat-icon matListItemIcon>security</mat-icon>
+          </div>
+
+          <div>
+            <h3>Secure & Private</h3>
+
+            <p class="intro-description">
+              Your data is safe with role-based access and privacy.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <div class="auth-card">
+
+      <p class="eyebrow">
+        JERAANO
+      </p>
+
+      <h1>
+     Sign in
+      </h1>
+
+      <p class="subtitle">
+        Login to continue to your dashboard.
+      </p>
+
+      <form
+        #loginForm="ngForm"
+        (ngSubmit)="login()"
+        novalidate>
+
+        <label for="email">
+          Username or Email
+        </label>
+
+        <input
+          id="email"
+          name="email"
+          type="text"
+          [(ngModel)]="email"
+          required
+          placeholder="Enter your username or email" />
+
+        <label for="password">
+          Password
+        </label>
+
+        <input
+          id="password"
+          name="password"
+          type="password"
+          [(ngModel)]="password"
+          required
+          minlength="6"
+          placeholder="Enter your password" />
+
+        <p
+          class="error"
+          *ngIf="errorMessage">
+
+          {{ errorMessage }}
+
+        </p>
+
+        <button
+          type="submit"
+          [disabled]="isSubmitting || loginForm.invalid">
+
+          {{ isSubmitting ? 'Logging in...' : 'Login' }}
+
+        </button>
+
+      </form>
+
+      <p class="switch-auth">
+        New here?
+
+        <a routerLink="/auth/register">
+          Create an account
+        </a>
+      </p>
+
+    </div>
 
   </div>
 

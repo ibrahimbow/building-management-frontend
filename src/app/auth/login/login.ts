@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 import { finalize, switchMap } from 'rxjs';
 
@@ -16,7 +17,8 @@ import { AuthService } from '../../core/services/auth.service';
     CommonModule,
     FormsModule,
     RouterLink,
-    MatCardModule
+    MatCardModule,
+    MatIconModule
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss',
