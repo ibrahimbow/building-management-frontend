@@ -31,7 +31,7 @@ export class ChatWebSocketService {
 
     this.stompClient = new Client({
       webSocketFactory: () =>
-        new SockJS('http://localhost:8080/ws/chat'),
+        new SockJS('/ws/chat'),
 
       reconnectDelay: 5000,
 

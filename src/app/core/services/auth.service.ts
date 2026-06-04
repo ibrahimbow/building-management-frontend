@@ -2,8 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
-
-
+import { environment } from '../../../environments/environment';
 
 import {
   AuthResponse,
@@ -25,44 +24,64 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
 
-  private readonly apiUrl = 'http://localhost:8080/api/auth';
+  private readonly apiUrl = `${environment.apiBaseUrl}/auth`;
 
   private readonly CURRENT_USER_KEY = 'bm_current_user';
   private readonly ACCESS_TOKEN_KEY = 'bm_access_token';
   private readonly REFRESH_TOKEN_KEY = 'bm_refresh_token';
 
+  private readonly currentUserSubject = new BehaviorSubject<User | null>(
+    this.getCurrentUser()
+  );
+
+  readonly currentUser$ = this.currentUserSubject.asObservable();
+
   register(request: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, request);
+    return this.http.post<RegisterResponse>(
+      `${this.apiUrl}/register`,
+      request
+    );
   }
 
   login(request: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
-      tap(response => this.storeTokens(response))
+    return this.http.post<AuthResponse>(
+      `${this.apiUrl}/login`,
+      request
+    ).pipe(
+      tap(response => this.storeAuthResponse(response))
     );
   }
 
   loadCurrentUser(): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/profile`).pipe(
-      tap(user => {
-        localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
-      })
+      tap(user => this.setCurrentUser(user))
     );
   }
 
-logout(): void {
-  localStorage.removeItem(this.CURRENT_USER_KEY);
-  localStorage.removeItem(this.ACCESS_TOKEN_KEY);
-  localStorage.removeItem(this.REFRESH_TOKEN_KEY);
-  localStorage.removeItem('currentUser');
+  logout(): void {
+    localStorage.removeItem(this.CURRENT_USER_KEY);
+    localStorage.removeItem(this.ACCESS_TOKEN_KEY);
+    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    localStorage.removeItem('currentUser');
 
-  this.currentUserSubject.next(null);
+    this.currentUserSubject.next(null);
 
-  this.router.navigate(['/auth/login'], { replaceUrl: true });
-}
+    this.router.navigate(['/auth/login'], { replaceUrl: true });
+  }
 
   getCurrentUser(): User | null {
     const data = localStorage.getItem(this.CURRENT_USER_KEY);
-    return data ? JSON.parse(data) as User : null;
+
+    if (!data) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(data) as User;
+    } catch {
+      localStorage.removeItem(this.CURRENT_USER_KEY);
+      return null;
+    }
   }
 
   getToken(): string | null {
@@ -104,38 +123,21 @@ logout(): void {
     return '/tenant/dashboard';
   }
 
-  getProfile() {
+  getProfile(): Observable<BuildingUserProfile> {
     return this.http.get<BuildingUserProfile>(
-      `${this.apiUrl}/profile`);
+      `${this.apiUrl}/profile`
+    );
   }
 
   updateProfile(
-    request: UpdateBuildingUserProfileRequest) {
+    request: UpdateBuildingUserProfileRequest
+  ): Observable<BuildingUserProfile> {
 
     return this.http.put<BuildingUserProfile>(
       `${this.apiUrl}/profile`,
       request
     ).pipe(
-      tap(profile => {
-
-        const currentUser =
-          this.getCurrentUser();
-
-        if (!currentUser) {
-          return;
-        }
-
-        const updatedUser: User = {
-          ...currentUser,
-          displayName: profile.displayName,
-          phoneNumber: profile.phoneNumber,
-          avatarUrl: profile.avatarUrl
-        };
-
-        localStorage.setItem(
-          this.CURRENT_USER_KEY,
-          JSON.stringify(updatedUser));
-      })
+      tap(profile => this.updateCurrentUser(profile))
     );
   }
 
@@ -148,19 +150,16 @@ logout(): void {
 
     const updatedUser: User = {
       ...currentUser,
+      username: profile.username,
+      email: profile.email,
       displayName: profile.displayName,
       phoneNumber: profile.phoneNumber,
-      avatarUrl: profile.avatarUrl
+      avatarUrl: profile.avatarUrl,
+      role: profile.role
     };
 
-    localStorage.setItem(
-      this.CURRENT_USER_KEY,
-      JSON.stringify(updatedUser)
-    );
-
-    this.currentUserSubject.next(updatedUser);
+    this.setCurrentUser(updatedUser);
   }
-
 
   changePassword(request: ChangePasswordRequest): Observable<void> {
     return this.http.patch<void>(
@@ -169,14 +168,17 @@ logout(): void {
     );
   }
 
-  private readonly currentUserSubject = new BehaviorSubject<User | null>(
-    this.getCurrentUser()
-  );
+private storeAuthResponse(response: AuthResponse): void {
+  localStorage.setItem(this.ACCESS_TOKEN_KEY, response.accessToken);
+  localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
+}
 
-  currentUser$ = this.currentUserSubject.asObservable();
+  private setCurrentUser(user: User): void {
+    localStorage.setItem(
+      this.CURRENT_USER_KEY,
+      JSON.stringify(user)
+    );
 
-  private storeTokens(response: AuthResponse): void {
-    localStorage.setItem(this.ACCESS_TOKEN_KEY, response.accessToken);
-    localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
+    this.currentUserSubject.next(user);
   }
 }

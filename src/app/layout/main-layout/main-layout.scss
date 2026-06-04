@@ -140,7 +140,7 @@
   position: absolute;
   left: 26px;
   right: 26px;
-  bottom: 34px;
+  bottom: 124px;
   width: calc(100% - 52px);
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.12);
@@ -548,4 +548,62 @@ flex-direction: column;
       font-weight: 950;
     line-height: 1.1;
 
+}
+
+.demo-top-label {
+  position: absolute;
+  left: 50%;
+  top: 22px;
+  transform: translateX(-50%);
+
+  color: #660404;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  z-index: 5;
+}
+
+.sidebar-footer {
+  position: absolute;
+  left: 26px;
+  right: 26px;
+  bottom: 20px;
+
+  padding: 16px 18px;
+ 
+  backdrop-filter: blur(14px);
+}
+
+.demo-badge {
+
+  align-items: center;
+  justify-content: center;
+
+   display: flex;
+  flex-direction: column-reverse;
+  gap: 30px;
+
+  color: #8b0a11;
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.copyright {
+  margin: 0 0 6px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.sidebar-footer small {
+  display: block;
+  color: rgba(219, 234, 254, 0.82);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
 }

@@ -31,7 +31,7 @@ export class NotificationWebSocketService {
 
     this.stompClient = new Client({
       webSocketFactory: () =>
-        new SockJS('http://localhost:8080/ws/notifications'),
+        new SockJS('/ws/notifications'),
 
       reconnectDelay: 5000,
 

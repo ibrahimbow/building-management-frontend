@@ -160,26 +160,43 @@ export class EditAnnouncement implements OnInit {
       this.snackBar.open('Please select a valid image file.', 'Close', {
         duration: 3000
       });
+      input.value = '';
       return;
     }
 
-    const reader = new FileReader();
+    const maxFileSizeInMb = 5;
+    const maxFileSizeInBytes = maxFileSizeInMb * 1024 * 1024;
 
-    reader.onload = () => {
-      this.imageUrl = reader.result as string;
-      this.cdr.markForCheck();
-    };
+    if (file.size > maxFileSizeInBytes) {
+      this.snackBar.open(`Image must be smaller than ${maxFileSizeInMb}MB.`, 'Close', {
+        duration: 3000
+      });
+      input.value = '';
+      return;
+    }
 
-    reader.readAsDataURL(file);
+    this.isUploading = true;
 
-    /**
-     * Later we connect this to backend upload:
-     * POST /api/files/upload
-     * type = ANNOUNCEMENT_IMAGE
-     *
-     * After upload success:
-     * this.imageUrl = response.url;
-     */
+    this.announcementService.uploadAnnouncementImage(file).pipe(
+      finalize(() => {
+        this.isUploading = false;
+        this.cdr.markForCheck();
+        input.value = '';
+      })
+    ).subscribe({
+      next: response => {
+        this.imageUrl = response.url;
+
+        this.snackBar.open('Image uploaded successfully.', 'Close', {
+          duration: 2500
+        });
+      },
+      error: () => {
+        this.snackBar.open('Could not upload image. Please try again.', 'Close', {
+          duration: 3000
+        });
+      }
+    });
   }
 
   removeImage(): void {
@@ -191,6 +208,7 @@ export class EditAnnouncement implements OnInit {
   }
 
   resolveImageUrl(imageUrl: string | null | undefined): string {
+
     if (!imageUrl) {
       return '';
     }
@@ -209,16 +227,16 @@ export class EditAnnouncement implements OnInit {
     }
 
     if (normalizedUrl.startsWith('/')) {
-      return `http://localhost:8080${normalizedUrl}`;
+      return normalizedUrl;
     }
 
-    return `http://localhost:8080/${normalizedUrl}`;
+    return `/${normalizedUrl}`;
   }
 
   private normalizeImageUrl(value: string): string | null {
     const trimmed = value.trim();
 
-    if (!trimmed || trimmed.startsWith('data:image')) {
+    if (!trimmed) {
       return null;
     }
 

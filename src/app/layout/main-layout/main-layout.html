@@ -89,16 +89,25 @@
       <mat-icon matListItemIcon>logout</mat-icon>
       <span matListItemTitle>Logout</span>
     </button>
+<div class="sidebar-footer">
+  <p class="copyright">
+    All rights reserved © 2026 Joritna
+  </p>
+</div>
+
   </mat-sidenav>
 
   <mat-sidenav-content class="main-shell">
     <mat-toolbar class="topbar">
       <div class="topbar-title">
         <p>Welcome, {{ (currentUser$ | async)?.displayName }} 👋</p>
+
+        <div class="demo-top-label">Demo Version</div>
       </div>
+       
 
       <span class="spacer"></span>
-
+  
       <div class="toolbar-actions">
         <button mat-icon-button type="button" class="notification-btn" [matMenuTriggerFor]="notificationMenu"
           aria-label="Open notifications">
@@ -123,6 +132,7 @@
 
         </button>
       </div>
+     
     </mat-toolbar>
 
     <mat-menu #notificationMenu="matMenu" panelClass="notification-menu-panel" xPosition="before">

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import {
   CreateShareAndHelpCommentRequest,
   CreateShareAndHelpRequest,
@@ -13,7 +14,7 @@ import {
 })
 export class ShareAndHelpService {
 
-  private readonly apiUrl = 'http://localhost:8080/api/tenant/share-and-help/posts';
+  private readonly apiUrl = `${environment.apiBaseUrl}/tenant/share-and-help/posts`;
 
   constructor(private readonly http: HttpClient) { }
 

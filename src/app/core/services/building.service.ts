@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-
+import { environment } from '../../../environments/environment';
 import {
   Building,
   CreateBuildingRequest,
@@ -16,9 +16,9 @@ import { BuildingTenant } from '../models/building-tenant.model';
 export class BuildingService {
 
   private readonly http = inject(HttpClient);
-
-  private readonly managerBuildingsUrl = 'http://localhost:8080/api/manager/buildings';
-  private readonly tenantBuildingsUrl = 'http://localhost:8080/api/tenant/buildings';
+  private readonly apiUrl = environment.apiBaseUrl;
+  private readonly managerBuildingsUrl = `${this.apiUrl}/manager/buildings`;
+  private readonly tenantBuildingsUrl = `${this.apiUrl}/tenant/buildings`;
 
   createBuilding(request: CreateBuildingRequest): Observable<Building> {
     return this.http.post<Building>(this.managerBuildingsUrl, request);

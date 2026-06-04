@@ -171,28 +171,32 @@ export class ShareAndHelpComponent implements OnInit, OnDestroy {
     return !!imageUrl && imageUrl.trim().length > 0;
   }
 
-resolveImageUrl(imageUrl: string | null | undefined): string {
+  resolveImageUrl(imageUrl: string | null | undefined): string {
 
-  if (!imageUrl) {
-    return '';
+    if (!imageUrl) {
+      return '';
+    }
+
+    const normalizedUrl = imageUrl
+      .replace('/profile_avatar/', '/PROFILE_AVATAR/')
+      .replace('/announcement_image/', '/ANNOUNCEMENT_IMAGE/')
+      .replace('/share_and_help_image/', '/SHARE_AND_HELP_IMAGE/')
+      .replace('/chat_message_image/', '/CHAT_MESSAGE_IMAGE/');
+
+    if (
+      normalizedUrl.startsWith('http') ||
+      normalizedUrl.startsWith('data:image')
+    ) {
+      return normalizedUrl;
+    }
+
+    if (normalizedUrl.startsWith('/')) {
+      return normalizedUrl;
+    }
+
+    return `/${normalizedUrl}`;
   }
 
-  const normalizedUrl = imageUrl
-    .replace('/profile_avatar/', '/PROFILE_AVATAR/')
-    .replace('/announcement_image/', '/ANNOUNCEMENT_IMAGE/')
-    .replace('/share_and_help_image/', '/SHARE_AND_HELP_IMAGE/')
-    .replace('/chat_message_image/', '/CHAT_MESSAGE_IMAGE/');
-
-  if (normalizedUrl.startsWith('http')) {
-    return normalizedUrl;
-  }
-
-  if (normalizedUrl.startsWith('/')) {
-    return `http://localhost:8080${normalizedUrl}`;
-  }
-
-  return `http://localhost:8080/${normalizedUrl}`;
-}
 
   private loadPosts(): void {
     this.isLoading = true;
@@ -216,11 +220,11 @@ resolveImageUrl(imageUrl: string | null | undefined): string {
       });
   }
 
-onAvatarError(event: Event): void {
-  (event.target as HTMLImageElement).src = 'assets/images/default-avatar.png';
-}
+  onAvatarError(event: Event): void {
+    (event.target as HTMLImageElement).src = 'assets/images/default-avatar.png';
+  }
 
-onImageError(event: Event): void {
-  (event.target as HTMLImageElement).src = 'assets/images/default-post-image.png';
-}
+  onImageError(event: Event): void {
+    (event.target as HTMLImageElement).src = 'assets/images/default-post-image.png';
+  }
 }

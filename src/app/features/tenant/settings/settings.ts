@@ -203,6 +203,7 @@ export class Settings implements OnInit {
           duration: 3000,
           verticalPosition: 'top'
         });
+        window.location.reload();
       }
     });
   }

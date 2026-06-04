@@ -408,8 +408,9 @@ export class BuildingChat implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   resolveImageUrl(imageUrl: string | null | undefined): string {
+
     if (!imageUrl) {
-      return '';
+      return 'assets/images/default-avatar.png';
     }
 
     const normalizedUrl = imageUrl
@@ -418,7 +419,18 @@ export class BuildingChat implements OnInit, AfterViewChecked, OnDestroy {
       .replace('/share_and_help_image/', '/SHARE_AND_HELP_IMAGE/')
       .replace('/chat_message_image/', '/CHAT_MESSAGE_IMAGE/');
 
-    return this.imageUrlService.resolve(normalizedUrl);
+    if (
+      normalizedUrl.startsWith('http') ||
+      normalizedUrl.startsWith('data:image')
+    ) {
+      return normalizedUrl;
+    }
+
+    if (normalizedUrl.startsWith('/')) {
+      return normalizedUrl;
+    }
+
+    return `/${normalizedUrl}`;
   }
 
   trackByMessageId(

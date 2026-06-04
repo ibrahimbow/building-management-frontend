@@ -1,0 +1,13 @@
+node_modules
+dist
+.angular
+.git
+.idea
+.vscode
+coverage
+playwright-report
+test-results
+tmp
+logs
+Dockerfile
+docker-compose.yml

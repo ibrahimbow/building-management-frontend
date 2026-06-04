@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { ChatMessage } from '../models/chat-message.model';
 import { ChatReaction } from '../models/chat-reaction.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class ChatService {
       ? 'manager'
       : 'tenant';
 
-    return `http://localhost:8080/api/${rolePath}/chat`;
+    return `${environment.apiBaseUrl}/${rolePath}/chat`;
   }
 
   getMessages(): Observable<ChatMessage[]> {

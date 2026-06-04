@@ -120,28 +120,35 @@ export class MainLayout implements OnInit, OnDestroy {
     return !item.requiresBuilding || this.tenantHasJoinedBuilding;
   }
 
-  openNotification(notification: NotificationItem): void {
-    this.notificationState.markAsReadAndRemove(notification.id);
+openNotification(notification: NotificationItem): void {
+  this.notificationState.markAsReadAndRemove(notification.id);
 
-    if (notification.type === 'ANNOUNCEMENT') {
-      this.router.navigate(['/tenant/announcements']);
-      return;
-    }
+  const role = this.authService.getRole();
 
-    if (notification.type === 'CHAT') {
-      this.router.navigate(['/tenant/building-chat']);
-      return;
-    }
-
-    if (notification.type === 'SHARE_AND_HELP') {
-      this.router.navigate(['/tenant/help-share']);
-    }
-
-      if (notification.type === 'SHARE_AND_HELP') {
-      this.router.navigate(['/manager/help-share']);
-    }
+  if (!role) {
+    this.router.navigate(['/auth/login']);
+    return;
   }
 
+  const prefix = role === 'MANAGER' || role === 'ADMIN'
+    ? '/manager'
+    : '/tenant';
+
+  if (notification.type === 'ANNOUNCEMENT') {
+    this.router.navigate([`${prefix}/announcements`]);
+    return;
+  }
+
+  if (notification.type === 'CHAT') {
+    this.router.navigate([`${prefix}/building-chat`]);
+    return;
+  }
+
+  if (notification.type === 'SHARE_AND_HELP') {
+    this.router.navigate([`${prefix}/help-share`]);
+    return;
+  }
+}
   logout(): void {
     
     this.notificationState.reset();

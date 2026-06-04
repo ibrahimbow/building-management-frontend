@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 import {
   Announcement,
@@ -15,7 +16,7 @@ export class AnnouncementService {
 
   private readonly http = inject(HttpClient);
 
-  private readonly apiUrl = 'http://localhost:8080/api';
+  private readonly apiUrl = environment.apiBaseUrl;
   private readonly managerAnnouncementsUrl = `${this.apiUrl}/manager/announcements`;
   private readonly tenantAnnouncementsUrl = `${this.apiUrl}/tenant/announcements`;
 
@@ -61,4 +62,17 @@ export class AnnouncementService {
       this.tenantAnnouncementsUrl
     );
   }
+
+  uploadAnnouncementImage(file: File) {
+    const formData = new FormData();
+
+    formData.append('file', file);
+    formData.append('type', 'ANNOUNCEMENT_IMAGE');
+
+    return this.http.post<{ url: string }>(
+      `${environment.apiBaseUrl}/files/upload`,
+      formData
+    );
+  }
+
 }
