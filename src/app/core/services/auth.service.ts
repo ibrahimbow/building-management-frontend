@@ -137,7 +137,27 @@ export class AuthService {
       `${this.apiUrl}/profile`,
       request
     ).pipe(
-      tap(profile => this.updateCurrentUser(profile))
+      tap(updatedProfile => {
+        const currentUser = this.currentUserSubject.value;
+
+        if (!currentUser) {
+          return;
+        }
+
+        const updatedCurrentUser: User = {
+          ...currentUser,
+          displayName: updatedProfile.displayName,
+          phoneNumber: updatedProfile.phoneNumber,
+          avatarUrl: updatedProfile.avatarUrl
+        };
+
+        localStorage.setItem(
+          this.CURRENT_USER_KEY,
+          JSON.stringify(updatedCurrentUser)
+        );
+
+        this.currentUserSubject.next(updatedCurrentUser);
+      })
     );
   }
 
@@ -168,10 +188,10 @@ export class AuthService {
     );
   }
 
-private storeAuthResponse(response: AuthResponse): void {
-  localStorage.setItem(this.ACCESS_TOKEN_KEY, response.accessToken);
-  localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
-}
+  private storeAuthResponse(response: AuthResponse): void {
+    localStorage.setItem(this.ACCESS_TOKEN_KEY, response.accessToken);
+    localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
+  }
 
   private setCurrentUser(user: User): void {
     localStorage.setItem(

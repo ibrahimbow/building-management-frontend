@@ -121,7 +121,8 @@
           <ng-container *ngIf="(currentUser$ | async) as currentUser">
 
             <img *ngIf="imageUrlService.hasImage(currentUser.avatarUrl)"
-              [src]="imageUrlService.resolve(currentUser.avatarUrl)" alt="Profile photo" class="toolbar-avatar" />
+              [src]="imageUrlService.resolve(currentUser.avatarUrl) || '/assets/images/default-avatar.png'"
+               alt="Profile photo" class="toolbar-avatar" />
 
             <mat-icon *ngIf="!imageUrlService.hasImage(currentUser.avatarUrl)">
               person

@@ -598,23 +598,46 @@ export class BuildingChat implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-  private handleRealtimeMessageCreated(message: ChatMessage): void {
-    const alreadyExists = this.messages.some(
-      currentMessage => currentMessage.id === message.id
+ private handleRealtimeMessageCreated(message: ChatMessage): void {
+
+  const alreadyExists = this.messages.some(
+    currentMessage => currentMessage.id === message.id
+  );
+
+  if (alreadyExists) {
+
+    this.messages = this.messages.map(currentMessage =>
+      currentMessage.senderUserId === message.senderUserId
+        ? {
+            ...currentMessage,
+            senderDisplayName: message.senderDisplayName,
+            senderAvatarUrl: message.senderAvatarUrl
+          }
+        : currentMessage
     );
 
-    if (alreadyExists) {
-      return;
-    }
-
-    this.messages = [
-      ...this.messages,
-      message
-    ];
-
-    this.shouldScrollToBottom = true;
     this.cdr.markForCheck();
+    return;
   }
+
+  this.messages = this.messages.map(currentMessage =>
+    currentMessage.senderUserId === message.senderUserId
+      ? {
+          ...currentMessage,
+          senderDisplayName: message.senderDisplayName,
+          senderAvatarUrl: message.senderAvatarUrl
+        }
+      : currentMessage
+  );
+
+  this.messages = [
+    ...this.messages,
+    message
+  ];
+
+  this.shouldScrollToBottom = true;
+  this.cdr.markForCheck();
+}
 
   private handleRealtimeMessageDeleted(message: ChatMessage): void {
     this.messages = this.messages.map(currentMessage =>
