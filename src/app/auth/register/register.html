@@ -1,18 +1,16 @@
 <section class="auth-page">
   <div class="auth-shell">
 
-    <div class="auth-hero">
-      <div class="hero-badge">JERAANO</div>
+    <aside class="auth-hero">
+      <div class="hero-badge">JORITNA</div>
 
       <h1>Create your account</h1>
 
       <p>
-        Join your building community, manage announcements, chat with residents,
-        and keep everything organized in one secure place.
+        Join your building community, follow announcements, chat with residents,
+        and stay connected in one secure place.
       </p>
-
- 
-    </div>
+    </aside>
 
     <mat-card class="auth-card">
       <mat-card-header>
@@ -26,35 +24,64 @@
           <div class="form-grid">
             <mat-form-field appearance="outline">
               <mat-label>Username</mat-label>
-              <input matInput #usernameInput name="username" [(ngModel)]="username" required minlength="3"
+              <input
+                matInput
+                name="username"
+                [(ngModel)]="username"
+                required
+                minlength="3"
                 autocomplete="username" />
               <mat-error>Username must be at least 3 characters.</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Display name</mat-label>
-              <input matInput name="displayName" [(ngModel)]="displayName" required minlength="2" autocomplete="name" />
+              <input
+                matInput
+                name="displayName"
+                [(ngModel)]="displayName"
+                required
+                minlength="2"
+                autocomplete="name" />
               <mat-error>Display name is required.</mat-error>
             </mat-form-field>
           </div>
 
-          <mat-form-field appearance="outline" class="full-width">
+          <mat-form-field appearance="outline">
             <mat-label>Email</mat-label>
-            <input matInput type="email" name="email" [(ngModel)]="email" required email autocomplete="email" />
+            <input
+              matInput
+              type="email"
+              name="email"
+              [(ngModel)]="email"
+              required
+              email
+              autocomplete="email" />
             <mat-error>Please enter a valid email address.</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="full-width">
+          <mat-form-field appearance="outline">
             <mat-label>Phone number</mat-label>
-            <input matInput name="phoneNumber" [(ngModel)]="phoneNumber"  required
-              pattern="^\+?[0-9]{8,15}$" autocomplete="tel" />
+            <input
+              matInput
+              name="phoneNumber"
+              [(ngModel)]="phoneNumber"
+              required
+              pattern="^\+?[0-9]{8,15}$"
+              autocomplete="tel" />
             <mat-error>Phone number must contain 8 to 15 digits.</mat-error>
           </mat-form-field>
 
           <div class="form-grid">
             <mat-form-field appearance="outline">
               <mat-label>Password</mat-label>
-              <input matInput type="password" name="password" [(ngModel)]="password" required minlength="6"
+              <input
+                matInput
+                type="password"
+                name="password"
+                [(ngModel)]="password"
+                required
+                minlength="6"
                 autocomplete="new-password" />
               <mat-error>Password must be at least 6 characters.</mat-error>
             </mat-form-field>
@@ -73,12 +100,17 @@
             {{ errorMessage }}
           </div>
 
-          <button mat-raised-button color="primary" class="submit-button" type="submit" [disabled]="isSubmitting">
+          <button
+            mat-raised-button
+            class="submit-button"
+            type="submit"
+            [disabled]="isSubmitting">
             {{ isSubmitting ? 'Creating account...' : 'Create account' }}
           </button>
 
         </form>
       </mat-card-content>
+
       <mat-card-actions>
         <span>Already have an account?</span>
         <a routerLink="/auth/login">Login</a>

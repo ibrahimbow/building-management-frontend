@@ -1,21 +1,18 @@
-// ─── register.scss ───────────────────────────────────────────
 .auth-page {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 5rem 20rem;
+  width: 100%;
+  padding: 24px;
   box-sizing: border-box;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow-x: hidden;
+
   background:
-    radial-gradient(circle at top right,
-      rgba(37, 99, 235, 0.18),
-      transparent 28%),
-
-    radial-gradient(circle at bottom left,
-      rgba(14, 165, 233, 0.12),
-      transparent 30%),
-
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.18), transparent 28%),
+    radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.12), transparent 30%),
     url('/assets/images/login-community-bg.png');
 
   background-size: cover;
@@ -24,348 +21,282 @@
 }
 
 .auth-shell {
-  width: 100%;
-  max-width: 1040px;
+  width: min(100%, 1040px);
   display: grid;
   grid-template-columns: 1fr;
-  border-radius: 22px;
   overflow: hidden;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 8px 40px rgba(99, 102, 241, 0.08);
-  background: #ffffff;
 
-  @media (min-width: 900px) {
-    grid-template-columns: 5fr 6fr;
-  }
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.14);
 }
 
-// ── Left hero panel ───────────────────────────────────────────
 .auth-hero {
   display: none;
-  flex-direction: column;
-  padding: 3rem 2.5rem;
-  background: linear-gradient(150deg, #3b82f6 0%, #6366f1 100%);
   position: relative;
+  padding: 48px 42px;
   overflow: hidden;
 
-  @media (min-width: 900px) {
-    display: flex;
-  }
+  background: linear-gradient(145deg, #0f172a 0%, #1d4ed8 55%, #2563eb 100%);
+  color: #ffffff;
 
   &::before,
   &::after {
     content: '';
     position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.06);
-    pointer-events: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
   }
 
   &::before {
-    width: 320px;
-    height: 320px;
-    bottom: -80px;
-    right: -80px;
+    width: 260px;
+    height: 260px;
+    right: -90px;
+    bottom: -70px;
   }
 
   &::after {
-    width: 180px;
-    height: 180px;
-    top: -50px;
+    width: 160px;
+    height: 160px;
     left: -50px;
-  }
-
-  .hero-badge {
-    align-self: flex-start;
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-    padding: 5px 14px;
-    border-radius: 100px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    position: relative;
-    z-index: 1;
-  }
-
-  h1 {
-    color: #ffffff;
-    font-size: 2.1rem;
-    font-weight: 800;
-    line-height: 1.2;
-    letter-spacing: -0.025em;
-    margin: 1rem 0 1.25rem;
-    position: relative;
-    z-index: 1;
-  }
-
-  p {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.92rem;
-    line-height: 1.7;
-    margin: 0;
-    position: relative;
-    z-index: 1;
-  }
-
-  .hero-features {
-    margin-top: auto;
-    padding-top: 2.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .hero-feature {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.87rem;
-    color: rgba(255, 255, 255, 0.88);
-
-    .feature-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
+    top: -40px;
   }
 }
 
-// ── Right form card ───────────────────────────────────────────
+.hero-badge {
+  position: relative;
+  z-index: 1;
+  width: fit-content;
+
+  padding: 7px 15px;
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.auth-hero h1 {
+  position: relative;
+  z-index: 1;
+
+  margin: 28px 0 16px;
+  max-width: 360px;
+
+  font-size: clamp(32px, 4vw, 46px);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.auth-hero p {
+  position: relative;
+  z-index: 1;
+
+  max-width: 390px;
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
 .auth-card {
-  background: #ffffff !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  padding: 2.5rem 2rem;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
 
-  @media (min-width: 576px) {
-    padding: 3.5rem 3rem;
-  }
+  padding: 32px 22px;
 
-  mat-card-header {
-    padding: 0;
-    margin-bottom: 2rem;
-
-    .mat-mdc-card-header-text {
-      margin: 0;
-    }
-
-    mat-card-title {
-      font-size: 1.6rem !important;
-      font-weight: 700 !important;
-      color: #0f172a !important;
-      letter-spacing: -0.02em;
-      margin-bottom: 6px !important;
-    }
-
-    mat-card-subtitle {
-      font-size: 0.88rem !important;
-      color: #94a3b8 !important;
-      margin: 0 !important;
-    }
-  }
-
-  mat-card-content {
-    padding: 0 !important;
-  }
+  background: #ffffff !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
-// ── Form grid ─────────────────────────────────────────────────
+mat-card-header {
+  padding: 0 !important;
+  margin-bottom: 24px;
+}
+
+:host ::ng-deep .mat-mdc-card-header-text {
+  margin: 0 !important;
+}
+
+mat-card-title {
+  margin-bottom: 6px !important;
+  color: #0f172a !important;
+  font-size: 28px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em;
+}
+
+mat-card-subtitle {
+  color: #64748b !important;
+  font-size: 14px !important;
+}
+
+mat-card-content {
+  padding: 0 !important;
+}
+
+form {
+  width: 100%;
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 0;
-
-  @media (min-width: 480px) {
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
 }
 
-// ── Angular Material field overrides ──────────────────────────
 mat-form-field {
   width: 100%;
-  margin-bottom: 6px;
-
-  &.full-width {
-    width: 100%;
-  }
-
-  // White background on the outlined container
-  .mdc-text-field--outlined {
-    --mdc-outlined-text-field-container-shape: 11px;
-    background-color: #ffffff !important;
-
-    &:hover {
-      background-color: #f8fafc !important;
-    }
-  }
-
-  // Remove Material's internal dark fill
-  .mdc-text-field__input {
-    background: transparent !important;
-    color: #0f172a !important;
-  }
-
-  // White fill behind the notched outline
-  .mdc-notched-outline {
-    background-color: #ffffff !important;
-    z-index: 0;
-  }
-
-  // Keep input text above the white background
-  input.mat-mdc-input-element,
-  textarea.mat-mdc-input-element {
-    position: relative;
-    z-index: 1;
-    color: #0f172a !important;
-    font-size: 0.9rem !important;
-    caret-color: #3b82f6;
-
-    &::placeholder {
-      color: #cbd5e1 !important;
-      opacity: 1;
-    }
-  }
-
-  mat-select {
-    position: relative;
-    z-index: 1;
-    color: #0f172a !important;
-    font-size: 0.9rem !important;
-  }
-
-  .mat-mdc-select-value-text {
-    color: #0f172a !important;
-  }
-
-  .mat-mdc-select-arrow {
-    color: #94a3b8 !important;
-  }
-
-  // Border colors
-  .mdc-notched-outline__leading,
-  .mdc-notched-outline__notch,
-  .mdc-notched-outline__trailing {
-    border-color: #e2e8f0 !important;
-  }
-
-  &.mat-focused {
-    .mdc-notched-outline__leading,
-    .mdc-notched-outline__notch,
-    .mdc-notched-outline__trailing {
-      border-color: #3b82f6 !important;
-      border-width: 1.5px !important;
-    }
-  }
-
-  // Label
-  .mdc-floating-label {
-    color: #94a3b8 !important;
-    font-size: 0.9rem;
-    z-index: 2;
-  }
-
-  mat-error {
-    font-size: 0.78rem !important;
-    color: #ef4444 !important;
-    margin-top: 2px;
-  }
+  margin-bottom: 10px;
 }
 
-// Fix Material select panel dropdown
-.mat-mdc-select-panel {
+:host ::ng-deep .mat-mdc-text-field-wrapper {
   background: #ffffff !important;
-
-  .mat-mdc-option {
-    color: #0f172a !important;
-
-    &:hover,
-    &.mat-mdc-option-active {
-      background: #eff6ff !important;
-    }
-  }
 }
 
-// ── Error banner ──────────────────────────────────────────────
+:host ::ng-deep .mdc-text-field--outlined {
+  --mdc-outlined-text-field-container-shape: 12px;
+}
+
+:host ::ng-deep .mat-mdc-form-field-infix {
+  min-height: 48px;
+}
+
+:host ::ng-deep input.mat-mdc-input-element {
+  color: #0f172a !important;
+  font-size: 15px !important;
+}
+
+:host ::ng-deep .mdc-floating-label {
+  color: #64748b !important;
+}
+
+:host ::ng-deep .mdc-notched-outline__leading,
+:host ::ng-deep .mdc-notched-outline__notch,
+:host ::ng-deep .mdc-notched-outline__trailing {
+  border-color: #dbe3ef !important;
+}
+
+:host ::ng-deep .mat-focused .mdc-notched-outline__leading,
+:host ::ng-deep .mat-focused .mdc-notched-outline__notch,
+:host ::ng-deep .mat-focused .mdc-notched-outline__trailing {
+  border-color: #2563eb !important;
+  border-width: 2px !important;
+}
+
 .error-message {
-  background: #fef2f2;
+  margin: 2px 0 16px;
+  padding: 12px 14px;
+
+  border-radius: 12px;
   border: 1px solid #fecaca;
+  background: #fef2f2;
+
   color: #dc2626;
-  padding: 0.85rem 1rem;
-  border-radius: 11px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  margin-bottom: 1.25rem;
-  line-height: 1.5;
+  font-size: 14px;
+  font-weight: 600;
 }
 
-// ── Submit button — light blue ────────────────────────────────
 .submit-button {
   width: 100% !important;
-  margin-top: 8px !important;
-  padding: 13px 0 !important;
-  border-radius: 11px !important;
-  font-size: 0.95rem !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.01em !important;
+  height: 48px !important;
+  margin-top: 4px !important;
+
+  border-radius: 12px !important;
   background: #2563eb !important;
   color: #ffffff !important;
-  border: 1.5px solid #93c5fd !important;
-  box-shadow: none !important;
-  transition: background 0.18s ease, transform 0.15s ease !important;
-  cursor: pointer;
+
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24) !important;
 
   &:hover:not([disabled]) {
-    background: #bfdbfe !important;
-    transform: translateY(-1px);
-  }
-
-  &:active:not([disabled]) {
-    transform: translateY(0);
+    background: #1d4ed8 !important;
   }
 
   &[disabled] {
-    background: #f1f5f9 !important;
+    background: #e2e8f0 !important;
     color: #94a3b8 !important;
-    border-color: #e2e8f0 !important;
-    cursor: not-allowed;
+    box-shadow: none !important;
   }
 }
 
-// ── Footer login link ─────────────────────────────────────────
 mat-card-actions {
   padding: 0 !important;
-  margin-top: 1.75rem;
+  margin-top: 22px;
+
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 6px;
-  font-size: 0.87rem;
-  color: #94a3b8;
+
+  color: #64748b;
+  font-size: 14px;
 
   a {
-    color: #3b82f6;
-    font-weight: 600;
+    color: #2563eb;
+    font-weight: 700;
     text-decoration: none;
-    transition: color 0.15s;
 
     &:hover {
-      color: #2563eb;
       text-decoration: underline;
     }
+  }
+}
+
+@media (min-width: 640px) {
+  .auth-card {
+    padding: 44px 42px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+}
+
+@media (min-width: 900px) {
+  .auth-shell {
+    grid-template-columns: 0.95fr 1.05fr;
+  }
+
+  .auth-hero {
+    display: block;
+  }
+
+  .auth-card {
+    min-height: 620px;
+    padding: 52px 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-page {
+    padding: 14px;
+    align-items: flex-start;
+  }
+
+  .auth-shell {
+    border-radius: 18px;
+  }
+
+  .auth-card {
+    padding: 28px 18px;
+  }
+
+  mat-card-title {
+    font-size: 24px !important;
   }
 }

@@ -31,8 +31,7 @@ export class ChatWebSocketService {
     }
 
 this.stompClient = new Client({
-  webSocketFactory: () =>
-    new SockJS(`${environment.webSocketBaseUrl}/ws/chat`),
+  brokerURL: `${environment.webSocketBaseUrl.replace('http', 'ws')}/ws/chat/websocket`,
 
   reconnectDelay: 5000,
 
@@ -41,8 +40,6 @@ this.stompClient = new Client({
   },
 
   onConnect: () => {
-    console.log('WebSocket connected');
-
     const topic = `/topic/buildings/${buildingId}/chat/messages`;
 
     this.subscription = this.stompClient?.subscribe(
@@ -55,6 +52,14 @@ this.stompClient = new Client({
         });
       }
     );
+  },
+
+  onStompError: frame => {
+    console.error('STOMP error:', frame);
+  },
+
+  onWebSocketError: error => {
+    console.error('WebSocket error:', error);
   }
 });
 
