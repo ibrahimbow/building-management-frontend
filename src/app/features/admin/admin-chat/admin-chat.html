@@ -1,0 +1,84 @@
+<section class="admin-chat">
+
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Admin moderation</p>
+
+      <h1>Chat Moderation</h1>
+
+      <p class="subtitle">
+        Review and moderate tenant chat messages.
+      </p>
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <div class="state-card">
+      Loading messages...
+    </div>
+  }
+
+  @if (!isLoading && messages.length === 0) {
+    <div class="state-card">
+      No chat messages found.
+    </div>
+  }
+
+  <div class="messages-list" #messagesContainer>
+
+    @for (message of messages; track message.id) {
+
+      <article class="message-card">
+
+        <div class="message-header">
+
+          <div class="user-section">
+
+            @if (message.senderAvatarUrl) {
+              <img
+                [src]="message.senderAvatarUrl"
+                [alt]="message.senderDisplayName"
+                class="avatar">
+            }
+
+            <div>
+              <h2>
+                {{ message.senderDisplayName }}
+              </h2>
+
+              <span class="date">
+                {{ message.createdAt | date:'medium' }}
+              </span>
+            </div>
+
+          </div>
+
+          <button
+            class="delete-button"
+            type="button"
+            (click)="deleteMessage(message.id)">
+
+            Delete
+          </button>
+
+        </div>
+
+        @if (message.content) {
+          <p class="content">
+            {{ message.content }}
+          </p>
+        }
+
+        @if (message.imageUrl) {
+          <img
+            [src]="message.imageUrl"
+            alt="Chat image"
+            class="message-image">
+        }
+
+      </article>
+    }
+
+  </div>
+
+</section>

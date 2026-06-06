@@ -476,7 +476,7 @@ export class BuildingChat implements OnInit, AfterViewChecked, OnDestroy {
   private loadTenantBuildingAndMessages(): void {
     this.buildingService
       .getCurrentBuildingForChat(
-        this.authService.isManagerOrAdmin()
+        this.authService.isManager()
       )
       .pipe(takeUntil(this.destroy$))
       .subscribe({

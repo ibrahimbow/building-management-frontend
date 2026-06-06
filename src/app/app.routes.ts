@@ -22,7 +22,7 @@ export const routes: Routes = [
     canActivate: [guestGuard],
     loadComponent: () =>
       import('./auth/register/register').then(m => m.Register)
-  }, 
+  },
   {
     path: 'tenant',
     canActivate: [authGuard, roleGuard],
@@ -87,7 +87,7 @@ export const routes: Routes = [
   {
     path: 'manager',
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['MANAGER', 'ADMIN'] },
+    data: { roles: ['MANAGER'] },
     loadComponent: () =>
       import('./layout/main-layout/main-layout').then(m => m.MainLayout),
     children: [
@@ -160,6 +160,39 @@ export const routes: Routes = [
   },
 
   {
+    path: 'admin',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] },
+    loadComponent: () =>
+      import('./layout/main-layout/main-layout').then(m => m.MainLayout),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/admin/admin-dashboard/admin-dashboard')
+            .then(m => m.AdminDashboard)
+      },
+      {
+        path: 'announcements',
+        loadComponent: () =>
+          import('./features/admin/admin-announcements/admin-announcements')
+            .then(m => m.AdminAnnouncements)
+      },
+      {
+        path: 'share-and-help',
+        loadComponent: () =>
+          import('./features/admin/admin-share-and-help/admin-share-and-help')
+            .then(m => m.AdminShareAndHelp)
+      },
+      {
+        path: 'chat',
+        loadComponent: () =>
+          import('./features/admin/admin-chat/admin-chat')
+            .then(m => m.AdminChat)
+      }
+    ]
+  },
+  {
     path: 'unauthorized',
     loadComponent: () =>
       import('./shared/unauthorized/unauthorized')
@@ -169,5 +202,5 @@ export const routes: Routes = [
   {
     path: '**',
     redirectTo: 'auth/login'
-  }
+  },
 ];

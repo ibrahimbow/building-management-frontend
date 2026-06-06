@@ -83,10 +83,18 @@ export class MainLayout implements OnInit, OnDestroy {
     { label: 'Settings', icon: 'settings', route: '/tenant/settings' }
   ];
 
+  readonly adminMenuItems: MenuItem[] = [
+    { label: 'Admin Dashboard', icon: 'admin_panel_settings', route: '/admin' },
+    { label: 'Announcements', icon: 'campaign', route: '/admin/announcements' },
+    { label: 'Share & Help', icon: 'volunteer_activism', route: '/admin/share-and-help' },
+    { label: 'Chat Moderation', icon: 'chat', route: '/admin/chat' }
+  ];
+
+
   ngOnInit(): void {
     this.initializeNotifications();
 
-    if (this.isManagerOrAdmin) {
+    if (this.isManager) {
       this.loadManagerBuildingState();
     }
 
@@ -100,8 +108,12 @@ export class MainLayout implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  get isManagerOrAdmin(): boolean {
-    return this.authService.isManagerOrAdmin();
+  get isManager(): boolean {
+    return this.authService.isManager();
+  }
+
+  get isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 
   get isTenant(): boolean {
@@ -120,37 +132,44 @@ export class MainLayout implements OnInit, OnDestroy {
     return !item.requiresBuilding || this.tenantHasJoinedBuilding;
   }
 
-openNotification(notification: NotificationItem): void {
-  this.notificationState.markAsReadAndRemove(notification.id);
+  openNotification(notification: NotificationItem): void {
+    this.notificationState.markAsReadAndRemove(notification.id);
 
-  const role = this.authService.getRole();
+    const role = this.authService.getRole();
 
-  if (!role) {
-    this.router.navigate(['/auth/login']);
-    return;
+    if (!role) {
+      this.router.navigate(['/auth/login']);
+      return;
+    }
+
+    if (role === 'ADMIN') {
+      this.router.navigate(['/admin']);
+      return;
+    }
+
+    const prefix = role === 'MANAGER'
+      ? '/manager'
+      : '/tenant';
+
+    if (notification.type === 'ANNOUNCEMENT') {
+      this.router.navigate([`${prefix}/announcements`]);
+      return;
+    }
+
+    if (notification.type === 'CHAT') {
+      this.router.navigate([`${prefix}/building-chat`]);
+      return;
+    }
+
+    if (notification.type === 'SHARE_AND_HELP') {
+      this.router.navigate([`${prefix}/help-share`]);
+      return;
+    }
   }
 
-  const prefix = role === 'MANAGER' || role === 'ADMIN'
-    ? '/manager'
-    : '/tenant';
 
-  if (notification.type === 'ANNOUNCEMENT') {
-    this.router.navigate([`${prefix}/announcements`]);
-    return;
-  }
-
-  if (notification.type === 'CHAT') {
-    this.router.navigate([`${prefix}/building-chat`]);
-    return;
-  }
-
-  if (notification.type === 'SHARE_AND_HELP') {
-    this.router.navigate([`${prefix}/help-share`]);
-    return;
-  }
-}
   logout(): void {
-    
+
     this.notificationState.reset();
     this.authService.logout();
     this.router.navigate(['/auth/login']).then(() => {

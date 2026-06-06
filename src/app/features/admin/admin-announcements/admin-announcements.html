@@ -1,0 +1,82 @@
+<section class="admin-announcements">
+
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Admin moderation</p>
+      <h1>Announcements</h1>
+      <p class="subtitle">
+        Review and moderate all platform announcements.
+      </p>
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <div class="state-card">
+      Loading announcements...
+    </div>
+  }
+
+  @if (!isLoading && announcements.length === 0) {
+    <div class="state-card">
+      No announcements found.
+    </div>
+  }
+
+  <div class="announcement-grid">
+
+    @for (
+      announcement of announcements;
+      track announcement.id
+    ) {
+
+      <article class="announcement-card">
+
+        @if (announcement.imageUrl) {
+          <img
+            [src]="announcement.imageUrl"
+            [alt]="announcement.title"
+            class="announcement-image">
+        }
+
+        <div class="announcement-content">
+
+          <div class="announcement-top">
+            <span class="category">
+              {{ announcement.category }}
+            </span>
+
+            <button
+              class="delete-button"
+              type="button"
+              (click)="deleteAnnouncement(announcement.id)">
+
+              Delete
+            </button>
+          </div>
+
+          <h2>
+            {{ announcement.title }}
+          </h2>
+
+          <p class="message">
+            {{ announcement.message }}
+          </p>
+
+          <div class="meta">
+            <span>
+              {{ announcement.createdBy }}
+            </span>
+
+            <span>
+              {{ announcement.createdAt | date:'medium' }}
+            </span>
+          </div>
+
+        </div>
+
+      </article>
+    }
+
+  </div>
+
+</section>

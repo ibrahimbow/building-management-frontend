@@ -60,11 +60,10 @@ export class Login {
       })
     ).subscribe({
       next: () => {
-        this.router.navigateByUrl(this.authService.getDashboardUrl(), {
-          replaceUrl: true
-        }).then(() => {
-          window.location.reload();
-        });
+        this.router.navigateByUrl(
+          this.authService.getDashboardUrl(),
+          { replaceUrl: true }
+        );
       },
       error: (err) => {
         this.errorMessage = err.status === 401

@@ -1,0 +1,152 @@
+.admin-share-help {
+  padding: 32px;
+}
+
+.page-header {
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  color: #2563eb;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+h1 {
+  margin: 0;
+  font-size: 32px;
+  color: #0f172a;
+}
+
+.subtitle {
+  margin-top: 8px;
+  color: #64748b;
+}
+
+.state-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  color: #64748b;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+}
+
+.post-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.post-card {
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.post-image {
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  display: block;
+}
+
+.post-content {
+  padding: 24px;
+}
+
+.post-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+h2 {
+  margin: 0 0 6px;
+  color: #0f172a;
+  font-size: 22px;
+}
+
+.author {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.description {
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 22px;
+}
+
+.delete-button {
+  border: none;
+  border-radius: 999px;
+  padding: 9px 15px;
+  cursor: pointer;
+  color: #ffffff;
+  background: #dc2626;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.comments-section {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+h3 {
+  margin: 0 0 14px;
+  color: #0f172a;
+  font-size: 16px;
+}
+
+.empty-comments {
+  color: #94a3b8;
+  margin: 0;
+}
+
+.comment-card {
+  background: #f8fafc;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.comment-author {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.comment-delete-button {
+  border: none;
+  background: transparent;
+  color: #dc2626;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.comment-card p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .post-top {
+    flex-direction: column;
+  }
+}

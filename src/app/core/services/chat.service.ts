@@ -16,7 +16,7 @@ export class ChatService {
   private readonly authService = inject(AuthService);
 
   private get baseUrl(): string {
-    const rolePath = this.authService.isManagerOrAdmin()
+    const rolePath = this.authService.isManager()
       ? 'manager'
       : 'tenant';
 

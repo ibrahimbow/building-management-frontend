@@ -1,0 +1,117 @@
+<section class="admin-share-help">
+
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Admin moderation</p>
+      <h1>Share & Help</h1>
+      <p class="subtitle">
+        Moderate tenant posts and comments.
+      </p>
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <div class="state-card">
+      Loading posts...
+    </div>
+  }
+
+  @if (!isLoading && posts.length === 0) {
+    <div class="state-card">
+      No posts found.
+    </div>
+  }
+
+  <div class="post-grid">
+
+    @for (post of posts; track post.id) {
+
+      <article class="post-card">
+
+        @if (post.imageUrl) {
+          <img
+            [src]="post.imageUrl"
+            [alt]="post.title"
+            class="post-image">
+        }
+
+        <div class="post-content">
+
+          <div class="post-top">
+
+            <div>
+              <h2>{{ post.title }}</h2>
+
+              <p class="author">
+                {{ post.createdByDisplayName }} - {{ post.createdAt | date:'medium' }}
+              </p>
+            </div>
+
+            <button
+              class="delete-button"
+              type="button"
+              (click)="deletePost(post.id)">
+
+              Delete Post
+            </button>
+
+          </div>
+
+          <p class="description">
+            {{ post.description }}
+          </p>
+
+          <div class="comments-section">
+
+            <h3>
+              Comments
+            </h3>
+
+            @if (post.comments.length === 0) {
+              <p class="empty-comments">
+                No comments
+              </p>
+            }
+
+            @for (
+              comment of post.comments;
+              track comment.id
+            ) {
+
+              <div class="comment-card">
+
+                <div class="comment-content">
+
+                  <div class="comment-header">
+                    <span class="comment-author">
+                      {{ comment.createdByDisplayName }} - {{ comment.createdAt | date:'medium' }}
+                    </span>
+
+                    <button
+                      class="comment-delete-button"
+                      type="button"
+                      (click)="deleteComment(post.id, comment.id)">
+
+                      Delete
+                    </button>
+                  </div>
+
+                  <p>
+                    {{ comment.comment }}
+                  </p>
+
+                </div>
+
+              </div>
+            }
+
+          </div>
+
+        </div>
+
+      </article>
+    }
+
+  </div>
+
+</section>

@@ -109,14 +109,18 @@ export class AuthService {
     return this.getRole() === 'TENANT';
   }
 
-  isManagerOrAdmin(): boolean {
-    return this.hasAnyRole(['MANAGER', 'ADMIN']);
+  isAdmin(): boolean {
+    return this.hasAnyRole(['ADMIN']);
   }
 
   getDashboardUrl(): string {
     const role = this.getRole();
 
-    if (role === 'ADMIN' || role === 'MANAGER') {
+    if (role === 'ADMIN') {
+      return '/admin';
+    }
+
+    if (role === 'MANAGER') {
       return '/manager/dashboard';
     }
 

@@ -7,10 +7,22 @@
 
       <span>
         JORITNA<br />
-      </span> 
+      </span>
     </div>
 
-    <mat-nav-list *ngIf="isManagerOrAdmin" class="nav-list">
+    <mat-nav-list *ngIf="isAdmin" class="nav-list">
+      <a
+        *ngFor="let item of adminMenuItems"
+        mat-list-item
+        [routerLink]="item.route"
+        routerLinkActive="active">
+
+        <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+        <span matListItemTitle>{{ item.label }}</span>
+      </a>
+    </mat-nav-list>
+
+    <mat-nav-list *ngIf="isManager" class="nav-list">
       <a mat-list-item routerLink="/manager/dashboard" routerLinkActive="active">
         <mat-icon matListItemIcon>dashboard</mat-icon>
         <span matListItemTitle>Dashboard</span>
@@ -88,12 +100,12 @@
       <mat-icon matListItemIcon>logout</mat-icon>
       <span matListItemTitle>Logout</span>
     </button>
-<div class="sidebar-footer">
-  <p class="copyright">
-    All rights reserved © 2026 Joritna
-  </p>
-</div>
 
+    <div class="sidebar-footer">
+      <p class="copyright">
+        All rights reserved © 2026 Joritna
+      </p>
+    </div>
   </mat-sidenav>
 
   <mat-sidenav-content class="main-shell">
@@ -103,36 +115,40 @@
 
         <div class="demo-top-label">Demo Version</div>
       </div>
-       
 
       <span class="spacer"></span>
-  
+
       <div class="toolbar-actions">
-        <button mat-icon-button type="button" class="notification-btn" [matMenuTriggerFor]="notificationMenu"
+        <button
+          mat-icon-button
+          type="button"
+          class="notification-btn"
+          [matMenuTriggerFor]="notificationMenu"
           aria-label="Open notifications">
 
-          <mat-icon [matBadge]="(unreadCount$ | async) || 0" matBadgeColor="warn"
+          <mat-icon
+            [matBadge]="(unreadCount$ | async) || 0"
+            matBadgeColor="warn"
             [matBadgeHidden]="((unreadCount$ | async) || 0) === 0">
+
             notifications
           </mat-icon>
         </button>
+
         <button mat-icon-button type="button" class="profile-btn">
-
           <ng-container *ngIf="(currentUser$ | async) as currentUser">
-
-            <img *ngIf="imageUrlService.hasImage(currentUser.avatarUrl)"
+            <img
+              *ngIf="imageUrlService.hasImage(currentUser.avatarUrl)"
               [src]="imageUrlService.resolve(currentUser.avatarUrl) || '/assets/images/default-avatar.png'"
-               alt="Profile photo" class="toolbar-avatar" />
+              alt="Profile photo"
+              class="toolbar-avatar" />
 
             <mat-icon *ngIf="!imageUrlService.hasImage(currentUser.avatarUrl)">
               person
             </mat-icon>
-
           </ng-container>
-
         </button>
       </div>
-     
     </mat-toolbar>
 
     <mat-menu #notificationMenu="matMenu" panelClass="notification-menu-panel" xPosition="before">
@@ -156,8 +172,12 @@
           </div>
 
           <div class="notification-list" *ngIf="notifications.length > 0">
-            <button type="button" class="notification-item" *ngFor="let notification of notifications"
-              [class.unread]="!notification.read" (click)="openNotification(notification)">
+            <button
+              type="button"
+              class="notification-item"
+              *ngFor="let notification of notifications"
+              [class.unread]="!notification.read"
+              (click)="openNotification(notification)">
 
               <div class="notification-icon">
                 <mat-icon *ngIf="notification.type === 'ANNOUNCEMENT'">campaign</mat-icon>

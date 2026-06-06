@@ -17,7 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 
-import { ShareAndHelp } from '../../core/models/share-and-help';
+import { ShareAndHelp } from '../../core/models/share-and-help.model';
 import { ShareAndHelpService } from '../../core/services/share-and-help.service';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';

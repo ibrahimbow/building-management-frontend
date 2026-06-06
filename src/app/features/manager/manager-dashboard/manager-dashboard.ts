@@ -14,7 +14,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
 import { BuildingTenant } from '../../../core/models/building-tenant.model';
 import { Building } from '../../../core/models/building.model';
 import { Announcement } from '../../../core/models/announcement.model';
-import { ShareAndHelp } from '../../../core/models/share-and-help';
+import { ShareAndHelp } from '../../../core/models/share-and-help.model';
 import { ShareAndHelpService } from '../../../core/services/share-and-help.service';
 
 interface ActivityPoint {

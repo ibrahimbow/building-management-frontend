@@ -7,7 +7,7 @@ import {
   CreateShareAndHelpRequest,
   ShareAndHelp,
   UpdateShareAndHelpRequest
-} from '../models/share-and-help';
+} from '../models/share-and-help.model';
 
 @Injectable({
   providedIn: 'root'
