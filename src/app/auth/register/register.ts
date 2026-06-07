@@ -1,9 +1,10 @@
-import { 
-  Component, 
-  ChangeDetectorRef, 
-  ViewChild, 
-  ElementRef ,
-ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
+  ViewEncapsulation, inject
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -20,10 +21,15 @@ import { AuthService } from '../../core/services/auth.service';
 import { UserRole } from '../../core/models/user.model';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PrivacyPolicyDialog } from '../../shared/dialogs/privacy-policy-dialog/privacy-policy-dialog';
+import { TermsOfServiceDialog } from '../../shared/dialogs/terms-of-service-dialog/terms-of-service-dialog';
+
+
 @Component({
   selector: 'app-register',
   standalone: true,
-    encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
   imports: [
     CommonModule,
     FormsModule,
@@ -33,6 +39,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
+    MatDialogModule,
     MatSnackBarModule
   ],
   templateUrl: './register.html',
@@ -40,8 +47,11 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 })
 export class Register {
 
-@ViewChild('usernameInput')
-private readonly usernameInput?: ElementRef<HTMLInputElement>;
+
+  private readonly dialog = inject(MatDialog);
+
+  @ViewChild('usernameInput')
+  private readonly usernameInput?: ElementRef<HTMLInputElement>;
 
   username = '';
   email = '';
@@ -56,9 +66,31 @@ private readonly usernameInput?: ElementRef<HTMLInputElement>;
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router,
-      private readonly cdr: ChangeDetectorRef,
+    private readonly cdr: ChangeDetectorRef,
     private readonly snackBar: MatSnackBar) {
   }
+
+
+  openPrivacyPolicy(): void {
+    console.log('Privacy clicked');
+
+    this.dialog.open(PrivacyPolicyDialog, {
+      width: '760px',
+      maxWidth: '92vw',
+      autoFocus: false,
+      restoreFocus: false
+    });
+  }
+
+  openTermsOfService(): void {
+    this.dialog.open(TermsOfServiceDialog, {
+      width: '760px',
+      maxWidth: '92vw',
+      autoFocus: false,
+      restoreFocus: false
+    });
+  }
+
 
   register(): void {
     this.errorMessage = '';
@@ -98,52 +130,52 @@ private readonly usernameInput?: ElementRef<HTMLInputElement>;
       return;
     }
 
-   this.isSubmitting = true;
+    this.isSubmitting = true;
 
-this.authService.register({
-  username,
-  email,
-  password: this.password,
-  displayName,
-  phoneNumber,
-  role: this.role
-}).pipe(
-  finalize(() => {
-  this.isSubmitting = false;
-  this.cdr.detectChanges();
-})
-).subscribe({
-  next: () => {
-    this.authService.login({
-      usernameOrEmail: email,
-      password: this.password
+    this.authService.register({
+      username,
+      email,
+      password: this.password,
+      displayName,
+      phoneNumber,
+      role: this.role
     }).pipe(
-      switchMap(() => this.authService.loadCurrentUser())
+      finalize(() => {
+        this.isSubmitting = false;
+        this.cdr.detectChanges();
+      })
     ).subscribe({
       next: () => {
-        this.router.navigateByUrl(this.authService.getDashboardUrl());
+        this.authService.login({
+          usernameOrEmail: email,
+          password: this.password
+        }).pipe(
+          switchMap(() => this.authService.loadCurrentUser())
+        ).subscribe({
+          next: () => {
+            this.router.navigateByUrl(this.authService.getDashboardUrl());
+          },
+          error: () => {
+            this.errorMessage = 'Account created, but login failed. Please login manually.';
+          }
+        });
       },
-      error: () => {
-        this.errorMessage = 'Account created, but login failed. Please login manually.';
+      error: (err: HttpErrorResponse) => {
+        if (err.status === 409) {
+          this.errorMessage = 'This email or username is already used. Please use another one.';
+        } else if (err.status === 400) {
+          this.errorMessage = 'Please check your registration details.';
+        } else {
+          this.errorMessage = 'Registration failed. Please try again.';
+        }
+
+        this.snackBar.open(this.errorMessage, 'Close', {
+          duration: 5000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
       }
     });
-  },
-error: (err: HttpErrorResponse) => {
-  if (err.status === 409) {
-    this.errorMessage = 'This email or username is already used. Please use another one.';
-  } else if (err.status === 400) {
-    this.errorMessage = 'Please check your registration details.';
-  } else {
-    this.errorMessage = 'Registration failed. Please try again.';
-  }
-
-  this.snackBar.open(this.errorMessage, 'Close', {
-    duration: 5000,
-    horizontalPosition: 'right',
-    verticalPosition: 'top',
-    panelClass: ['error-snackbar']
-  });
-}
-});
   }
 }

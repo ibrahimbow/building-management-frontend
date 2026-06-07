@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -9,6 +9,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { finalize, switchMap } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth.service';
+import { DemoNotice } from '../../shared/components/demo-notice/demo-notice';
+
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PrivacyPolicyDialog } from '../../shared/dialogs/privacy-policy-dialog/privacy-policy-dialog';
+import { TermsOfServiceDialog } from '../../shared/dialogs/terms-of-service-dialog/terms-of-service-dialog';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +23,10 @@ import { AuthService } from '../../core/services/auth.service';
     FormsModule,
     RouterLink,
     MatCardModule,
-    MatIconModule
+    MatIconModule,
+    MatDialogModule,
+    DemoNotice
+
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss',
@@ -31,11 +39,33 @@ export class Login {
   errorMessage = '';
   isSubmitting = false;
 
+  private readonly dialog = inject(MatDialog);
+
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef
   ) {
+  }
+
+  openPrivacyPolicy(): void {
+    console.log('Privacy clicked');
+
+    this.dialog.open(PrivacyPolicyDialog, {
+      width: '760px',
+      maxWidth: '92vw',
+      autoFocus: false,
+      restoreFocus: false
+    });
+  }
+  
+  openTermsOfService(): void {
+    this.dialog.open(TermsOfServiceDialog, {
+      width: '760px',
+      maxWidth: '92vw',
+      autoFocus: false,
+      restoreFocus: false
+    });
   }
 
   login(): void {

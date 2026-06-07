@@ -320,3 +320,38 @@ button:disabled {
     max-width: 500px;
   }
 }
+
+.auth-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 12px;
+  color: rgba(8, 0, 0, 0.78);
+
+  z-index: 50;
+  pointer-events: auto;
+}
+
+.footer-link {
+  color: #080000;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
+
+.footer-separator {
+  color: rgba(0, 0, 0, 0.35);
+}

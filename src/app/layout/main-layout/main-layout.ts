@@ -19,6 +19,11 @@ import { NotificationStateService } from '../../core/services/notification-state
 import { TenantBuildingStateService } from '../../core/services/tenant-building-state.service';
 import { NotificationItem } from '../../core/services/notification.service';
 
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PrivacyPolicyDialog } from '../../shared/dialogs/privacy-policy-dialog/privacy-policy-dialog';
+import { TermsOfServiceDialog } from '../../shared/dialogs/terms-of-service-dialog/terms-of-service-dialog';
+
+
 interface MenuItem {
   label: string;
   icon: string;
@@ -40,6 +45,7 @@ interface MenuItem {
     MatIconModule,
     MatButtonModule,
     MatBadgeModule,
+    MatDialogModule,
     MatMenuModule
   ],
   templateUrl: './main-layout.html',
@@ -54,8 +60,9 @@ export class MainLayout implements OnInit, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
-
   readonly imageUrlService = inject(ImageUrlService);
+
+  private readonly dialog = inject(MatDialog);
 
   readonly notifications$: Observable<NotificationItem[]> = this.notificationState.notifications$;
   readonly currentUser$ = this.authService.currentUser$;
@@ -83,15 +90,24 @@ export class MainLayout implements OnInit, OnDestroy {
     { label: 'Settings', icon: 'settings', route: '/tenant/settings' }
   ];
 
-  readonly adminMenuItems: MenuItem[] = [
-    { label: 'Admin Dashboard', icon: 'admin_panel_settings', route: '/admin' },
-    { label: 'Announcements', icon: 'campaign', route: '/admin/announcements' },
-    { label: 'Share & Help', icon: 'volunteer_activism', route: '/admin/share-and-help' },
-    { label: 'Chat Moderation', icon: 'chat', route: '/admin/chat' }
-  ];
+readonly adminMenuItems: MenuItem[] = [
+  { label: 'Admin Dashboard', icon: 'admin_panel_settings', route: '/admin/dashboard' },
+  { label: 'Announcements', icon: 'campaign', route: '/admin/announcements' },
+  { label: 'Share & Help', icon: 'volunteer_activism', route: '/admin/share-and-help' },
+  { label: 'Chat Moderation', icon: 'chat', route: '/admin/chat' }
+];
 
+  showDemoNotice = true;
 
   ngOnInit(): void {
+
+
+    const accepted = localStorage.getItem(
+      'joritna_demo_notice_accepted'
+    );
+
+    this.showDemoNotice = accepted !== 'true';
+
     this.initializeNotifications();
 
     if (this.isManager) {
@@ -101,6 +117,34 @@ export class MainLayout implements OnInit, OnDestroy {
     if (this.isTenant) {
       this.loadTenantBuildingState();
     }
+  }
+
+  openPrivacyPolicy(): void {
+    this.dialog.open(PrivacyPolicyDialog, {
+      width: '760px',
+      maxWidth: '92vw',
+      autoFocus: false,
+      restoreFocus: false
+    });
+  }
+
+  openTermsOfService(): void {
+    this.dialog.open(TermsOfServiceDialog, {
+      width: '760px',
+      maxWidth: '92vw',
+      autoFocus: false,
+      restoreFocus: false
+    });
+  }
+
+  understandDemoNotice(): void {
+
+    this.showDemoNotice = false;
+
+    localStorage.setItem(
+      'joritna_demo_notice_accepted',
+      'true'
+    );
   }
 
   ngOnDestroy(): void {

@@ -1,0 +1,43 @@
+@if (showDemoNotice) {
+<div class="demo-warning-overlay">
+  <div class="demo-warning-modal">
+
+    <div class="warning-icon">⚠️</div>
+    <br>
+
+    <h2>Demo & Testing Environment</h2>
+
+    <p class="warning-text">
+      JORITNA is currently running in a demo/testing environment intended for development, evaluation, and educational
+      purposes.
+    </p>
+
+    <p class="warning-text">
+      Please do not upload or share sensitive or real personal information, including but not limited to:
+
+      real passwords
+      banking information
+      government identification numbers
+      confidential documents
+      medical information
+    </p>
+
+    <p class="warning-text">
+      Users are solely responsible for the information they choose to submit or share within the platform.
+
+      JORITNA and its developers are not responsible for any sensitive information voluntarily entered into this
+      demo/testing environment.
+    </p>
+    For testing purposes, users are encouraged to use sample accounts, example email addresses (such as
+    anything@joritna.com), fictional passwords, and non-real data.
+    <br>
+    <br>
+    <br>
+
+    <button type="button" class="confirm-button" (click)="understandDemoNotice()">
+      I Understand
+    </button>
+
+  </div>
+</div>
+}

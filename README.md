@@ -1,6 +1,29 @@
+# JORITNA
+
+A modern building community platform for announcements, chat, and tenant collaboration.
+
+---
+
+## Copyright & License
+
+Copyright (c) 2026 Ibrahim Alolofi.
+All rights reserved.
+
+JORITNA and its source code are proprietary software.
+
+Unauthorized copying, modification, distribution, reverse engineering, sublicensing, or commercial use of any part of this project is strictly prohibited without explicit prior written permission from the author.
+
+---
+
+## Project Status
+
+Private MVP project currently under active development.
+
+---
+
 # 🏢 Building Management Frontend
 
-A modern, scalable **Angular (Standalone)** application for managing residential buildings, built with enterprise-grade architecture, clean UI, and real-world SaaS design patterns.
+A modern, scalable Angular (Standalone) application for managing residential buildings, built using enterprise-grade architecture, clean UI principles, and real-world SaaS design patterns.
 
 ---
 

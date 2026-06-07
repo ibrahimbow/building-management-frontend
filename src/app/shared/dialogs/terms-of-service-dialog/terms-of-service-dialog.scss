@@ -1,0 +1,65 @@
+.terms-dialog {
+  width: 100%;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  padding: 24px 24px 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #2563eb;
+}
+
+h2 {
+  margin: 0;
+  font-size: 28px;
+  color: #0f172a;
+}
+
+.updated {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.dialog-content {
+  max-height: 65vh;
+  padding: 24px;
+  color: #334155;
+  line-height: 1.7;
+}
+
+h3 {
+  margin-top: 24px;
+  margin-bottom: 8px;
+  color: #0f172a;
+  font-size: 18px;
+}
+
+p {
+  margin: 0 0 12px;
+}
+
+ul {
+  margin-top: 8px;
+  margin-bottom: 16px;
+  padding-left: 22px;
+}
+
+li {
+  margin-bottom: 6px;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px 24px;
+  border-top: 1px solid #e2e8f0;
+}

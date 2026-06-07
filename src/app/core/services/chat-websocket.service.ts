@@ -16,6 +16,7 @@ export class ChatWebSocketService {
 
   private stompClient?: Client;
   private subscription?: StompSubscription;
+  private connectedBuildingId?: string;
 
   private readonly eventSubject = new Subject<ChatWebSocketEvent>();
 
@@ -23,45 +24,52 @@ export class ChatWebSocketService {
     this.eventSubject.asObservable();
 
   connect(buildingId: string): void {
-    console.log('Connecting WebSocket for building:', buildingId);
-
-    if (this.stompClient?.active) {
-      console.log('WebSocket already active');
+    if (
+      this.stompClient?.active &&
+      this.connectedBuildingId === buildingId
+    ) {
       return;
     }
 
-this.stompClient = new Client({
-  brokerURL: `${environment.webSocketBaseUrl.replace('http', 'ws')}/ws/chat/websocket`,
+    this.disconnect();
 
-  reconnectDelay: 5000,
+    this.connectedBuildingId = buildingId;
 
-  debug: message => {
-    console.log('[STOMP]', message);
-  },
+    this.stompClient = new Client({
+      webSocketFactory: () =>
+        new SockJS(`${environment.webSocketBaseUrl}/ws/chat`),
 
-  onConnect: () => {
-    const topic = `/topic/buildings/${buildingId}/chat/messages`;
+      reconnectDelay: 5000,
 
-    this.subscription = this.stompClient?.subscribe(
-      topic,
-      (message: IMessage) => {
-        const event = JSON.parse(message.body) as ChatWebSocketEvent;
+      debug: message => {
+        console.log('[CHAT STOMP]', message);
+      },
 
-        this.ngZone.run(() => {
-          this.eventSubject.next(event);
-        });
+      onConnect: () => {
+        const topic =
+          `/topic/buildings/${buildingId}/chat/messages`;
+
+        this.subscription = this.stompClient?.subscribe(
+          topic,
+          (message: IMessage) => {
+            const event =
+              JSON.parse(message.body) as ChatWebSocketEvent;
+
+            this.ngZone.run(() => {
+              this.eventSubject.next(event);
+            });
+          }
+        );
+      },
+
+      onStompError: frame => {
+        console.error('Chat STOMP error:', frame);
+      },
+
+      onWebSocketError: error => {
+        console.error('Chat WebSocket error:', error);
       }
-    );
-  },
-
-  onStompError: frame => {
-    console.error('STOMP error:', frame);
-  },
-
-  onWebSocketError: error => {
-    console.error('WebSocket error:', error);
-  }
-});
+    });
 
     this.stompClient.activate();
   }
@@ -72,5 +80,6 @@ this.stompClient = new Client({
 
     this.subscription = undefined;
     this.stompClient = undefined;
+    this.connectedBuildingId = undefined;
   }
 }

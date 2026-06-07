@@ -10,22 +10,34 @@
   </div>
 
   <div class="admin-grid">
-    <a routerLink="/admin/announcements" class="admin-card">
+    <button
+      type="button"
+      class="admin-card"
+      (click)="goToAnnouncements()">
+
       <div class="icon">📢</div>
       <h2>Announcements</h2>
       <p>Review and delete inappropriate manager announcements.</p>
-    </a>
+    </button>
 
-    <a routerLink="/admin/share-and-help" class="admin-card">
+    <button
+      type="button"
+      class="admin-card"
+      (click)="goToShareAndHelp()">
+
       <div class="icon">🤝</div>
       <h2>Share & Help</h2>
       <p>Moderate tenant posts and comments.</p>
-    </a>
+    </button>
 
-    <a routerLink="/admin/chat" class="admin-card">
+    <button
+      type="button"
+      class="admin-card"
+      (click)="goToChat()">
+
       <div class="icon">💬</div>
       <h2>Chat</h2>
       <p>Review and remove inappropriate chat messages.</p>
-    </a>
+    </button>
   </div>
 </section>

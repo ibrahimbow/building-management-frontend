@@ -10,12 +10,11 @@
       </span>
     </div>
 
+
+
+
     <mat-nav-list *ngIf="isAdmin" class="nav-list">
-      <a
-        *ngFor="let item of adminMenuItems"
-        mat-list-item
-        [routerLink]="item.route"
-        routerLinkActive="active">
+      <a *ngFor="let item of adminMenuItems" mat-list-item [routerLink]="item.route" routerLinkActive="active">
 
         <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
         <span matListItemTitle>{{ item.label }}</span>
@@ -113,22 +112,16 @@
       <div class="topbar-title">
         <p>Welcome, {{ (currentUser$ | async)?.displayName }} 👋</p>
 
-        <div class="demo-top-label">Demo Version</div>
+        <div class="demo-top-label">Demo Version </div>
       </div>
 
       <span class="spacer"></span>
 
       <div class="toolbar-actions">
-        <button
-          mat-icon-button
-          type="button"
-          class="notification-btn"
-          [matMenuTriggerFor]="notificationMenu"
+        <button mat-icon-button type="button" class="notification-btn" [matMenuTriggerFor]="notificationMenu"
           aria-label="Open notifications">
 
-          <mat-icon
-            [matBadge]="(unreadCount$ | async) || 0"
-            matBadgeColor="warn"
+          <mat-icon [matBadge]="(unreadCount$ | async) || 0" matBadgeColor="warn"
             [matBadgeHidden]="((unreadCount$ | async) || 0) === 0">
 
             notifications
@@ -137,11 +130,9 @@
 
         <button mat-icon-button type="button" class="profile-btn">
           <ng-container *ngIf="(currentUser$ | async) as currentUser">
-            <img
-              *ngIf="imageUrlService.hasImage(currentUser.avatarUrl)"
+            <img *ngIf="imageUrlService.hasImage(currentUser.avatarUrl)"
               [src]="imageUrlService.resolve(currentUser.avatarUrl) || '/assets/images/default-avatar.png'"
-              alt="Profile photo"
-              class="toolbar-avatar" />
+              alt="Profile photo" class="toolbar-avatar" />
 
             <mat-icon *ngIf="!imageUrlService.hasImage(currentUser.avatarUrl)">
               person
@@ -172,12 +163,8 @@
           </div>
 
           <div class="notification-list" *ngIf="notifications.length > 0">
-            <button
-              type="button"
-              class="notification-item"
-              *ngFor="let notification of notifications"
-              [class.unread]="!notification.read"
-              (click)="openNotification(notification)">
+            <button type="button" class="notification-item" *ngFor="let notification of notifications"
+              [class.unread]="!notification.read" (click)="openNotification(notification)">
 
               <div class="notification-icon">
                 <mat-icon *ngIf="notification.type === 'ANNOUNCEMENT'">campaign</mat-icon>
@@ -203,5 +190,30 @@
     <main class="page-content" [class.chat-page-mode]="isChatPage">
       <router-outlet></router-outlet>
     </main>
+
+             <footer class="auth-footer">
+      <span>
+        © 2026 JORITNA. All rights reserved.
+      </span>
+
+      <span class="footer-separator">•</span>
+
+      <a href="#" class="footer-link" (click)="openPrivacyPolicy(); $event.preventDefault()">
+
+        Privacy Policy
+      </a>
+      <span class="footer-separator">•</span>
+
+      <span class="footer-link" role="button" tabindex="0" (click)="openTermsOfService()">
+
+        Terms of Service
+      </span>
+      <span class="footer-separator">•</span>
+
+      <span>
+        Demo & Testing Environment
+      </span>
+    </footer>
+    
   </mat-sidenav-content>
 </mat-sidenav-container>
