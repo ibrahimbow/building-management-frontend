@@ -1,15 +1,21 @@
 /* ── Page wrapper ────────────────────────────────────────────────── */
 .create-building-page {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 0;
   background: transparent;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow-x: hidden;
 }
 
 /* ── Main card ───────────────────────────────────────────────────── */
 .create-building-card {
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   border-radius: 18px !important;
   border: 1px solid #e2eaf6;
   background: #ffffff;
@@ -20,21 +26,22 @@
 
 /* ── Hero section ────────────────────────────────────────────────── */
 .hero-section {
-  height: 190px;
-  padding: 34px 30px 0;
+  min-height: 190px;
+  height: auto;
+  padding: 34px 30px 24px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  min-height: 200px;
+  gap: 24px;
 }
 
 .hero-title {
   display: flex;
   align-items: flex-start;
   gap: 24px;
+  min-width: 0;
 }
 
-/* Round icon bubble */
 .hero-icon {
   width: 82px;
   height: 82px;
@@ -53,14 +60,14 @@
   line-height: 42px;
 }
 
-/* Title + subtitle */
 .hero-text {
   padding-top: 8px;
+  min-width: 0;
 }
 
 .hero-text h1 {
   margin: 0;
-  font-size: 36px;
+  font-size: clamp(28px, 4vw, 36px);
   line-height: 1.1;
   font-weight: 900;
   letter-spacing: -0.8px;
@@ -72,12 +79,12 @@
   font-size: 15px;
   color: #4a6080;
   font-weight: 400;
+  line-height: 1.5;
 }
 
-/* Building illustration */
 .building-art {
-  width: 400px;
-  height: 250px;
+  width: min(360px, 35%);
+  height: 230px;
   flex-shrink: 0;
   display: flex;
   align-items: flex-end;
@@ -94,23 +101,25 @@
 /* ── Form content ────────────────────────────────────────────────── */
 mat-card-content {
   padding: 36px 40px 44px !important;
+  box-sizing: border-box;
 }
 
-/* 4-column grid */
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 20px;
 }
 
-/* Field label */
+.field-block {
+  min-width: 0;
+}
+
 .field-block label {
   display: block;
   margin-bottom: 10px;
   font-size: 14px;
   font-weight: 600;
   color: #0f2044;
-  letter-spacing: 0;
 }
 
 .field-block label .required {
@@ -118,25 +127,25 @@ mat-card-content {
   margin-left: 2px;
 }
 
-/* mat-form-field fill */
 mat-form-field {
   width: 100%;
 }
 
-/* Hide the subscript (error/hint row) */
+/* ── Angular Material field styling ──────────────────────────────── */
 ::ng-deep .create-building-page .mat-mdc-form-field-subscript-wrapper {
-  display: none !important;
+  display: block !important;
+  min-height: 18px;
+  margin-top: 4px;
 }
 
-/* Wrapper height */
 ::ng-deep .create-building-page .mat-mdc-text-field-wrapper {
-  height: 54px !important;
+  min-height: 54px !important;
   border-radius: 10px !important;
   background: #ffffff !important;
 }
 
 ::ng-deep .create-building-page .mat-mdc-form-field-flex {
-  height: 54px;
+  min-height: 54px;
   align-items: center;
 }
 
@@ -147,7 +156,6 @@ mat-form-field {
   align-items: center;
 }
 
-/* Outline border — light, 1.5 px */
 ::ng-deep .create-building-page .mdc-notched-outline__leading,
 ::ng-deep .create-building-page .mdc-notched-outline__notch,
 ::ng-deep .create-building-page .mdc-notched-outline__trailing {
@@ -163,17 +171,27 @@ mat-form-field {
   border-radius: 0 10px 10px 0 !important;
 }
 
-/* Input text */
 ::ng-deep .create-building-page .mat-mdc-input-element {
   font-size: 14px !important;
   color: #071b4d !important;
   font-weight: 500 !important;
 }
 
-/* Placeholder */
 ::ng-deep .create-building-page .mat-mdc-input-element::placeholder {
   color: #a0b0c8 !important;
   font-weight: 400 !important;
+}
+
+::ng-deep .create-building-page .mat-mdc-form-field-invalid .mdc-notched-outline__leading,
+::ng-deep .create-building-page .mat-mdc-form-field-invalid .mdc-notched-outline__notch,
+::ng-deep .create-building-page .mat-mdc-form-field-invalid .mdc-notched-outline__trailing {
+  border-color: #dc2626 !important;
+}
+
+::ng-deep .create-building-page .mat-mdc-form-field-error {
+  font-size: 12px;
+  font-weight: 700;
+  color: #dc2626;
 }
 
 /* Prefix icon */
@@ -189,9 +207,9 @@ mat-icon[matPrefix] {
 
 /* ── Error message ───────────────────────────────────────────────── */
 .error-message {
-  margin: 16px 0 0;
+  margin: 14px 0 0;
   color: #dc2626;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 14px;
 }
 
@@ -201,21 +219,23 @@ mat-icon[matPrefix] {
   display: flex;
   align-items: center;
   gap: 24px;
+  flex-wrap: wrap;
 }
 
-/* Submit button */
 .form-actions button {
   height: 56px;
   min-width: 210px;
+  max-width: 100%;
   border-radius: 12px !important;
   background: linear-gradient(135deg, #2f46f5 0%, #1a8fff 100%) !important;
   color: #ffffff !important;
   font-size: 15px;
   font-weight: 800;
   letter-spacing: 0.1px;
-  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.30) !important;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.3) !important;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
 }
 
@@ -233,13 +253,14 @@ mat-icon[matPrefix] {
   box-shadow: none !important;
 }
 
-/* Helper text beside button */
 .helper-text {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   color: #64748b;
   font-size: 13px;
+  max-width: 100%;
+  flex-wrap: wrap;
 }
 
 .helper-text mat-icon {
@@ -248,9 +269,10 @@ mat-icon[matPrefix] {
   font-size: 18px;
   line-height: 18px;
   color: #94a3b8;
+  flex-shrink: 0;
 }
 
-/* ── Info card (bottom strip) ────────────────────────────────────── */
+/* ── Info card ───────────────────────────────────────────────────── */
 .info-card {
   display: flex !important;
   align-items: center;
@@ -259,6 +281,7 @@ mat-icon[matPrefix] {
   border-radius: 16px;
   background: #eef4ff;
   border: 1px solid #d6e4fa;
+  box-sizing: border-box;
 }
 
 .info-icon {
@@ -279,6 +302,10 @@ mat-icon[matPrefix] {
   line-height: 22px;
 }
 
+.info-text {
+  min-width: 0;
+}
+
 .info-text h3 {
   margin: 0 0 4px;
   font-size: 15px;
@@ -293,24 +320,57 @@ mat-icon[matPrefix] {
   line-height: 1.5;
 }
 
-/* ── Responsive ──────────────────────────────────────────────────── */
-@media (max-width: 1200px) {
+/* ── Tablet / Chromebook ─────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .hero-section {
+    padding: 30px 28px 24px;
+  }
+
   .building-art {
     display: none;
   }
 
+  mat-card-content {
+    padding: 30px 28px 38px !important;
+  }
+
   .form-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
+/* ── Mobile ──────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .hero-section {
-    padding: 28px 24px 0;
+    padding: 24px 20px;
+  }
+
+  .hero-title {
+    gap: 16px;
+  }
+
+  .hero-icon {
+    width: 58px;
+    height: 58px;
+  }
+
+  .hero-icon mat-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+    line-height: 30px;
+  }
+
+  .hero-text h1 {
+    font-size: 28px;
+  }
+
+  .hero-text p {
+    font-size: 14px;
   }
 
   mat-card-content {
-    padding: 28px 24px 36px !important;
+    padding: 24px 20px 32px !important;
   }
 
   .form-grid {
@@ -319,30 +379,21 @@ mat-icon[matPrefix] {
 
   .form-actions {
     flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .form-actions button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .helper-text {
     align-items: flex-start;
   }
-}
 
-::ng-deep .create-building-page .mat-mdc-form-field-invalid .mdc-notched-outline__leading,
-::ng-deep .create-building-page .mat-mdc-form-field-invalid .mdc-notched-outline__notch,
-::ng-deep .create-building-page .mat-mdc-form-field-invalid .mdc-notched-outline__trailing {
-  border-color: #dc2626 !important;
-}
-
-::ng-deep .create-building-page .mat-mdc-form-field-error {
-  font-size: 12px;
-  font-weight: 700;
-  color: #dc2626;
-}
-
-::ng-deep .create-building-page .mat-mdc-form-field-subscript-wrapper {
-  display: block;
-  min-height: 18px;
-  margin-top: 4px;
-}
-
-.error-message {
-  margin: 14px 0 0;
-  color: #dc2626;
-  font-weight: 800;
+  .info-card {
+    align-items: flex-start;
+    padding: 20px;
+  }
 }
