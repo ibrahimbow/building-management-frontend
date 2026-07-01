@@ -17,6 +17,7 @@ export class ChatWebSocketService {
   private stompClient?: Client;
   private subscription?: StompSubscription;
   private connectedBuildingId?: string;
+  private connecting = false;
 
   private readonly eventSubject = new Subject<ChatWebSocketEvent>();
 
@@ -24,6 +25,10 @@ export class ChatWebSocketService {
     this.eventSubject.asObservable();
 
   connect(buildingId: string): void {
+    if (this.connecting) {
+      return;
+    }
+
     if (
       this.stompClient?.active &&
       this.connectedBuildingId === buildingId
@@ -31,8 +36,11 @@ export class ChatWebSocketService {
       return;
     }
 
-    this.disconnect();
+    if (this.stompClient?.active) {
+      this.disconnect();
+    }
 
+    this.connecting = true;
     this.connectedBuildingId = buildingId;
 
     this.stompClient = new Client({
@@ -46,6 +54,8 @@ export class ChatWebSocketService {
       },
 
       onConnect: () => {
+        this.connecting = false;
+
         const topic =
           `/topic/buildings/${buildingId}/chat/messages`;
 
@@ -63,11 +73,17 @@ export class ChatWebSocketService {
       },
 
       onStompError: frame => {
+        this.connecting = false;
         console.error('Chat STOMP error:', frame);
       },
 
       onWebSocketError: error => {
+        this.connecting = false;
         console.error('Chat WebSocket error:', error);
+      },
+
+      onWebSocketClose: () => {
+        this.connecting = false;
       }
     });
 
@@ -76,10 +92,14 @@ export class ChatWebSocketService {
 
   disconnect(): void {
     this.subscription?.unsubscribe();
-    this.stompClient?.deactivate();
+
+    if (this.stompClient?.active) {
+      void this.stompClient.deactivate();
+    }
 
     this.subscription = undefined;
     this.stompClient = undefined;
     this.connectedBuildingId = undefined;
+    this.connecting = false;
   }
 }

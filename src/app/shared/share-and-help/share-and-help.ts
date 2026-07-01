@@ -27,6 +27,8 @@ import { ConfirmDialog } from '../confirm-dialog/confirm-dialog';
 
 import { TimeAgoPipe } from '../../core/pipes/time-ago-pipe';
 
+import { ShareAndHelpStatus } from '../../core/models/share-and-help-status.enum';
+
 @Component({
   selector: 'app-share-and-help',
   standalone: true,
@@ -227,4 +229,58 @@ export class ShareAndHelpComponent implements OnInit, OnDestroy {
   onImageError(event: Event): void {
     (event.target as HTMLImageElement).src = 'assets/images/default-post-image.png';
   }
+
+ isPostOwner(post: ShareAndHelp): boolean {
+  return post.createdByUserId === this.authService.getCurrentUser()?.id;
+}
+
+isResolved(post: ShareAndHelp): boolean {
+  return post.status === ShareAndHelpStatus.RESOLVED;
+}
+
+togglePostStatus(post: ShareAndHelp): void {
+  if (this.isResolved(post)) {
+    this.reopenPost(post);
+    return;
+  }
+
+  this.resolvePost(post);
+}
+
+private resolvePost(post: ShareAndHelp): void {
+  this.service.resolvePost(post.id)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: updatedPost => {
+        this.replacePost(updatedPost);
+        this.notificationService.success('Post marked as resolved.');
+      },
+      error: () => {
+        this.notificationService.error('Could not resolve post.');
+      }
+    });
+}
+
+private reopenPost(post: ShareAndHelp): void {
+  this.service.reopenPost(post.id)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: updatedPost => {
+        this.replacePost(updatedPost);
+        this.notificationService.success('Post reopened.');
+      },
+      error: () => {
+        this.notificationService.error('Could not reopen post.');
+      }
+    });
+}
+
+private replacePost(updatedPost: ShareAndHelp): void {
+  this.posts = this.posts.map(post =>
+    post.id === updatedPost.id ? updatedPost : post
+  );
+
+  this.cdr.markForCheck();
+}
+
 }

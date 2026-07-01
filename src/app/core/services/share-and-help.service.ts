@@ -55,4 +55,18 @@ export class ShareAndHelpService {
       `${this.apiUrl}/${postId}/comments/${commentId}`
     );
   }
+
+resolvePost(postId: string): Observable<ShareAndHelp> {
+  return this.http.patch<ShareAndHelp>(
+    `${this.apiUrl}/${postId}/resolve`,
+    {}
+  );
+}
+
+reopenPost(postId: string): Observable<ShareAndHelp> {
+  return this.http.patch<ShareAndHelp>(
+    `${this.apiUrl}/${postId}/reopen`,
+    {}
+  );
+}
 }

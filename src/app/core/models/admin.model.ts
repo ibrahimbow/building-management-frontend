@@ -11,3 +11,12 @@ export type AdminShareAndHelpPost = ShareAndHelp;
 export interface AdminModerationDeleteResult {
   deleted: boolean;
 }
+
+export interface AdminAuditEvent {
+  id: string;
+  userId: number;
+  username: string;
+  eventType: string;
+  description: string;
+  createdAt: string;
+}

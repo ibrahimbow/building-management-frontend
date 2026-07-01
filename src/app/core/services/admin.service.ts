@@ -1,11 +1,14 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 
+import { PageResponse } from '../../core/models/page-response.model';
+
 import {
   AdminAnnouncement,
+  AdminAuditEvent,
   AdminChatMessage,
   AdminShareAndHelpPost
 } from '../models/admin.model';
@@ -72,6 +75,18 @@ export class AdminService {
 
     return this.http.delete<void>(
       `${this.apiUrl}/chat/messages/${messageId}`
+    );
+  }
+
+  getAuditEvents(page = 0, size = 20): Observable<PageResponse<AdminAuditEvent>> {
+
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+
+    return this.http.get<PageResponse<AdminAuditEvent>>(
+      `${this.apiUrl}/audit/events`,
+      { params }
     );
   }
 }

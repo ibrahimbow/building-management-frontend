@@ -1,3 +1,5 @@
+import { ShareAndHelpStatus } from './share-and-help-status.enum';
+
 export interface ShareAndHelpComment {
   id: string;
   comment: string;
@@ -13,6 +15,7 @@ export interface ShareAndHelp {
   title: string;
   description: string;
   imageUrl: string | null;
+  status: ShareAndHelpStatus;
   createdAt: string;
   updatedAt: string | null;
 

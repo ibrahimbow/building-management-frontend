@@ -94,9 +94,9 @@ readonly adminMenuItems: MenuItem[] = [
   { label: 'Admin Dashboard', icon: 'admin_panel_settings', route: '/admin/dashboard' },
   { label: 'Announcements', icon: 'campaign', route: '/admin/announcements' },
   { label: 'Share & Help', icon: 'volunteer_activism', route: '/admin/share-and-help' },
-  { label: 'Chat Moderation', icon: 'chat', route: '/admin/chat' }
+  { label: 'Chat Moderation', icon: 'chat', route: '/admin/chat' },
+  { label: 'Audit Logs', icon: 'history', route: '/admin/audit' }
 ];
-
   showDemoNotice = true;
 
   ngOnInit(): void {

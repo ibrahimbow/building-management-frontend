@@ -194,6 +194,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/admin-chat/admin-chat')
             .then(m => m.AdminChat)
+      },
+      {
+        path: 'audit',
+        loadComponent: () =>
+          import('./features/admin/admin-audit/admin-audit')
+            .then(m => m.AdminAudit)
       }
     ]
   },

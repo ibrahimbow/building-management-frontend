@@ -1,0 +1,80 @@
+<section class="audit-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Admin monitoring</p>
+      <h1>Audit Logs</h1>
+      <p class="subtitle">
+        Review authentication and user activity events across the platform.
+      </p>
+    </div>
+  </header>
+
+  <div class="table-card">
+    <div class="table-header">
+      <h2>System Events</h2>
+      <span>{{ totalElements }} records</span>
+    </div>
+
+    <div *ngIf="isLoading" class="state">
+      Loading audit logs...
+    </div>
+
+    <div *ngIf="!isLoading && auditEvents.length === 0" class="state">
+      No audit events found.
+    </div>
+
+    <div *ngIf="!isLoading && auditEvents.length > 0" class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Created At</th>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Event Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let auditEvent of auditEvents; trackBy: trackByAuditEventId">
+            <td>{{ auditEvent.createdAt | date:'medium' }}</td>
+            <td>{{ auditEvent.userId }}</td>
+            <td>{{ auditEvent.username }}</td>
+            <td>
+              <span class="event-badge">
+                {{ auditEvent.eventType }}
+              </span>
+            </td>
+            <td>{{ auditEvent.description }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div
+      *ngIf="!isLoading && totalElements > 0"
+      class="pagination"
+    >
+      <button
+        type="button"
+        (click)="previousPage()"
+        [disabled]="page === 0"
+      >
+        Previous
+      </button>
+
+      <span>
+        Page {{ page + 1 }} of {{ totalPages || 1 }}
+        · {{ totalElements }} records
+      </span>
+
+      <button
+        type="button"
+        (click)="nextPage()"
+        [disabled]="page + 1 >= totalPages"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+</section>
